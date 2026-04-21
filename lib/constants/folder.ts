@@ -1,0 +1,1 @@
+export const FOLDER = ["LMS images", "LMS audio", "power_point"]

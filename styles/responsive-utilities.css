@@ -1,0 +1,265 @@
+/* Responsive Design Utilities for LMS Enspire */
+
+/* Breakpoints theo Tailwind CSS mặc định:
+   sm: 640px+
+   md: 768px+
+   lg: 1024px+
+   xl: 1280px+
+   2xl: 1536px+
+*/
+
+/* Custom utilities using @apply directive - more compatible approach */
+.container-responsive {
+  @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Grid responsive cho card layouts */
+.grid-responsive-cards {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+}
+
+.grid-responsive-cards-large {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6;
+}
+
+  /* Text responsive */
+  .text-responsive-h1 {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-bold;
+  }
+
+  .text-responsive-h2 {
+    @apply text-xl sm:text-2xl lg:text-3xl font-bold;
+  }
+
+  .text-responsive-h3 {
+    @apply text-lg sm:text-xl lg:text-2xl font-semibold;
+  }
+
+  .text-responsive-body {
+    @apply text-sm sm:text-base;
+  }
+
+  .text-responsive-small {
+    @apply text-xs sm:text-sm;
+  }
+
+  /* Button responsive */
+  .btn-responsive {
+    @apply px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base;
+  }
+
+  .btn-responsive-large {
+    @apply px-4 py-3 text-sm sm:px-6 sm:py-3 lg:px-8 lg:py-4 sm:text-base lg:text-lg;
+  }
+
+  /* Form layout responsive */
+  .form-responsive {
+    @apply space-y-4 sm:space-y-6;
+  }
+
+  .form-grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6;
+  }
+
+  /* Card responsive */
+  .card-responsive {
+    @apply p-4 sm:p-6 lg:p-8 rounded-lg sm:rounded-xl lg:rounded-2xl;
+  }
+
+  /* Modal responsive */
+  .modal-responsive {
+    @apply w-[95vw] max-w-md sm:w-full sm:max-w-lg lg:max-w-2xl;
+  }
+
+  .modal-responsive-large {
+    @apply w-[95vw] max-w-4xl sm:w-full lg:max-w-6xl xl:max-w-7xl;
+  }
+
+  /* Image responsive */
+  .image-responsive {
+    @apply w-full h-auto max-w-full;
+  }
+
+  /* Spacing responsive */
+  .space-responsive {
+    @apply space-y-4 sm:space-y-6 lg:space-y-8;
+  }
+
+  .gap-responsive {
+    @apply gap-2 sm:gap-4 lg:gap-6;
+  }
+
+  /* Navigation responsive */
+  .nav-responsive {
+    @apply flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4;
+  }
+
+  /* Table responsive */
+  .table-responsive {
+    @apply overflow-x-auto;
+  }
+
+  .table-responsive table {
+    @apply min-w-full;
+  }
+
+  /* Sidebar responsive */
+  .sidebar-responsive {
+    @apply w-full sm:w-64 lg:w-72 xl:w-80;
+  }
+
+  /* Content area responsive */
+  .content-responsive {
+    @apply w-full sm:flex-1 sm:ml-64 lg:ml-72 xl:ml-80;
+  }
+
+  /* Hide/show responsive */
+  .hide-mobile {
+    @apply hidden sm:block;
+  }
+
+  .show-mobile {
+    @apply block sm:hidden;
+  }
+
+  .hide-tablet {
+    @apply hidden md:block;
+  }
+
+  .show-tablet {
+    @apply block md:hidden;
+  }
+
+  /* Flex responsive */
+  .flex-responsive {
+    @apply flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4;
+  }
+
+  .flex-responsive-reverse {
+    @apply flex flex-col-reverse sm:flex-row items-start sm:items-center gap-2 sm:gap-4;
+  }
+
+  /* Truncate text với responsive */
+  .truncate-responsive {
+    @apply truncate sm:text-clip;
+  }
+
+  /* Line clamp responsive */
+  .line-clamp-responsive {
+    @apply line-clamp-2 sm:line-clamp-3 lg:line-clamp-none;
+  }
+}
+
+/* Specific fixes cho các component */
+@layer components {
+  /* Modal overlay responsive */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-2 sm:p-4;
+  }
+
+  /* Card hover effects responsive */
+  .card-hover-responsive {
+    @apply transition-all duration-200 hover:shadow-md sm:hover:shadow-lg lg:hover:shadow-xl hover:scale-[1.02];
+  }
+
+  /* Input responsive */
+  .input-responsive {
+    @apply text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2;
+  }
+
+  /* Badge responsive */
+  .badge-responsive {
+    @apply text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1;
+  }
+
+  /* Loading skeleton responsive */
+  .skeleton-responsive {
+    @apply h-4 sm:h-5 lg:h-6 bg-gray-200 rounded animate-pulse;
+  }
+}
+
+/* Media queries cho các breakpoint đặc biệt */
+@media (max-width: 640px) {
+  /* Mobile specific styles */
+  .mobile-full-width {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+
+  .mobile-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Tablet specific styles */
+  .tablet-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  /* Desktop specific styles */
+  .desktop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Fix cho aspect ratio trên các devices */
+@media (max-width: 768px) {
+  .aspect-responsive {
+    aspect-ratio: 16/9;
+  }
+}
+
+@media (min-width: 769px) {
+  .aspect-responsive {
+    aspect-ratio: 4/3;
+  }
+}
+
+/* Print styles responsive */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-friendly {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .high-dpi-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Landscape orientation */
+@media (orientation: landscape) and (max-height: 600px) {
+  .landscape-compact {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .touch-friendly {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .touch-hover-disable:hover {
+    transform: none;
+  }
+}

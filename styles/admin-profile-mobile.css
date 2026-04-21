@@ -1,0 +1,142 @@
+/* Mobile Optimizations for Admin Profile */
+
+/* Image Cropper Mobile Support */
+.image-cropper-canvas {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Ensure proper touch targets on mobile */
+@media (max-width: 768px) {
+    .admin-profile-button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .admin-profile-input {
+        font-size: 16px;
+        /* Prevents zoom on iOS */
+    }
+
+    /* Improve scrolling performance */
+    .admin-profile-scroll {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Better spacing for small screens */
+    .admin-profile-container {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    /* Optimize modal positioning */
+    .admin-profile-modal {
+        margin: 16px;
+        max-height: calc(100vh - 32px);
+    }
+
+    /* Better avatar positioning */
+    .admin-profile-avatar-mobile {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    /* Improve button layout on mobile */
+    .admin-profile-button-group {
+        gap: 8px;
+    }
+
+    .admin-profile-button-group button {
+        flex: 1;
+        min-height: 44px;
+    }
+
+    /* Image cropper mobile optimizations */
+    .image-cropper-modal {
+        width: 95vw !important;
+        max-width: 400px !important;
+        max-height: 90vh !important;
+        padding: 12px !important;
+    }
+
+    .image-cropper-canvas {
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: 8px;
+    }
+
+    .image-cropper-slider {
+        width: 100% !important;
+        max-width: 280px !important;
+    }
+
+    .image-cropper-button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .image-cropper-button-group button {
+        width: 100% !important;
+        min-height: 44px;
+    }
+}
+
+/* Landscape orientation optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+    .admin-profile-modal {
+        max-height: calc(100vh - 16px);
+        margin: 8px;
+    }
+
+    .admin-profile-avatar-mobile img {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* Very small screens (iPhone SE, etc.) */
+@media (max-width: 375px) {
+    .admin-profile-container {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    .admin-profile-card {
+        padding: 12px;
+    }
+
+    .admin-profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    .admin-profile-transition {
+        transition: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .admin-profile-border {
+        border-width: 2px;
+    }
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+    .admin-profile-bg {
+        background-color: rgb(17 24 39);
+    }
+
+    .admin-profile-card {
+        background-color: rgb(31 41 55);
+        border-color: rgb(55 65 81);
+    }
+}

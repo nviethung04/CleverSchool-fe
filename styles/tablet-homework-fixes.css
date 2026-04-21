@@ -1,0 +1,283 @@
+/* Tablet-specific fixes for homework submission page */
+
+/* Media queries for tablet responsiveness */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    /* Adjust sidebar width for tablets */
+    .homework-sidebar {
+        width: 280px !important;
+    }
+
+    /* Ensure content area has enough space */
+    .homework-content {
+        min-width: 480px;
+    }
+
+    /* Adjust answer options spacing */
+    .answer-options-grid {
+        gap: 1rem !important;
+        padding: 0 1rem;
+    }
+
+    /* Make answer text more readable on tablets */
+    .answer-text {
+        font-size: 1rem !important;
+        line-height: 1.5;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Adjust answer option sizes */
+    .answer-option-text {
+        min-width: 140px !important;
+        max-width: 200px;
+        padding: 0.75rem 1rem !important;
+    }
+
+    /* Prevent text overflow */
+    .answer-option {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Specific fixes for portrait tablets */
+@media (min-width: 768px) and (max-width: 834px) and (orientation: portrait) {
+    .homework-sidebar {
+        width: 260px !important;
+    }
+
+    .answer-options-grid {
+        gap: 0.75rem !important;
+    }
+
+    .answer-option-text {
+        min-width: 120px !important;
+        max-width: 180px;
+        font-size: 0.9rem !important;
+    }
+}
+
+/* GLOBAL DEBUG - Test bottom padding */
+.flex-1.overflow-y-auto {
+    padding-bottom: 4rem !important;
+    background: rgba(0, 255, 0, 0.1) !important;
+    /* Green debug */
+}
+
+/* Fixes for landscape tablets (iPad landscape, Android tablets landscape) */
+@media screen and (min-width: 768px) and (max-width: 1180px) and (orientation: landscape) {
+
+    /* Add extra spacing for content on iPad landscape - Direct target */
+    body .flex-1.overflow-y-auto {
+        padding-bottom: 4rem !important;
+        /* Extra bottom spacing */
+    }
+
+    /* Also target any flex-1 container */
+    body div.flex-1 {
+        padding-bottom: 3rem !important;
+    }
+
+    /* Smaller multiple choice buttons for iPad landscape */
+    .multiple-choice-answer-button {
+        width: 8rem !important;
+        /* 128px instead of 240px */
+        height: 6rem !important;
+        /* 96px instead of 240px */
+        max-width: 8rem !important;
+        max-height: 6rem !important;
+    }
+
+    /* Force smaller size for multiple choice buttons on iPad landscape - HIGH SPECIFICITY */
+    body .homework-content .multiple-choice-answer-button,
+    body .multiple-choice-answer-button,
+    .multiple-choice-answer-button {
+        width: 8rem !important;
+        /* 128px instead of 240px */
+        height: 6rem !important;
+        /* 96px instead of 240px */
+        max-width: 8rem !important;
+        max-height: 6rem !important;
+        min-width: 8rem !important;
+        min-height: 6rem !important;
+        background: rgba(255, 0, 0, 0.3) !important;
+        /* Red background for debug */
+        border: 2px solid blue !important;
+    }
+
+    /* Debug: Show homework content area */
+    body .homework-content {
+        background: rgba(0, 255, 0, 0.2) !important;
+        /* Green background for debug */
+        border: 3px solid green !important;
+    }
+
+    /* Main layout */
+    body .homework-sidebar {
+        width: 240px !important;
+        min-width: 200px !important;
+        flex-shrink: 0 !important;
+    }
+
+    body .homework-content {
+        flex: 1 !important;
+        min-width: 0 !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        height: calc(100vh - 60px) !important;
+        max-height: calc(100vh - 60px) !important;
+    }
+
+    /* Question header */
+    body .homework-content h2 {
+        font-size: 14px !important;
+        padding: 8px !important;
+        margin: 0 !important;
+        line-height: 1.3 !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+    }
+
+    /* Ensure all child containers allow scrolling */
+    body .homework-content>div,
+    body .homework-content .flex-1 {
+        overflow-y: visible !important;
+        min-height: fit-content !important;
+    }
+
+    /* Question header */
+    body .homework-content h2 {
+        font-size: 14px !important;
+        padding: 8px !important;
+        margin: 0 !important;
+        line-height: 1.3 !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+    }
+
+    /* FORCE ANSWER GRID TO BE VISIBLE AND HORIZONTAL */
+    body .answer-options-grid,
+    body .homework-content .answer-options-grid,
+    body [class*="answer-options-grid"] {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: visible !important;
+        gap: 12px !important;
+        padding: 12px !important;
+        width: 100% !important;
+        min-height: 80px !important;
+        background: rgba(255, 0, 0, 0.1) !important;
+        /* Red background to debug */
+        border: 2px solid red !important;
+        /* Red border to debug */
+    }
+
+    /* FORCE ANSWER BUTTONS TO BE SMALLER AND HORIZONTAL */
+    body .answer-options-grid button,
+    body .homework-content .answer-options-grid button,
+    body [class*="answer-options-grid"] button,
+    body .answer-options-grid button[class*="w-44"],
+    body .answer-options-grid button[class*="w-52"],
+    body .answer-options-grid button[class*="w-60"],
+    body .answer-options-grid button[class*="h-44"],
+    body .answer-options-grid button[class*="h-52"],
+    body .answer-options-grid button[class*="h-60"] {
+        flex-shrink: 0 !important;
+        min-width: 100px !important;
+        width: 100px !important;
+        max-width: 100px !important;
+        min-height: 80px !important;
+        height: 80px !important;
+        max-height: 80px !important;
+        font-size: 12px !important;
+        background: blue !important;
+        /* Blue background to debug */
+        color: white !important;
+        border: 1px solid white !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* FORCE OVERRIDE ALL TAILWIND CLASSES */
+    body .answer-options-grid button.w-44,
+    body .answer-options-grid button.w-52,
+    body .answer-options-grid button.w-60,
+    body .answer-options-grid button.h-44,
+    body .answer-options-grid button.h-52,
+    body .answer-options-grid button.h-60 {
+        width: 100px !important;
+        height: 80px !important;
+    }
+
+    /* Flexible sidebar elements */
+    body .homework-sidebar img {
+        max-width: clamp(40px, 6vw, 70px) !important;
+        max-height: clamp(50px, 8vw, 90px) !important;
+    }
+
+    body .homework-sidebar svg {
+        width: clamp(60px, 8vw, 100px) !important;
+        height: clamp(60px, 8vw, 100px) !important;
+    }
+
+    body .homework-sidebar button {
+        padding: clamp(0.3rem, 1vw, 0.6rem) clamp(0.4rem, 1.2vw, 0.8rem) !important;
+        font-size: clamp(0.65rem, 1.5vw, 0.85rem) !important;
+    }
+
+    body .homework-sidebar h1 {
+        font-size: clamp(0.8rem, 2vw, 1.1rem) !important;
+        margin-bottom: clamp(0.25rem, 1vw, 0.75rem) !important;
+    }
+
+    /* Flexible navigation arrows */
+    body .homework-content button[class*="absolute"] {
+        padding: clamp(0.4rem, 1vw, 0.7rem) !important;
+        width: clamp(2rem, 4vw, 3rem) !important;
+        height: clamp(2rem, 4vw, 3rem) !important;
+    }
+
+    body .homework-content button[class*="absolute"] svg {
+        width: clamp(0.7rem, 1.5vw, 1.2rem) !important;
+        height: clamp(0.7rem, 1.5vw, 1.2rem) !important;
+    }
+
+    /* Responsive scrollbar */
+    body .homework-content .flex-1::-webkit-scrollbar,
+    body .homework-content>div::-webkit-scrollbar,
+    body .homework-content .w-full::-webkit-scrollbar {
+        height: clamp(6px, 1vw, 12px) !important;
+        width: clamp(6px, 1vw, 12px) !important;
+    }
+
+    body .homework-content .flex-1::-webkit-scrollbar-track,
+    body .homework-content>div::-webkit-scrollbar-track,
+    body .homework-content .w-full::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1) !important;
+        border-radius: 50% !important;
+    }
+
+    body .homework-content .flex-1::-webkit-scrollbar-thumb,
+    body .homework-content>div::-webkit-scrollbar-thumb,
+    body .homework-content .w-full::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.3) !important;
+        border-radius: 50% !important;
+    }
+
+    body .homework-content .flex-1::-webkit-scrollbar-thumb:hover,
+    body .homework-content>div::-webkit-scrollbar-thumb:hover,
+    body .homework-content .w-full::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.5) !important;
+    }
+}
+
+/* Fixes for large landscape tablets */
+@media (min-width: 1024px) and (max-width: 1199px) and (orientation: landscape) {
+    .homework-sidebar {
+        width: 300px !important;
+    }
+}

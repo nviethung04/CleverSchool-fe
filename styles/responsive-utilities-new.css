@@ -1,0 +1,557 @@
+/* Responsive Design Utilities for LMS Enspire */
+
+/* Breakpoints theo Tailwind CSS mặc định:
+   sm: 640px+
+   md: 768px+
+   lg: 1024px+
+   xl: 1280px+
+   2xl: 1536px+
+*/
+
+/* Custom responsive utilities - Using vanilla CSS instead of @layer utilities */
+
+/* Container responsive cho các màn hình khác nhau */
+.container-responsive {
+  width: 100%;
+  max-width: 80rem; /* 1280px */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-responsive {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-responsive {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Grid responsive cho card layouts */
+.grid-responsive-cards {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .grid-responsive-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-responsive-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-responsive-cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Grid cho course layouts */
+.grid-responsive-courses {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .grid-responsive-courses {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-responsive-courses {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Text responsive - Headings */
+.text-responsive-h1 {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+@media (min-width: 640px) {
+  .text-responsive-h1 {
+    font-size: 1.875rem; /* text-3xl */
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-responsive-h1 {
+    font-size: 2.25rem; /* text-4xl */
+  }
+}
+
+.text-responsive-h2 {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+@media (min-width: 640px) {
+  .text-responsive-h2 {
+    font-size: 1.5rem; /* text-2xl */
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-responsive-h2 {
+    font-size: 1.875rem; /* text-3xl */
+  }
+}
+
+.text-responsive-h3 {
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+@media (min-width: 640px) {
+  .text-responsive-h3 {
+    font-size: 1.25rem; /* text-xl */
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-responsive-h3 {
+    font-size: 1.5rem; /* text-2xl */
+  }
+}
+
+/* Text responsive - Body */
+.text-responsive-body {
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.5;
+}
+
+@media (min-width: 640px) {
+  .text-responsive-body {
+    font-size: 1rem; /* text-base */
+  }
+}
+
+.text-responsive-small {
+  font-size: 0.75rem; /* text-xs */
+  line-height: 1.5;
+}
+
+@media (min-width: 640px) {
+  .text-responsive-small {
+    font-size: 0.875rem; /* text-sm */
+  }
+}
+
+/* Button responsive */
+.btn-responsive-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+}
+
+@media (min-width: 640px) {
+  .btn-responsive-sm {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+.btn-responsive-lg {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .btn-responsive-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .btn-responsive-lg {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+  }
+}
+
+/* Card responsive */
+.card-responsive {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 640px) {
+  .card-responsive {
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-responsive {
+    padding: 2rem;
+    border-radius: 1rem;
+  }
+}
+
+/* Modal responsive */
+.modal-responsive {
+  width: 95vw;
+  max-width: 28rem; /* max-w-md */
+}
+
+@media (min-width: 640px) {
+  .modal-responsive {
+    width: 100%;
+    max-width: 32rem; /* max-w-lg */
+  }
+}
+
+@media (min-width: 1024px) {
+  .modal-responsive {
+    max-width: 42rem; /* max-w-2xl */
+  }
+}
+
+.modal-responsive-lg {
+  width: 95vw;
+  max-width: 56rem; /* max-w-4xl */
+}
+
+@media (min-width: 640px) {
+  .modal-responsive-lg {
+    width: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .modal-responsive-lg {
+    max-width: 72rem; /* max-w-6xl */
+  }
+}
+
+@media (min-width: 1280px) {
+  .modal-responsive-lg {
+    max-width: 80rem; /* max-w-7xl */
+  }
+}
+
+/* Hide/Show utilities for responsive */
+.hide-on-mobile {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .hide-on-mobile {
+    display: block;
+  }
+}
+
+.show-on-mobile {
+  display: block;
+}
+
+@media (min-width: 640px) {
+  .show-on-mobile {
+    display: none;
+  }
+}
+
+.hide-on-tablet {
+  display: block;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hide-on-tablet {
+    display: none;
+  }
+}
+
+.show-on-tablet {
+  display: none;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .show-on-tablet {
+    display: block;
+  }
+}
+
+.hide-on-desktop {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .hide-on-desktop {
+    display: none;
+  }
+}
+
+.show-on-desktop {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .show-on-desktop {
+    display: block;
+  }
+}
+
+/* Flexbox responsive utilities */
+.flex-responsive-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .flex-responsive-stack {
+    flex-direction: row;
+    gap: 2rem;
+  }
+}
+
+.flex-responsive-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .flex-responsive-center {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+/* Form responsive */
+.form-responsive {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .form-responsive {
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .form-responsive {
+    gap: 2rem;
+  }
+}
+
+/* Navigation responsive */
+.nav-responsive {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .nav-responsive {
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
+
+/* Table responsive */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table-responsive table {
+  width: 100%;
+  min-width: 600px;
+}
+
+@media (min-width: 768px) {
+  .table-responsive table {
+    min-width: auto;
+  }
+}
+
+/* Image responsive */
+.img-responsive {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+/* Spacing responsive */
+.space-responsive-y > * + * {
+  margin-top: 1rem;
+}
+
+@media (min-width: 640px) {
+  .space-responsive-y > * + * {
+    margin-top: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .space-responsive-y > * + * {
+    margin-top: 2rem;
+  }
+}
+
+/* Grid two column responsive */
+.grid-responsive-2col {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .grid-responsive-2col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* Header responsive utilities for minimalist design */
+.header-minimalist {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.header-container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .header-container {
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+.header-nav-desktop {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .header-nav-desktop {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+}
+
+.header-mobile-menu {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .header-mobile-menu {
+    display: none;
+  }
+}
+
+.header-logo-text {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .header-logo-text {
+    display: block;
+  }
+}
+
+.header-actions-mobile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .header-actions-mobile {
+    gap: 0.5rem;
+  }
+}
+
+/* Dropdown menu animations */
+.dropdown-enter {
+  opacity: 0;
+  transform: scale(0.95) translateY(-10px);
+}
+
+.dropdown-enter-active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transition: all 0.2s ease-out;
+}
+
+.dropdown-exit {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.dropdown-exit-active {
+  opacity: 0;
+  transform: scale(0.95) translateY(-10px);
+  transition: all 0.15s ease-in;
+}
+
+/* Avatar hover effects */
+.avatar-hover-ring:hover {
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+/* Notification badge pulse animation */
+.notification-pulse {
+  animation: notification-pulse 2s infinite;
+}
+
+@keyframes notification-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+/* Button hover transitions */
+.btn-hover-minimal {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-hover-minimal:hover {
+  background-color: rgba(243, 244, 246, 1);
+  transform: translateY(-1px);
+}
