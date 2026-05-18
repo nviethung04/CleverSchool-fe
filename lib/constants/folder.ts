@@ -1,1 +1,1 @@
-export const FOLDER = ["LMS images", "LMS audio", "power_point"]
+export const FOLDER = ["Clever School images", "Clever School audio", "power_point"]

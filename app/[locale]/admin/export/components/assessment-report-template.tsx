@@ -331,7 +331,7 @@ export function generateAssessmentReportHTML(
   const headerHTML = `
     <div class="header">
       <div class="header-left">
-        <div style="font-weight: 700; font-size: 18px; font-family: 'TimesNewRoman', 'Times New Roman', serif;"><strong>TRUNG TÂM ANH NGỮ ENSPIRE</strong></div>
+        <div style="font-weight: 700; font-size: 18px; font-family: 'TimesNewRoman', 'Times New Roman', serif;"><strong>TRUNG TÂM ANH NGỮ Clever School</strong></div>
         <div style="font-size: 15px; font-family: 'TimesNewRoman', 'Times New Roman', serif; font-weight: 700; margin-top: 5px;"><strong>Năm học 2025-2026</strong></div>
       </div>
       <div class="header-right">

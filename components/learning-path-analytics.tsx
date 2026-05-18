@@ -101,9 +101,9 @@ export function LearningPathAnalytics() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <LucideCheckCircle className="h-5 w-5 text-enspire-green" />
+        return <LucideCheckCircle className="h-5 w-5 text-Clever School-green" />
       case "in-progress":
-        return <LucidePlayCircle className="h-5 w-5 text-enspire-blue" />
+        return <LucidePlayCircle className="h-5 w-5 text-Clever School-blue" />
       case "locked":
         return <LucideLock className="h-5 w-5 text-gray-400" />
       default:
@@ -118,7 +118,7 @@ export function LearningPathAnalytics() {
           <Button
             variant={viewMode === "progress" ? "default" : "outline"}
             size="sm"
-            className={`rounded-full ${viewMode === "progress" ? "bg-enspire-blue text-white" : ""}`}
+            className={`rounded-full ${viewMode === "progress" ? "bg-Clever School-blue text-white" : ""}`}
             onClick={() => setViewMode("progress")}
           >
             Tiến độ
@@ -126,7 +126,7 @@ export function LearningPathAnalytics() {
           <Button
             variant={viewMode === "effectiveness" ? "default" : "outline"}
             size="sm"
-            className={`rounded-full ${viewMode === "effectiveness" ? "bg-enspire-green text-white" : ""}`}
+            className={`rounded-full ${viewMode === "effectiveness" ? "bg-Clever School-green text-white" : ""}`}
             onClick={() => setViewMode("effectiveness")}
           >
             Hiệu quả
@@ -141,15 +141,15 @@ export function LearningPathAnalytics() {
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
                 module.status === "completed"
-                  ? "bg-enspire-green bg-opacity-20"
+                  ? "bg-Clever School-green bg-opacity-20"
                   : module.status === "in-progress"
-                    ? "bg-enspire-blue bg-opacity-20"
+                    ? "bg-Clever School-blue bg-opacity-20"
                     : "bg-gray-100"
               }`}
             >
               {getStatusIcon(module.status)}
             </div>
-            <div className={`bg-white rounded-2xl border-2 border-enspire-${module.color} p-4 flex-grow card-kid`}>
+            <div className={`bg-white rounded-2xl border-2 border-Clever School-${module.color} p-4 flex-grow card-kid`}>
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <h3 className="font-bold">{module.title}</h3>
@@ -165,9 +165,9 @@ export function LearningPathAnalytics() {
                   }
                   className={
                     module.status === "completed"
-                      ? "bg-enspire-green bg-opacity-10 text-enspire-green border-enspire-green"
+                      ? "bg-Clever School-green bg-opacity-10 text-Clever School-green border-Clever School-green"
                       : module.status === "in-progress"
-                        ? "bg-enspire-blue bg-opacity-10 text-enspire-blue border-enspire-blue"
+                        ? "bg-Clever School-blue bg-opacity-10 text-Clever School-blue border-Clever School-blue"
                         : "text-gray-400 bg-gray-50"
                   }
                 >
@@ -207,7 +207,7 @@ export function LearningPathAnalytics() {
                   </div>
                   <Progress value={module.progress} className="h-2 bg-gray-100">
                     <div
-                      className={`h-full bg-enspire-${module.color} rounded-full`}
+                      className={`h-full bg-Clever School-${module.color} rounded-full`}
                       style={{ width: `${module.progress}%` }}
                     ></div>
                   </Progress>
@@ -237,7 +237,7 @@ export function LearningPathAnalytics() {
                     </div>
                     <Progress value={module.effectiveness} className="h-2 bg-gray-100">
                       <div
-                        className="h-full bg-enspire-green rounded-full"
+                        className="h-full bg-Clever School-green rounded-full"
                         style={{ width: `${module.effectiveness}%` }}
                       ></div>
                     </Progress>

@@ -3,9 +3,9 @@ import { getMessaging, getToken, onMessage, isSupported } from "firebase/messagi
 
 const firebaseConfig = {
     apiKey: "AIzaSyCNnVsg-4hdD7STtZHptGMIkH613g7LUsw",
-    authDomain: "ed-lms.firebaseapp.com",
-    projectId: "ed-lms",
-    storageBucket: "ed-lms.firebasestorage.app",
+    authDomain: "ed-Clever School.firebaseapp.com",
+    projectId: "ed-Clever School",
+    storageBucket: "ed-Clever School.firebasestorage.app",
     messagingSenderId: "574072475726",
     appId: "1:574072475726:web:2a0dc365c91dc389fa331f",
     measurementId: "G-LL7ZX9LKPN"

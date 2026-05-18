@@ -15,9 +15,9 @@ export function HeroSection({ stats }: HeroSectionProps) {
   return (
     <section className="py-16 md:py-24 cloud-bg relative overflow-hidden">
       {/* Decorative elements */}
-      <div className="absolute top-10 left-10 w-20 h-20 rounded-full bg-enspire-yellow opacity-50 animate-bounce"></div>
+      <div className="absolute top-10 left-10 w-20 h-20 rounded-full bg-Clever School-yellow opacity-50 animate-bounce"></div>
       <div
-        className="absolute bottom-10 right-10 w-16 h-16 rounded-full bg-enspire-orange opacity-50 animate-bounce"
+        className="absolute bottom-10 right-10 w-16 h-16 rounded-full bg-Clever School-orange opacity-50 animate-bounce"
         style={{ animationDelay: "0.5s" }}
       ></div>
 
@@ -25,7 +25,7 @@ export function HeroSection({ stats }: HeroSectionProps) {
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-              Học tiếng Anh <span className="text-enspire-blue">vui vẻ</span> cùng LMS!
+              Học tiếng Anh <span className="text-Clever School-blue">vui vẻ</span> cùng Clever School!
             </h1>
             <p className="text-lg text-gray-600 mb-6">
               Hệ thống học tập thông minh giúp người học phát triển kỹ năng tiếng Anh theo lộ trình riêng, phù hợp với khả
@@ -35,27 +35,27 @@ export function HeroSection({ stats }: HeroSectionProps) {
             {/* Stats - Server rendered */}
             <div className="flex gap-6 mb-8">
               <div className="text-center">
-                <div className="text-2xl font-bold text-enspire-blue">{stats.totalStudents.toLocaleString()}+</div>
+                <div className="text-2xl font-bold text-Clever School-blue">{stats.totalStudents.toLocaleString()}+</div>
                 <div className="text-sm text-gray-600">Học sinh</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-enspire-green">{stats.totalCourses}+</div>
+                <div className="text-2xl font-bold text-Clever School-green">{stats.totalCourses}+</div>
                 <div className="text-sm text-gray-600">Khóa học</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-enspire-yellow">{stats.satisfactionRate}%</div>
+                <div className="text-2xl font-bold text-Clever School-yellow">{stats.satisfactionRate}%</div>
                 <div className="text-sm text-gray-600">Hài lòng</div>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="rounded-full bg-enspire-yellow text-black hover:bg-yellow-400" asChild>
+              <Button size="lg" className="rounded-full bg-Clever School-yellow text-black hover:bg-yellow-400" asChild>
                 <Link href="/register">Bắt đầu học ngay</Link>
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="rounded-full border-enspire-blue text-enspire-blue"
+                className="rounded-full border-Clever School-blue text-Clever School-blue"
                 asChild
               >
                 <Link href="/about">Tìm hiểu thêm</Link>
@@ -63,8 +63,8 @@ export function HeroSection({ stats }: HeroSectionProps) {
             </div>
           </div>
           <div className="relative">
-            <div className="absolute -top-10 -left-10 w-32 h-32 bg-enspire-green rounded-full opacity-20"></div>
-            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-enspire-blue rounded-full opacity-20"></div>
+            <div className="absolute -top-10 -left-10 w-32 h-32 bg-Clever School-green rounded-full opacity-20"></div>
+            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-Clever School-blue rounded-full opacity-20"></div>
             <Image
               src="/giaoduc.jpg"
               alt="Người học học tiếng Anh"

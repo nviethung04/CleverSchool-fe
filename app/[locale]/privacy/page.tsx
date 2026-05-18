@@ -32,7 +32,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "terms" });
 
   return {
-    title: t("title") + " - Enspire LMS",
+    title: t("title") + " - Clever School",
     description: t("agreement").substring(0, 160),
   };
 }
@@ -95,7 +95,7 @@ export default function TermsPage() {
                 <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="flex-1">
-                <CardTitle className="text-2xl mb-2">Enspire LMS</CardTitle>
+                <CardTitle className="text-2xl mb-2">Clever School</CardTitle>
                 <CardDescription className="text-base leading-relaxed">
                   {t("agreement")}
                 </CardDescription>

@@ -237,7 +237,7 @@ export default function FileManagerPage() {
   // Lấy URL upload từ environment variable
   const getUploadUrl = (): string => {
     let apiBaseUrl =
-      process.env.NEXT_PUBLIC_API_BASE_URL || "https://lmsx-api.urp.vn";
+      process.env.NEXT_PUBLIC_API_BASE_URL || "https://Clever Schoolx-api.urp.vn";
 
     // Loại bỏ /api ở cuối nếu có
     if (apiBaseUrl.endsWith("/api")) {

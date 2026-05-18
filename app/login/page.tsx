@@ -22,7 +22,7 @@ export default function LoginPage() {
       </Suspense>
 
       <div className="mt-8 text-center text-sm text-gray-500">
-        <p>© {new Date().getFullYear()} LMS. Tất cả các quyền được bảo lưu.</p>
+        <p>© {new Date().getFullYear()} Clever School. Tất cả các quyền được bảo lưu.</p>
       </div>
     </div>
   );

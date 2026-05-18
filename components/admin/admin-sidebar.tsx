@@ -349,7 +349,7 @@ export function AdminSidebar() {
                 <span className="text-sm font-bold text-white">L</span>
               </div>
               <span className="text-xl font-bold tracking-tight text-white">
-                LMS
+                Clever School
               </span>
             </Link>
           ) : (

@@ -241,7 +241,7 @@ export default function CriteriaReportPage() {
           </div>
           <Button
             asChild
-            className="mt-4 md:mt-0 bg-enspire-green text-white hover:bg-opacity-90"
+            className="mt-4 md:mt-0 bg-Clever School-green text-white hover:bg-opacity-90"
           >
             <Link href={`/${locale}/admin/criteria-report/create`}>
               <LucidePlus className="mr-2 h-4 w-4" />

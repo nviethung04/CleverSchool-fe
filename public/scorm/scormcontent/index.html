@@ -137,9 +137,9 @@
     var completionPercentage = 100;
     var reporting = 'passed-incomplete';
 
-    var LMSProxySelections = [
+    var Clever SchoolProxySelections = [
       'CommitData',
-      'ConcedeControl', // Gives control back to the LMS
+      'ConcedeControl', // Gives control back to the Clever School
       'CreateResponseIdentifier', // Create question response
       'Finish',
       'GetDataChunk',  // Retrieve stringified object with lesson progress
@@ -151,17 +151,17 @@
       'ResetStatus', // Reset the Status
       'SetBookmark',   // Set identifier for bookmark
       'SetDataChunk',  // Set a stringified object with lesson progress
-      'SetFailed', // Tell LMS user Failed course
+      'SetFailed', // Tell Clever School user Failed course
       'SetLanguagePreference', // Set user's Language Preference
-      'SetPassed', // Tell LMS user Passed the course
-      'SetReachedEnd', // Tell LMS user completed course
-      'SetScore', // Report Users Score to the LMS (for Pass and fail)
+      'SetPassed', // Tell Clever School user Passed the course
+      'SetReachedEnd', // Tell Clever School user completed course
+      'SetScore', // Report Users Score to the Clever School (for Pass and fail)
       'WriteToDebug',
     ];
 
     function HookCommit() {
-  LMSProxyFuncs.WriteToDebug('Commit strategy detected a reason to commit! Forcing a commit to the LMS.');
-  LMSProxyFuncs.CommitData();
+  Clever SchoolProxyFuncs.WriteToDebug('Commit strategy detected a reason to commit! Forcing a commit to the Clever School.');
+  Clever SchoolProxyFuncs.CommitData();
 }
 
 const ProxyHooks = {
@@ -185,26 +185,26 @@ function hookProxy(funcName) {
   return;
 }
 
-var LMSProxyFuncs = pick(LMSProxySelections, window.parent, Function.prototype);
+var Clever SchoolProxyFuncs = pick(Clever SchoolProxySelections, window.parent, Function.prototype);
 
 function noAPIFunction (funcName) {
   return function () {
-    console.log('Warning: Course was unable to find the LMS API for ' + funcName + '. Course may have been launched from scormcontent/index.html, or the course package is not within an LMS. Saving of student data will not occur.');
+    console.log('Warning: Course was unable to find the Clever School API for ' + funcName + '. Course may have been launched from scormcontent/index.html, or the course package is not within an Clever School. Saving of student data will not occur.');
   }
 }
 
 var initProxy = function() {
-  return Object.keys(LMSProxyFuncs).reduce(function(newProxy, funcName) {
+  return Object.keys(Clever SchoolProxyFuncs).reduce(function(newProxy, funcName) {
     // Alert logic for if there's issues finding the eLearning API.
     var triggerAlert = true;
 
     // xAPI and cmi5 API's can be identified by their object type and key count.
-    if (typeof LMSProxyFuncs[funcName] === 'object' && Object.keys(LMSProxyFuncs[funcName]).length > 1) {
+    if (typeof Clever SchoolProxyFuncs[funcName] === 'object' && Object.keys(Clever SchoolProxyFuncs[funcName]).length > 1) {
       triggerAlert = false;
     }
 
     // AICC and SCORM API's can be identified by the length of the function.
-    if (LMSProxyFuncs[funcName].toString().length > 35) {
+    if (Clever SchoolProxyFuncs[funcName].toString().length > 35) {
       triggerAlert = false;
     }
 
@@ -223,13 +223,13 @@ var initProxy = function() {
     }
 
     if (arrayHas(funcName, ['CreateResponseIdentifier', 'MatchingResponse', 'cmi5'])) {
-      newProxy[funcName] = LMSProxyFuncs[funcName];
+      newProxy[funcName] = Clever SchoolProxyFuncs[funcName];
       return newProxy;
     }
 
     newProxy[funcName] = function () {
       var args = ([]).slice.call(arguments);
-      var result = LMSProxyFuncs[funcName].apply(null, args);
+      var result = Clever SchoolProxyFuncs[funcName].apply(null, args);
 
       hookProxy(funcName);
 
@@ -240,9 +240,9 @@ var initProxy = function() {
 }
 
 
-    var LMSProxy = initProxy();
+    var Clever SchoolProxy = initProxy();
 
-    var cache = getLMSData();
+    var cache = getClever SchoolData();
 
     function debounce(fn, delay) {
   var timer = null;
@@ -307,7 +307,7 @@ function identity(value) {
 function bookmark(id) {
   var url = 'index.html#/lessons/' + id;
 
-  LMSProxy.SetBookmark(url, '');
+  Clever SchoolProxy.SetBookmark(url, '');
 }
 
 function completeOut(passed, reportParam) {
@@ -317,14 +317,14 @@ function completeOut(passed, reportParam) {
     switch(reportType) {
       case 'completed-incomplete':
       case 'completed-failed':
-        LMSProxy.ResetStatus();
-        LMSProxy.SetReachedEnd();
+        Clever SchoolProxy.ResetStatus();
+        Clever SchoolProxy.SetReachedEnd();
         break;
 
       case 'passed-incomplete':
       case 'passed-failed':
-        LMSProxy.SetPassed();
-        LMSProxy.SetReachedEnd();
+        Clever SchoolProxy.SetPassed();
+        Clever SchoolProxy.SetReachedEnd();
         break;
     }
   } else {
@@ -332,7 +332,7 @@ function completeOut(passed, reportParam) {
       case 'passed-failed':
       case 'completed-failed':
         if(!isPassed()) {
-          LMSProxy.SetFailed();
+          Clever SchoolProxy.SetFailed();
         }
         break;
     }
@@ -340,26 +340,26 @@ function completeOut(passed, reportParam) {
 }
 
 var setDataChunk = debounce(function(data) {
-  LMSProxy.SetDataChunk(data);
+  Clever SchoolProxy.SetDataChunk(data);
 }, 100);
 
-function concatLMSData(data) {
+function concatClever SchoolData(data) {
   assign(cache, data);
   setDataChunk(compress(cache));
 }
 
 function getLocale() {
-  return getLMSData().locale;
+  return getClever SchoolData().locale;
 }
 
 function setLocale(locale) {
-  concatLMSData({ locale: locale });
-  LMSProxy.SetLanguagePreference(locale);
+  concatClever SchoolData({ locale: locale });
+  Clever SchoolProxy.SetLanguagePreference(locale);
 }
 
 
 function exit() {
-  LMSProxy.ConcedeControl();
+  Clever SchoolProxy.ConcedeControl();
 }
 
 function finish(totalProgress) {
@@ -407,7 +407,7 @@ function sanitizeForUri(title) {
   // Currently only enabled for AICC.
   if ('scorm12' === 'aicc') { 
     if (percentInvalid > 0.25 || sanitizedTitle.trim() === '') {
-      LMSProxyFuncs.WriteToDebug('Sanitized title is empty or has more than 25% invalid characters. Generating hash-based ID.');
+      Clever SchoolProxyFuncs.WriteToDebug('Sanitized title is empty or has more than 25% invalid characters. Generating hash-based ID.');
       sanitizedTitle = generateBase64ID(title);
     }
   }
@@ -440,7 +440,7 @@ function shorten(title) {
 
 function buildResponseIdentifier(response) {
   var title = sanitizeForUri(response.title);
-  return LMSProxy.CreateResponseIdentifier(shorten(title), title);
+  return Clever SchoolProxy.CreateResponseIdentifier(shorten(title), title);
 }
 
 function buildMatchingResponse(response) {
@@ -448,11 +448,11 @@ function buildMatchingResponse(response) {
   var targetTitle = sanitizeForUri(response.target.title);
 
   var source =
-    LMSProxy.CreateResponseIdentifier(shorten(sourceTitle), sourceTitle);
+    Clever SchoolProxy.CreateResponseIdentifier(shorten(sourceTitle), sourceTitle);
   var target =
-    LMSProxy.CreateResponseIdentifier(shorten(targetTitle), targetTitle);
+    Clever SchoolProxy.CreateResponseIdentifier(shorten(targetTitle), targetTitle);
 
-  return new LMSProxy.MatchingResponse(source, target);
+  return new Clever SchoolProxy.MatchingResponse(source, target);
 }
 
 function cleanTitle(title, maxSize) {
@@ -485,19 +485,19 @@ function reportAnswer(data) {
     case 'MULTIPLE_RESPONSE':
       response = data.response.map(buildResponseIdentifier);
       correctResponses = data.correctResponse.map(buildResponseIdentifier);
-      recorder = LMSProxy.RecordMultipleChoiceInteraction;
+      recorder = Clever SchoolProxy.RecordMultipleChoiceInteraction;
       break;
 
     case 'FILL_IN_THE_BLANK':
       response = data.response;
       correctResponses = data.correctResponse;
-      recorder = LMSProxy.RecordFillInInteraction;
+      recorder = Clever SchoolProxy.RecordFillInInteraction;
       break;
 
     case 'MATCHING':
       response = data.response.map(buildMatchingResponse);
       correctResponses = data.correctResponse.map(buildMatchingResponse);
-      recorder = LMSProxy.RecordMatchingInteraction;
+      recorder = Clever SchoolProxy.RecordMatchingInteraction;
       break;
   }
 
@@ -513,11 +513,11 @@ function reportAnswer(data) {
   );
 }
 
-function getLMSData() {
+function getClever SchoolData() {
   var data = null;
 
   if(!cache) {
-    data = LMSProxy.GetDataChunk();
+    data = Clever SchoolProxy.GetDataChunk();
 
     var result = data
       ? decompress(data)
@@ -535,7 +535,7 @@ function getProgress(initialProgress) {
 
   var progress = assign({}, {
     progress: { lessons: {} }
-  }, getLMSData()).progress;
+  }, getClever SchoolData()).progress;
 
   if(initialProgress) {
     return decodeCourseProgress(initialProgress, progress);
@@ -549,7 +549,7 @@ function isExport() {
 }
 
 function isPassed() {
-  return LMSProxy.GetStatus() === window.parent.LESSON_STATUS_PASSED;
+  return Clever SchoolProxy.GetStatus() === window.parent.LESSON_STATUS_PASSED;
 }
 
 function pick(keys, obj, def) {
@@ -567,10 +567,10 @@ function pick(keys, obj, def) {
 }
 
 function reportScore(score) {
-  var highScore = Math.max(getLMSData().score || 0, score);
-  concatLMSData({ score: highScore });
+  var highScore = Math.max(getClever SchoolData().score || 0, score);
+  concatClever SchoolData({ score: highScore });
 
-  LMSProxy.SetScore(highScore, 100, 0);
+  Clever SchoolProxy.SetScore(highScore, 100, 0);
 }
 
 function resolvePath(path) {
@@ -595,7 +595,7 @@ function setLessonProgress(lessonProgress) {
 
   var progress = assign({}, currentProgress, { lessons: lessons });
 
-  concatLMSData({ progress: progress });
+  concatClever SchoolData({ progress: progress });
 }
 
 function setCourseProgress(courseProgress) {
@@ -610,7 +610,7 @@ function setCourseProgress(courseProgress) {
     encodeCourseProgress(courseProgress)
   );
 
-  concatLMSData({ progress: progress });
+  concatClever SchoolData({ progress: progress });
 }
 
 function getMasteryScore(payload) {

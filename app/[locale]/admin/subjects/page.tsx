@@ -111,7 +111,7 @@ export default function SubjectsPage() {
             </p>
           </div>
           <Button
-            className="mt-4 md:mt-0 bg-enspire-green text-white hover:bg-opacity-90"
+            className="mt-4 md:mt-0 bg-Clever School-green text-white hover:bg-opacity-90"
             onClick={handleCreate}
           >
             <LucidePlus className="mr-2 h-4 w-4" />

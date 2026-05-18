@@ -596,7 +596,7 @@ export function convertApiMessageToUIMessage(
         // Check if static_url already has CDN prefix
         const baseUrl = media.static_url.startsWith('https://')
             ? media.static_url
-            : `https://cdn-dev.xlms.vn/${media.static_url}`
+            : `https://cdn-dev.xClever School.vn/${media.static_url}`
 
         return {
             id: media.id.toString(),
@@ -659,12 +659,12 @@ export function convertSSEMessageToUIMessage(sseMessage: any, allMessages: Messa
     if (sseMessage.files && Array.isArray(sseMessage.files)) {
         files = sseMessage.files.map((file: any) => {
             // Fix double CDN prefix issue in URLs
-            const cleanUrl = file.url?.includes('https://cdn-dev.xlms.vn/https://')
-                ? file.url.replace('https://cdn-dev.xlms.vn/https://', 'https://')
+            const cleanUrl = file.url?.includes('https://cdn-dev.xClever School.vn/https://')
+                ? file.url.replace('https://cdn-dev.xClever School.vn/https://', 'https://')
                 : file.url
 
-            const cleanThumbnailUrl = file.thumbnailUrl?.includes('https://cdn-dev.xlms.vn/https://')
-                ? file.thumbnailUrl.replace('https://cdn-dev.xlms.vn/https://', 'https://')
+            const cleanThumbnailUrl = file.thumbnailUrl?.includes('https://cdn-dev.xClever School.vn/https://')
+                ? file.thumbnailUrl.replace('https://cdn-dev.xClever School.vn/https://', 'https://')
                 : file.thumbnailUrl
 
             return {

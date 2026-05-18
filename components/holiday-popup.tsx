@@ -171,7 +171,7 @@ export function HolidayPopup() {
             maxWidth: "98vw",
             maxHeight: "98vh"
           }}
-          // onClick={() => window.location.href = "https://www.xlms.vn/"}
+          // onClick={() => window.location.href = "https://www.xClever School.vn/"}
           priority
         />
         <button

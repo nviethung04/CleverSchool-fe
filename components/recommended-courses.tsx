@@ -63,12 +63,12 @@ export function RecommendedCourses() {
       {courses.map((course) => (
         <div
           key={course.id}
-          className={`border-2 border-enspire-${course.color} rounded-2xl overflow-hidden hover:shadow-md transition-shadow game-card`}
+          className={`border-2 border-Clever School-${course.color} rounded-2xl overflow-hidden hover:shadow-md transition-shadow game-card`}
         >
           <div className="relative h-[100px]">
             <Image src={course.image || "/placeholder.svg"} alt={course.title} fill className="object-cover" />
             <div className="absolute top-2 right-2">
-              <Badge className={`bg-enspire-${course.color} text-white`}>{course.level}</Badge>
+              <Badge className={`bg-Clever School-${course.color} text-white`}>{course.level}</Badge>
             </div>
           </div>
           <div className="p-4">
@@ -94,7 +94,7 @@ export function RecommendedCourses() {
               </Badge>
             </div>
             <Button
-              className={`w-full rounded-full bg-enspire-${course.color} ${course.color === "yellow" ? "text-black" : "text-white"} hover:bg-opacity-90`}
+              className={`w-full rounded-full bg-Clever School-${course.color} ${course.color === "yellow" ? "text-black" : "text-white"} hover:bg-opacity-90`}
             >
               Bắt đầu học
             </Button>

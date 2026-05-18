@@ -101,7 +101,7 @@ export default function SettingsPage() {
       <div className="flex flex-col space-y-6">
         <div className="flex flex-col space-y-2">
           <h1 className="text-3xl font-bold tracking-tight text-primary">Cài đặt</h1>
-          <p className="text-muted-foreground">Tùy chỉnh trải nghiệm học tập của bạn trên LMS</p>
+          <p className="text-muted-foreground">Tùy chỉnh trải nghiệm học tập của bạn trên Clever School</p>
         </div>
 
         <Tabs defaultValue="personalization" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
@@ -230,7 +230,7 @@ export default function SettingsPage() {
                   <Bell className="h-5 w-5 text-primary" />
                   Thông báo
                 </CardTitle>
-                <CardDescription>Quản lý cách bạn nhận thông báo từ LMS</CardDescription>
+                <CardDescription>Quản lý cách bạn nhận thông báo từ Clever School</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Notification Channels */}
@@ -447,7 +447,7 @@ export default function SettingsPage() {
                     <Link2 className="h-5 w-5 text-primary" />
                     Tích hợp
                   </CardTitle>
-                  <CardDescription>Kết nối LMS với các ứng dụng và dịch vụ khác</CardDescription>
+                  <CardDescription>Kết nối Clever School với các ứng dụng và dịch vụ khác</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Video Conferencing */}

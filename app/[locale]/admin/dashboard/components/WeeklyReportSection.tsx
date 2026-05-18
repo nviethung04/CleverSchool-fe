@@ -266,7 +266,7 @@ export default function WeeklyReportSection() {
             <div class="report-container">
                 <div class="header">
                     <h1>BÁO CÁO TỔNG QUAN HÀNG TUẦN</h1>
-                    <p>Theo dõi số lượng và tần xuất sử dụng LMS 2025</p>
+                    <p>Theo dõi số lượng và tần xuất sử dụng Clever School 2025</p>
                     <p>Ngày xuất báo cáo: ${today}</p>
                 </div>
 
@@ -339,8 +339,8 @@ export default function WeeklyReportSection() {
                 </div>
 
                 <div class="footer">
-                    <p>Báo cáo được tạo tự động bởi hệ thống LMS Enspire</p>
-                    <p>© ${new Date().getFullYear()} Enspire Digital. All rights reserved.</p>
+                    <p>Báo cáo được tạo tự động bởi hệ thống Clever School Clever School</p>
+                    <p>© ${new Date().getFullYear()} Clever School Digital. All rights reserved.</p>
                 </div>
             </div>
         </body>
@@ -451,7 +451,7 @@ export default function WeeklyReportSection() {
                             Báo cáo tổng quan hàng tuần
                         </CardTitle>
                         <p className="text-sm text-gray-600 mt-1">
-                            Theo dõi số lượng và tần xuất sử dụng LMS 2025
+                            Theo dõi số lượng và tần xuất sử dụng Clever School 2025
                         </p>
                     </div>
                     <Button onClick={exportReport} variant="outline" size="sm">

@@ -56,7 +56,7 @@ function getHomePageData() {
         name: "Nguyễn Thị Mai",
         role: "Phụ huynh học sinh lớp 3",
         content:
-          "Con tôi rất thích học tiếng Anh trên web LMS. Các bài học được thiết kế phù hợp với khả năng của con, giúp con tiến bộ rõ rệt chỉ sau 3 tháng.",
+          "Con tôi rất thích học tiếng Anh trên web Clever School. Các bài học được thiết kế phù hợp với khả năng của con, giúp con tiến bộ rõ rệt chỉ sau 3 tháng.",
         color: "blue",
       },
       {

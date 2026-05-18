@@ -300,14 +300,14 @@ function ScheduleModal({
       <div className="bg-white rounded-xl shadow-lg w-full max-w-7xl h-[90vh] flex flex-col overflow-hidden">
         {/* Header - Fixed */}
         <div className="flex items-center justify-between p-6 border-b flex-shrink-0 flex-wrap gap-2">
-          <h3 className="font-bold text-xl sm:text-2xl text-enspire-blue">
+          <h3 className="font-bold text-xl sm:text-2xl text-Clever School-blue">
             Lịch trình khóa học
           </h3>
           <div className="flex gap-2">
             <Button
               onClick={handleSaveSchedule}
               // disabled={isSaving || unassignedLessons.length > 0}
-              className="bg-enspire-green hover:bg-enspire-green/90"
+              className="bg-Clever School-green hover:bg-Clever School-green/90"
               title={
                 unassignedLessons.length > 0
                   ? `Vui lòng gán ${unassignedLessons.length} bài học còn lại trước khi lưu`
@@ -346,7 +346,7 @@ function ScheduleModal({
                 >
                   {loading ? (
                     <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin h-8 w-8 border-4 border-enspire-green border-t-transparent rounded-full"></div>
+                      <div className="animate-spin h-8 w-8 border-4 border-Clever School-green border-t-transparent rounded-full"></div>
                       <span className="ml-2">Đang tải lịch trình...</span>
                     </div>
                   ) : localSemesters.length === 0 ? (
@@ -357,11 +357,11 @@ function ScheduleModal({
                     localSemesters.map((semester) => (
                       <div
                         key={semester.id}
-                        className="border-2 border-solid border-enspire-blue rounded-lg p-4 bg-blue-50/30 flex-shrink-0"
+                        className="border-2 border-solid border-Clever School-blue rounded-lg p-4 bg-blue-50/30 flex-shrink-0"
                       >
                         {/* Semester Header */}
-                        <div className="mb-3 pb-2 border-b border-enspire-blue/30">
-                          <h5 className="font-bold text-lg text-enspire-blue">
+                        <div className="mb-3 pb-2 border-b border-Clever School-blue/30">
+                          <h5 className="font-bold text-lg text-Clever School-blue">
                             {semester.name}
                           </h5>
                           {semester.description && (
@@ -384,13 +384,13 @@ function ScheduleModal({
                           {(semester.weeks || []).map((week: any) => (
                             <div
                               key={week.week_id}
-                              className="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-[120px] hover:border-enspire-green hover:bg-green-50/50 transition-colors flex-shrink-0 bg-white"
+                              className="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-[120px] hover:border-Clever School-green hover:bg-green-50/50 transition-colors flex-shrink-0 bg-white"
                               onDragOver={handleDragOver}
                               onDrop={(e) => handleDrop(e, week.week_id)}
                             >
                               <div className="flex items-center justify-between mb-3">
                                 <div>
-                                  <h6 className="font-semibold text-enspire-green">
+                                  <h6 className="font-semibold text-Clever School-green">
                                     Tuần {week.week_number} (Tuần{" "}
                                     {week.week_number_in_year}/
                                     {new Date(week.end_date).getFullYear()})
@@ -515,7 +515,7 @@ function ScheduleModal({
                       className="flex flex-wrap items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-move bg-white shadow-sm hover:shadow-md flex-shrink-0"
                     >
                       <div className="flex-shrink-0 w-10 text-center">
-                        <div className="bg-enspire-blue text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
+                        <div className="bg-Clever School-blue text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
                           {index + 1}
                         </div>
                       </div>

@@ -201,7 +201,7 @@ export default function AdminCoursesPage() {
             <p className="text-gray-600">Quản lý và phát triển các khóa học tiếng Anh</p>
           </div>
           <div className="mt-4 md:mt-0 flex gap-3">
-            <Button className="rounded-full bg-enspire-green text-white hover:bg-opacity-90" onClick={() =>
+            <Button className="rounded-full bg-Clever School-green text-white hover:bg-opacity-90" onClick={() =>
               {
                 setShowAddCourseDialog(true)
                 setSelectedCourse(null);

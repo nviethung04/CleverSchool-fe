@@ -27,7 +27,7 @@ export function FeaturesSection({ features }: FeaturesSectionProps) {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-4">Tính năng nổi bật</h2>
         <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12">
-          LMS giúp người học học tiếng Anh một cách hiệu quả và thú vị với các tính năng được thiết kế riêng cho lứa tuổi
+          Clever School giúp người học học tiếng Anh một cách hiệu quả và thú vị với các tính năng được thiết kế riêng cho lứa tuổi
           tiểu học
         </p>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -46,11 +46,11 @@ function FeatureCard({ icon, title, description, color }: Omit<Feature, "id">) {
 
   return (
     <Card
-      className={`card-kid border-enspire-${color} hover:border-enspire-${color} hover:border-2 transition-all duration-300`}
+      className={`card-kid border-Clever School-${color} hover:border-Clever School-${color} hover:border-2 transition-all duration-300`}
     >
       <CardContent className="p-6 text-center">
         <div className="mb-4 flex justify-center">
-          {IconComponent && <IconComponent className={`h-10 w-10 text-enspire-${color}`} />}
+          {IconComponent && <IconComponent className={`h-10 w-10 text-Clever School-${color}`} />}
         </div>
         <h3 className="text-xl font-bold mb-2">{title}</h3>
         <p className="text-gray-600">{description}</p>

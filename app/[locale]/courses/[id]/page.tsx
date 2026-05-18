@@ -253,7 +253,7 @@ export default function CourseDetailPage({
                   />
                   <Badge
                     variant="outline"
-                    className="absolute top-2 right-2 bg-enspire-blue text-white"
+                    className="absolute top-2 right-2 bg-Clever School-blue text-white"
                   >
                     {safeString(course.subject, t("subjectFallback"))}
                   </Badge>
@@ -356,7 +356,7 @@ export default function CourseDetailPage({
                         className="h-2 bg-gray-100"
                       >
                         <div
-                          className="h-full bg-enspire-blue rounded-full animated-progress-bar"
+                          className="h-full bg-Clever School-blue rounded-full animated-progress-bar"
                           style={
                             {
                               "--progress-width": `${safeString(
@@ -375,10 +375,10 @@ export default function CourseDetailPage({
           </div>
 
           <div>
-            <Card className="card-kid border-enspire-green h-full">
+            <Card className="card-kid border-Clever School-green h-full">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <LucideFileText className="h-5 w-5 text-enspire-green" />
+                  <LucideFileText className="h-5 w-5 text-Clever School-green" />
                   {t("courseInfo")}
                 </CardTitle>
               </CardHeader>
@@ -565,9 +565,9 @@ export default function CourseDetailPage({
                     course.chapters.map((chapter: any, index: number) => (
                       <Card
                         key={chapter.id}
-                        className="border-2 border-enspire-blue rounded-2xl overflow-hidden bg-enspire-blue"
+                        className="border-2 border-Clever School-blue rounded-2xl overflow-hidden bg-Clever School-blue"
                       >
-                        <CardHeader className="bg-enspire-blue rounded-t-2xl px-6 py-4 border-none">
+                        <CardHeader className="bg-Clever School-blue rounded-t-2xl px-6 py-4 border-none">
                           <div className="flex flex-row justify-between items-start gap-3">
                             <CardTitle className="text-lg text-white font-semibold flex items-center gap-2 flex-1">
                               {(() => {
@@ -587,7 +587,7 @@ export default function CourseDetailPage({
                                   <>
                                     {mainTitle}
                                     {badge && !(user?.type === "student") && (
-                                      <span className="inline-block bg-white text-enspire-blue border border-enspire-blue rounded-full px-3 py-1 text-base font-semibold whitespace-nowrap ml-2">
+                                      <span className="inline-block bg-white text-Clever School-blue border border-Clever School-blue rounded-full px-3 py-1 text-base font-semibold whitespace-nowrap ml-2">
                                         {badge}
                                       </span>
                                     )}
@@ -597,7 +597,7 @@ export default function CourseDetailPage({
                             </CardTitle>
                             <Badge
                               variant="outline"
-                              className="bg-white text-enspire-blue font-semibold flex-shrink-0"
+                              className="bg-white text-Clever School-blue font-semibold flex-shrink-0"
                             >
                               {Array.isArray(chapter.lessons)
                                 ? chapter.lessons.length
@@ -820,7 +820,7 @@ export default function CourseDetailPage({
             <TabsContent value="path">
               <div className="bg-white rounded-3xl shadow-lg p-6">
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                  <LucideBarChart2 className="h-6 w-6 text-enspire-blue" />
+                  <LucideBarChart2 className="h-6 w-6 text-Clever School-blue" />
                   {t("learningPath")}
                 </h2>
                 <LearningPath />
@@ -830,7 +830,7 @@ export default function CourseDetailPage({
             <TabsContent value="scores">
               <div className="bg-white rounded-3xl shadow-lg p-6">
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                  <Trophy className="h-6 w-6 text-enspire-blue" />
+                  <Trophy className="h-6 w-6 text-Clever School-blue" />
                   {t("scores.title")}
                 </h2>
 
@@ -1280,7 +1280,7 @@ export default function CourseDetailPage({
               <div className="bg-white rounded-3xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <MessageCircle className="h-6 w-6 text-enspire-blue" />
+                    <MessageCircle className="h-6 w-6 text-Clever School-blue" />
                     Thảo luận khóa học
                   </h2>
                   <Button asChild>

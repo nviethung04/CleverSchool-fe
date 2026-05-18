@@ -234,7 +234,7 @@ export function TeacherDashboardHeader() {
               <Link href="" className="hidden xl:flex items-center gap-3 group">
                 {/* <Image
                     src="/Logo1.png"
-                    alt="Enspire Logo"
+                    alt="Clever School Logo"
                     width={120}
                     height={32}
                     className="h-8 w-auto group-hover:scale-105 transition-transform duration-300"

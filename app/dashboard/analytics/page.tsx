@@ -59,7 +59,7 @@ export default function AnalyticsPage() {
             changeType="increase"
             description="So với tháng trước"
             color="blue"
-            icon={<LucideClock className="h-5 w-5 text-enspire-blue" />}
+            icon={<LucideClock className="h-5 w-5 text-Clever School-blue" />}
           />
           <AnalyticsCard
             title="Hoạt động hoàn thành"
@@ -68,7 +68,7 @@ export default function AnalyticsPage() {
             changeType="increase"
             description="So với tháng trước"
             color="green"
-            icon={<LucideBookOpen className="h-5 w-5 text-enspire-green" />}
+            icon={<LucideBookOpen className="h-5 w-5 text-Clever School-green" />}
           />
           <AnalyticsCard
             title="Điểm trung bình"
@@ -77,7 +77,7 @@ export default function AnalyticsPage() {
             changeType="decrease"
             description="So với tháng trước"
             color="yellow"
-            icon={<LucideActivity className="h-5 w-5 text-enspire-yellow" />}
+            icon={<LucideActivity className="h-5 w-5 text-Clever School-yellow" />}
           />
           <AnalyticsCard
             title="Công cụ tương tác"
@@ -86,17 +86,17 @@ export default function AnalyticsPage() {
             changeType="increase"
             description="So với tháng trước"
             color="orange"
-            icon={<LucideGamepad2 className="h-5 w-5 text-enspire-orange" />}
+            icon={<LucideGamepad2 className="h-5 w-5 text-Clever School-orange" />}
           />
         </div>
 
         {/* Learning Engagement */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="md:col-span-2">
-            <Card className="h-full card-kid border-enspire-blue">
+            <Card className="h-full card-kid border-Clever School-blue">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <LucideBarChart2 className="h-5 w-5 text-enspire-blue" />
+                  <LucideBarChart2 className="h-5 w-5 text-Clever School-blue" />
                   Mức độ tương tác học tập
                 </CardTitle>
                 <CardDescription>Phân tích thời gian và mức độ tương tác theo ngày</CardDescription>
@@ -107,10 +107,10 @@ export default function AnalyticsPage() {
             </Card>
           </div>
           <div>
-            <Card className="h-full card-kid border-enspire-green">
+            <Card className="h-full card-kid border-Clever School-green">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <LucideGamepad2 className="h-5 w-5 text-enspire-green" />
+                  <LucideGamepad2 className="h-5 w-5 text-Clever School-green" />
                   Sử dụng công cụ tương tác
                 </CardTitle>
                 <CardDescription>Phân tích việc sử dụng các công cụ học tập</CardDescription>
@@ -124,7 +124,7 @@ export default function AnalyticsPage() {
                       <span className="text-sm font-medium">42%</span>
                     </div>
                     <Progress value={42} className="h-2 bg-gray-100">
-                      <div className="h-full bg-enspire-blue rounded-full" style={{ width: "42%" }}></div>
+                      <div className="h-full bg-Clever School-blue rounded-full" style={{ width: "42%" }}></div>
                     </Progress>
                   </div>
                   <div>
@@ -133,7 +133,7 @@ export default function AnalyticsPage() {
                       <span className="text-sm font-medium">35%</span>
                     </div>
                     <Progress value={35} className="h-2 bg-gray-100">
-                      <div className="h-full bg-enspire-yellow rounded-full" style={{ width: "35%" }}></div>
+                      <div className="h-full bg-Clever School-yellow rounded-full" style={{ width: "35%" }}></div>
                     </Progress>
                   </div>
                   <div>
@@ -142,7 +142,7 @@ export default function AnalyticsPage() {
                       <span className="text-sm font-medium">23%</span>
                     </div>
                     <Progress value={23} className="h-2 bg-gray-100">
-                      <div className="h-full bg-enspire-green rounded-full" style={{ width: "23%" }}></div>
+                      <div className="h-full bg-Clever School-green rounded-full" style={{ width: "23%" }}></div>
                     </Progress>
                   </div>
                 </div>
@@ -154,10 +154,10 @@ export default function AnalyticsPage() {
         {/* Skills and Learning Path Analytics */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div>
-            <Card className="h-full card-kid border-enspire-yellow">
+            <Card className="h-full card-kid border-Clever School-yellow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <LucideBarChart2 className="h-5 w-5 text-enspire-yellow" />
+                  <LucideBarChart2 className="h-5 w-5 text-Clever School-yellow" />
                   Phân tích kỹ năng
                 </CardTitle>
                 <CardDescription>Đánh giá chi tiết các kỹ năng tiếng Anh</CardDescription>
@@ -174,7 +174,7 @@ export default function AnalyticsPage() {
                       </div>
                     </div>
                     <Progress value={70} className="h-2 bg-gray-100">
-                      <div className="h-full bg-enspire-blue rounded-full" style={{ width: "70%" }}></div>
+                      <div className="h-full bg-Clever School-blue rounded-full" style={{ width: "70%" }}></div>
                     </Progress>
                   </div>
                   <div>
@@ -186,7 +186,7 @@ export default function AnalyticsPage() {
                       </div>
                     </div>
                     <Progress value={50} className="h-2 bg-gray-100">
-                      <div className="h-full bg-enspire-yellow rounded-full" style={{ width: "50%" }}></div>
+                      <div className="h-full bg-Clever School-yellow rounded-full" style={{ width: "50%" }}></div>
                     </Progress>
                   </div>
                   <div>
@@ -198,7 +198,7 @@ export default function AnalyticsPage() {
                       </div>
                     </div>
                     <Progress value={80} className="h-2 bg-gray-100">
-                      <div className="h-full bg-enspire-green rounded-full" style={{ width: "80%" }}></div>
+                      <div className="h-full bg-Clever School-green rounded-full" style={{ width: "80%" }}></div>
                     </Progress>
                   </div>
                   <div>
@@ -210,7 +210,7 @@ export default function AnalyticsPage() {
                       </div>
                     </div>
                     <Progress value={60} className="h-2 bg-gray-100">
-                      <div className="h-full bg-enspire-orange rounded-full" style={{ width: "60%" }}></div>
+                      <div className="h-full bg-Clever School-orange rounded-full" style={{ width: "60%" }}></div>
                     </Progress>
                   </div>
                 </div>
@@ -218,10 +218,10 @@ export default function AnalyticsPage() {
             </Card>
           </div>
           <div className="md:col-span-2">
-            <Card className="h-full card-kid border-enspire-orange">
+            <Card className="h-full card-kid border-Clever School-orange">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <LucideBookOpen className="h-5 w-5 text-enspire-orange" />
+                  <LucideBookOpen className="h-5 w-5 text-Clever School-orange" />
                   Phân tích lộ trình học tập
                 </CardTitle>
                 <CardDescription>Tiến độ và hiệu quả của lộ trình học tập</CardDescription>
@@ -235,10 +235,10 @@ export default function AnalyticsPage() {
 
         {/* Detailed Analytics */}
         <div className="mb-8">
-          <Card className="card-kid border-enspire-blue">
+          <Card className="card-kid border-Clever School-blue">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <LucideUsers className="h-5 w-5 text-enspire-blue" />
+                <LucideUsers className="h-5 w-5 text-Clever School-blue" />
                 Phân tích chi tiết
               </CardTitle>
               <CardDescription>Phân tích chi tiết theo từng khóa học và hoạt động</CardDescription>
@@ -266,7 +266,7 @@ export default function AnalyticsPage() {
                             </Badge>
                             <Badge
                               variant="outline"
-                              className="text-xs bg-enspire-blue bg-opacity-10 text-enspire-blue border-enspire-blue"
+                              className="text-xs bg-Clever School-blue bg-opacity-10 text-Clever School-blue border-Clever School-blue"
                             >
                               {course.subject}
                             </Badge>
@@ -283,7 +283,7 @@ export default function AnalyticsPage() {
                             </div>
                             <Progress value={course.progress} className="h-2 bg-gray-100">
                               <div
-                                className="h-full bg-enspire-blue rounded-full"
+                                className="h-full bg-Clever School-blue rounded-full"
                                 style={{ width: `${course.progress}%` }}
                               ></div>
                             </Progress>
@@ -308,7 +308,7 @@ export default function AnalyticsPage() {
                             </div>
                             <Progress value={course.averageScore} className="h-2 bg-gray-100">
                               <div
-                                className="h-full bg-enspire-green rounded-full"
+                                className="h-full bg-Clever School-green rounded-full"
                                 style={{ width: `${course.averageScore}%` }}
                               ></div>
                             </Progress>
@@ -336,7 +336,7 @@ export default function AnalyticsPage() {
                               className="h-2 bg-gray-100"
                             >
                               <div
-                                className="h-full bg-enspire-yellow rounded-full"
+                                className="h-full bg-Clever School-yellow rounded-full"
                                 style={{ width: `${(Number.parseInt(course.timeSpent) / 10) * 100}%` }}
                               ></div>
                             </Progress>
@@ -359,7 +359,7 @@ export default function AnalyticsPage() {
                           <div className="mt-2 md:mt-0 flex flex-wrap gap-2">
                             <Badge
                               variant="outline"
-                              className={`text-xs bg-enspire-${activity.color} bg-opacity-10 text-enspire-${activity.color} border-enspire-${activity.color}`}
+                              className={`text-xs bg-Clever School-${activity.color} bg-opacity-10 text-Clever School-${activity.color} border-Clever School-${activity.color}`}
                             >
                               {activity.category}
                             </Badge>
@@ -389,7 +389,7 @@ export default function AnalyticsPage() {
                             </div>
                             <Progress value={activity.completionRate} className="h-2 bg-gray-100">
                               <div
-                                className={`h-full bg-enspire-${activity.color} rounded-full`}
+                                className={`h-full bg-Clever School-${activity.color} rounded-full`}
                                 style={{ width: `${activity.completionRate}%` }}
                               ></div>
                             </Progress>
@@ -414,7 +414,7 @@ export default function AnalyticsPage() {
                             </div>
                             <Progress value={activity.averageScore} className="h-2 bg-gray-100">
                               <div
-                                className="h-full bg-enspire-green rounded-full"
+                                className="h-full bg-Clever School-green rounded-full"
                                 style={{ width: `${activity.averageScore}%` }}
                               ></div>
                             </Progress>
@@ -442,7 +442,7 @@ export default function AnalyticsPage() {
                               className="h-2 bg-gray-100"
                             >
                               <div
-                                className="h-full bg-enspire-yellow rounded-full"
+                                className="h-full bg-Clever School-yellow rounded-full"
                                 style={{ width: `${(Number.parseInt(activity.averageTime) / 10) * 100}%` }}
                               ></div>
                             </Progress>
@@ -465,7 +465,7 @@ export default function AnalyticsPage() {
                           <div className="mt-2 md:mt-0 flex flex-wrap gap-2">
                             <Badge
                               variant="outline"
-                              className={`text-xs bg-enspire-${tool.color} bg-opacity-10 text-enspire-${tool.color} border-enspire-${tool.color}`}
+                              className={`text-xs bg-Clever School-${tool.color} bg-opacity-10 text-Clever School-${tool.color} border-Clever School-${tool.color}`}
                             >
                               {tool.category}
                             </Badge>
@@ -495,7 +495,7 @@ export default function AnalyticsPage() {
                             </div>
                             <Progress value={tool.engagementRate} className="h-2 bg-gray-100">
                               <div
-                                className={`h-full bg-enspire-${tool.color} rounded-full`}
+                                className={`h-full bg-Clever School-${tool.color} rounded-full`}
                                 style={{ width: `${tool.engagementRate}%` }}
                               ></div>
                             </Progress>
@@ -520,7 +520,7 @@ export default function AnalyticsPage() {
                             </div>
                             <Progress value={tool.effectivenessRate} className="h-2 bg-gray-100">
                               <div
-                                className="h-full bg-enspire-green rounded-full"
+                                className="h-full bg-Clever School-green rounded-full"
                                 style={{ width: `${tool.effectivenessRate}%` }}
                               ></div>
                             </Progress>
@@ -548,7 +548,7 @@ export default function AnalyticsPage() {
                               className="h-2 bg-gray-100"
                             >
                               <div
-                                className="h-full bg-enspire-yellow rounded-full"
+                                className="h-full bg-Clever School-yellow rounded-full"
                                 style={{ width: `${(Number.parseInt(tool.averageTime) / 60) * 100}%` }}
                               ></div>
                             </Progress>
@@ -565,10 +565,10 @@ export default function AnalyticsPage() {
 
         {/* Recommendations */}
         <div>
-          <Card className="card-kid border-enspire-green">
+          <Card className="card-kid border-Clever School-green">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <LucideBookOpen className="h-5 w-5 text-enspire-green" />
+                <LucideBookOpen className="h-5 w-5 text-Clever School-green" />
                 Đề xuất cải thiện
               </CardTitle>
               <CardDescription>Đề xuất dựa trên phân tích dữ liệu học tập</CardDescription>
@@ -579,7 +579,7 @@ export default function AnalyticsPage() {
                   <div key={index} className="border rounded-lg p-4">
                     <div className="flex items-start gap-3">
                       <div
-                        className={`p-2 rounded-full bg-enspire-${recommendation.color} bg-opacity-20 flex-shrink-0`}
+                        className={`p-2 rounded-full bg-Clever School-${recommendation.color} bg-opacity-20 flex-shrink-0`}
                       >
                         {recommendation.icon}
                       </div>
@@ -591,7 +591,7 @@ export default function AnalyticsPage() {
                             <Badge
                               key={i}
                               variant="outline"
-                              className={`text-xs bg-enspire-${recommendation.color} bg-opacity-10 text-enspire-${recommendation.color} border-enspire-${recommendation.color}`}
+                              className={`text-xs bg-Clever School-${recommendation.color} bg-opacity-10 text-Clever School-${recommendation.color} border-Clever School-${recommendation.color}`}
                             >
                               {tag}
                             </Badge>
@@ -628,7 +628,7 @@ function AnalyticsCard({
   icon: React.ReactNode
 }) {
   return (
-    <Card className={`card-kid border-enspire-${color}`}>
+    <Card className={`card-kid border-Clever School-${color}`}>
       <CardContent className="pt-6">
         <div className="flex flex-col">
           <div className="flex justify-between items-center mb-2">
@@ -798,7 +798,7 @@ const recommendations = [
     description:
       "Dựa trên phân tích, kỹ năng viết của bạn đang giảm nhẹ. Hãy dành thêm thời gian cho các bài tập viết và sử dụng các công cụ tương tác để cải thiện.",
     color: "blue",
-    icon: <LucideBookOpen className="h-5 w-5 text-enspire-blue" />,
+    icon: <LucideBookOpen className="h-5 w-5 text-Clever School-blue" />,
     tags: ["Kỹ năng viết", "Cần cải thiện", "Ưu tiên cao"],
   },
   {
@@ -806,7 +806,7 @@ const recommendations = [
     description:
       "Điểm ngữ pháp của bạn đang giảm nhẹ. Quizizz có nhiều bài kiểm tra ngữ pháp hiệu quả có thể giúp bạn cải thiện điểm số.",
     color: "yellow",
-    icon: <LucideGamepad2 className="h-5 w-5 text-enspire-yellow" />,
+    icon: <LucideGamepad2 className="h-5 w-5 text-Clever School-yellow" />,
     tags: ["Ngữ pháp", "Quizizz", "Công cụ tương tác"],
   },
   {
@@ -814,7 +814,7 @@ const recommendations = [
     description:
       "Bạn đang tiến bộ tốt trong khóa học này, nhưng tiến độ còn chậm. Tăng thời gian học sẽ giúp bạn hoàn thành khóa học nhanh hơn.",
     color: "green",
-    icon: <LucideBarChart2 className="h-5 w-5 text-enspire-green" />,
+    icon: <LucideBarChart2 className="h-5 w-5 text-Clever School-green" />,
     tags: ["Kỹ năng nói", "Tiến độ", "Khóa học"],
   },
 ]

@@ -634,7 +634,7 @@ export default function SchoolPage() {
                             accept={".csv,.xlsx"}
                             label="Nhập dữ liệu"
                         />
-                        <Button className="rounded-full bg-enspire-green text-white hover:bg-opacity-90" onClick={openCreateSchool}>
+                        <Button className="rounded-full bg-Clever School-green text-white hover:bg-opacity-90" onClick={openCreateSchool}>
                             <LucidePlus className="mr-2 h-4 w-4" />
                             {t("createNew")}
                         </Button>

@@ -1906,7 +1906,7 @@ export default function CriteriaForm({
           </Button>
           <Button
             type="submit"
-            className="bg-enspire-green text-white hover:bg-opacity-90"
+            className="bg-Clever School-green text-white hover:bg-opacity-90"
             disabled={isSubmitting}
           >
             {isSubmitting

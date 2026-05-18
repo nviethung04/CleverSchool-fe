@@ -1,4 +1,4 @@
-// Enspire Brand Color Palette
+// Clever School Brand Color Palette
 export const BRAND_COLORS = {
   navy:    '#33408F',
   yellow:  '#F1B518',

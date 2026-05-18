@@ -469,10 +469,10 @@ const generateEvaluationHTML = (
         <div class="report-container">
             <div class="report-header">
                 <div class="header-text">
-                    <div>Trung tâm ngoại ngữ Enspire</div>
+                    <div>Trung tâm ngoại ngữ Clever School</div>
                 </div>
                 <div class="logo">
-                    <img src="/logo.svg" alt="Enspire logo" />
+                    <img src="/logo.svg" alt="Clever School logo" />
                 </div>
             </div>
 

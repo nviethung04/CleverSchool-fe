@@ -6,20 +6,20 @@
     "backButton": "Back",
     "backToHome": "Back to Home",
     "lastUpdated": "Last Updated: {date}",
-    "agreement": "This Privacy Policy (hereinafter referred to as \"Policy\") is made by and between you (\"you\") and the Enspire Learning Management System (\"Enspire LMS\" or \"we\") regarding your use of any or all services (\"Services\") of Enspire LMS. By using the Service, you agree to be bound by these terms and conditions.",
+    "agreement": "This Privacy Policy (hereinafter referred to as \"Policy\") is made by and between you (\"you\") and the Clever School Learning Management System (\"Clever School\" or \"we\") regarding your use of any or all services (\"Services\") of Clever School. By using the Service, you agree to be bound by these terms and conditions.",
     "serviceDescription": "The Service is designed to provide a comprehensive online learning platform, helping learners access knowledge through lectures, assignments, tests, and other learning materials. The system also provides management and learning progress tracking tools for teachers and administrators.",
-    "userDefinition": "The term \"you\" refers to all individuals and/or organizations accessing Enspire LMS for any reason, including students, teachers, administrators, and other related parties.",
+    "userDefinition": "The term \"you\" refers to all individuals and/or organizations accessing Clever School for any reason, including students, teachers, administrators, and other related parties.",
     "section1": {
       "title": "I. Terms of Use",
       "subsection1": {
         "title": "I.1. Rights Associated with the Service",
-        "content": "Enspire LMS owns and maintains all intellectual property rights to its Service, including but not limited to the platform, interface, features, and technology. However, the content of lectures, assignments, and learning materials created by teachers belongs to the teachers or the corresponding educational institutions. Enspire LMS is not responsible for content created and uploaded by users to the system. You are solely responsible for using, exploiting, and providing personal information on this platform."
+        "content": "Clever School owns and maintains all intellectual property rights to its Service, including but not limited to the platform, interface, features, and technology. However, the content of lectures, assignments, and learning materials created by teachers belongs to the teachers or the corresponding educational institutions. Clever School is not responsible for content created and uploaded by users to the system. You are solely responsible for using, exploiting, and providing personal information on this platform."
       },
       "subsection2": {
         "title": "I.2. Use and Termination of Service",
         "content": "You may only use the content of the Service for legitimate learning and teaching purposes. You may not copy, distribute, modify, create derivative works, or use the content of the Service for unauthorized commercial purposes. For example, you may not copy and sell learning materials; may not share accounts with others; may not use automated tools to extract data from the system. If you are unsure whether your intended use of the Service is permitted, please contact us.",
-        "responsibilities": "Enspire LMS will not be liable for interruptions, service outages, loss or corruption of data from attacks by any individuals or organizations, as well as technical incidents while providing the Service. Enspire LMS is also not responsible for losses arising from the use of the Service or from interactions between you and other users.",
-        "termination": "Enspire LMS has the right to unilaterally suspend or terminate the Service or your access to the Service upon detecting violations of these terms."
+        "responsibilities": "Clever School will not be liable for interruptions, service outages, loss or corruption of data from attacks by any individuals or organizations, as well as technical incidents while providing the Service. Clever School is also not responsible for losses arising from the use of the Service or from interactions between you and other users.",
+        "termination": "Clever School has the right to unilaterally suspend or terminate the Service or your access to the Service upon detecting violations of these terms."
       }
     },
     "section2": {
@@ -27,34 +27,34 @@
       "subsection1": {
         "title": "II.1. Information We Collect",
         "content": "When you register as a member, you need to provide us with some personal information, such as your name, email address, role (student/teacher/administrator), and other information you provide. We may combine the personal information you provide with information about your learning activities to improve your learning experience.",
-        "tracking": "Each time you access the Service, Enspire LMS's system will use cookies and other techniques to record your activities. Enspire LMS's server will also automatically log information when you access and use the Services, including but not limited to URL, IP address, browser type, language, date and time of access or use of the Service, and learning progress data."
+        "tracking": "Each time you access the Service, Clever School's system will use cookies and other techniques to record your activities. Clever School's server will also automatically log information when you access and use the Services, including but not limited to URL, IP address, browser type, language, date and time of access or use of the Service, and learning progress data."
       },
       "subsection2": {
         "title": "II.2. Use of Information",
         "content": "We use your personal information to improve the quality of the Service, enhance learning experience, personalize learning content, track learning progress, and send you notifications about courses, assignments, learning results, and other important updates.",
-        "research": "We may use your information in research and analysis to operate and upgrade Enspire LMS's technologies and Services to improve learning effectiveness.",
+        "research": "We may use your information in research and analysis to operate and upgrade Clever School's technologies and Services to improve learning effectiveness.",
         "sharing": "As a rule, we do not provide your personal information to third parties except in the following cases:",
         "sharingCases": [
           "You agree to let us provide your personal information to third parties; and/or",
           "We believe that providing your personal information to third parties is necessary, for example to comply with legal requirements, prevent crime or protect national security, or protect the personal safety of users or the public; and/or",
-          "The third party is the entity acquiring all or most of the legal entity owning Enspire LMS and the Service; and/or",
+          "The third party is the entity acquiring all or most of the legal entity owning Clever School and the Service; and/or",
           "The information is anonymous statistical data about users and learning activities. We may share this type of information with educational institutions and researchers to improve educational quality."
         ]
       },
       "subsection3": {
         "title": "II.3. Modify or Delete Information",
-        "content": "You can access your personal information and modify this information if it is incorrect or delete such information through your personal page. Such changes and/or deletions may not be possible at certain times when there is instability in the Enspire LMS system. In this case, we will strive to enable you to continue to correct or delete personal information as soon as possible, but we are not responsible for any problems or damages that may be caused by this delay."
+        "content": "You can access your personal information and modify this information if it is incorrect or delete such information through your personal page. Such changes and/or deletions may not be possible at certain times when there is instability in the Clever School system. In this case, we will strive to enable you to continue to correct or delete personal information as soon as possible, but we are not responsible for any problems or damages that may be caused by this delay."
       },
       "subsection4": {
         "title": "II.4. Security",
-        "content": "The passwords for accessing accounts of all members of Enspire LMS are encrypted and protected by modern security measures. We apply the highest security standards to protect your information. However, network security is not absolutely secure, so Enspire LMS is not responsible for damages that may occur due to cyber attacks or security breaches beyond our control."
+        "content": "The passwords for accessing accounts of all members of Clever School are encrypted and protected by modern security measures. We apply the highest security standards to protect your information. However, network security is not absolutely secure, so Clever School is not responsible for damages that may occur due to cyber attacks or security breaches beyond our control."
       }
     },
     "contact": {
       "title": "III. Contact",
       "content": "If you have any questions about these Terms of Service, please contact us via email or through the in-app support system."
     },
-    "acceptance": "By using Enspire LMS, you confirm that you have read, understood, and agree to all the terms and conditions in this Agreement."
+    "acceptance": "By using Clever School, you confirm that you have read, understood, and agree to all the terms and conditions in this Agreement."
   },
   "homework": {
     "submitConfirmWithSkipped": "You still have {notCompletedCount} incomplete questions, including {skippedCount} skipped questions. Are you sure you want to submit?",
@@ -127,7 +127,7 @@
   "viewDetail": "View details",
   "lessonsLower": "lessons",
   "home": {
-    "title": "Welcome to Enspire LMS!",
+    "title": "Welcome to Clever School!",
     "content": "Start your learning journey"
   },
   "profile": {
@@ -137,7 +137,7 @@
     "saveInfo": "Save Information",
     "blankError": "Please fill in all required fields",
     "dateError": "Expiry date must be after issue date",
-    "titleDescription": "View and manage your personal information on LMS",
+    "titleDescription": "View and manage your personal information on Clever School",
     "personalInfo": "Personal Information",
     "role": "Role",
     "birthday": "Birthday",
@@ -194,7 +194,7 @@
     "changePasswordError": "Failed to change password. Please try again!",
     "updateAvatarSuccess": "Avatar updated successfully!",
     "updateAvatarError": "Failed to update avatar. Please try again!",
-    "managementDescription": "View and manage your personal information on LMS",
+    "managementDescription": "View and manage your personal information on Clever School",
     "username": "Username",
     "learningProgress": "Learning Progress",
     "progressDescription": "Track your learning progress across skills",
@@ -240,7 +240,7 @@
     "uploadingImage": "Uploading an image to server...",
     "apiReturnNull": "API returned user as null or undefined",
     "teacherProfile": "Teacher Profile",
-    "teacherProfileDescription": "View and manage your personal information on LMS",
+    "teacherProfileDescription": "View and manage your personal information on Clever School",
     "changeAvatar": "Change Avatar",
     "personalDetails": "Detailed information about your profile",
     "updateInfo": "Update Information",
@@ -455,7 +455,7 @@
     "suggestionText": "Keep learning to achieve your goals!",
     "continueLearning": "Continue Learning",
     "noAccess": "No access.",
-    "description": "View and manage your personal information on LMS",
+    "description": "View and manage your personal information on Clever School",
     "personalInfo": "Personal Information",
     "personalInfoDescription": "View and edit your personal information.",
     "achievements": "Achievements",
@@ -533,7 +533,7 @@
     "listUsers": "Account List",
     "manageUsersDescription": "Manage student and teacher accounts",
     "userProfile": "User Profile",
-    "userProfileDescription": "View and manage your personal information on LMS",
+    "userProfileDescription": "View and manage your personal information on Clever School",
     "personalInfo": "Personal Information",
     "username": "Username",
     "fullName": "Full Name",

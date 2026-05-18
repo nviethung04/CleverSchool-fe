@@ -833,7 +833,7 @@ export default function QuestionDetailPage() {
           <main className="container mx-auto px-4 py-8">
             <div className="flex justify-center items-center py-16">
               <div className="text-center">
-                <Loader2 className="h-12 w-12 text-enspire-green mx-auto mb-4 animate-spin" />
+                <Loader2 className="h-12 w-12 text-Clever School-green mx-auto mb-4 animate-spin" />
                 <h3 className="text-xl font-medium text-gray-700">
                   {t("loadingQuestion")}
                 </h3>
@@ -886,7 +886,7 @@ export default function QuestionDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Sidebar */}
             <div className="lg:col-span-1">
-              <Card className="border-enspire-green">
+              <Card className="border-Clever School-green">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg">{t("basicInfo")}</CardTitle>
                 </CardHeader>
@@ -957,7 +957,7 @@ export default function QuestionDetailPage() {
 
             {/* Main content */}
             <div className="lg:col-span-3">
-              <Card className="border-enspire-green">
+              <Card className="border-Clever School-green">
                 <CardHeader>
                   <CardTitle>{t("questionContent")}</CardTitle>
                   <CardDescription>

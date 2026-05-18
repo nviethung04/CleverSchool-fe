@@ -508,7 +508,7 @@ export default function SemesterForm({
         </Button>
         <Button
           type="submit"
-          className="bg-enspire-green text-white hover:bg-opacity-90"
+          className="bg-Clever School-green text-white hover:bg-opacity-90"
           disabled={isSubmitting}
         >
           <Save className="mr-2 h-4 w-4" />

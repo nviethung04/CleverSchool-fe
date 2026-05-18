@@ -106,7 +106,7 @@ export function Footer() {
         </div>
         <div className="mt-8 pt-8 text-center text-gray-400">
           <p>
-            © {new Date().getFullYear()} LMS. Tất cả các quyền được bảo lưu.
+            © {new Date().getFullYear()} Clever School. Tất cả các quyền được bảo lưu.
           </p>
         </div>
       </div>

@@ -307,9 +307,9 @@ export function createPDFPreviewHTML(users: any[], params: {
     <div class="header">
       <div class="logo">
         <!-- Sử dụng ảnh PNG/JPG từ public để đảm bảo html2pdf.js render được -->
-        <img src="/logo.png" alt="enspire logo" style="height:32px; width:auto; display:inline-block; vertical-align:middle;" />
+        <img src="/logo.png" alt="Clever School logo" style="height:32px; width:auto; display:inline-block; vertical-align:middle;" />
         <div class="header-titles">
-          <span class="main-title">Thông tin đăng nhập hệ thống LMS</span>
+          <span class="main-title">Thông tin đăng nhập hệ thống Clever School</span>
           <span class="subtitle">Danh sách tài khoản</span>
         </div>
       </div>

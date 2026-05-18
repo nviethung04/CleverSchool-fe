@@ -13,20 +13,21 @@ import { MaintenanceSessionCleanup } from "@/app/maintenance/components/maintena
 const quicksand = Quicksand({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LMS – Tối ưu hóa trải nghiệm học tập",
-  description: "LMS – Quản lý & phát triển hành trình học tập cá nhân",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  title: "Clever School – Tối ưu hóa trải nghiệm học tập",
+  description: "Clever School – Quản lý & phát triển hành trình học tập cá nhân",
   icons: {
     icon: "/logo-urp.png", // favicon hoặc icon chung
   },
   openGraph: {
-    title: "LMS – Tối ưu hóa trải nghiệm học tập",
-    description: "LMS – Quản lý & phát triển hành trình học tập cá nhân",
+    title: "Clever School – Tối ưu hóa trải nghiệm học tập",
+    description: "Clever School – Quản lý & phát triển hành trình học tập cá nhân",
     images: [
       {
         url: "/logo-urp.png", // ảnh hiển thị khi chia sẻ
         width: 200,
         height: 200,
-        alt: "LMS Logo",
+        alt: "Clever School Logo",
       },
     ],
   },
@@ -51,7 +52,7 @@ export default async function RootLayout({
         <div
           aria-hidden="true"
           className="fixed inset-0 -z-10 w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: 'url("/BG_enspire.png")' }}
+          style={{ backgroundImage: 'url("/BG_Clever School.png")' }}
         />
         <NextIntlClientProvider messages={messages}>
           <Providers>

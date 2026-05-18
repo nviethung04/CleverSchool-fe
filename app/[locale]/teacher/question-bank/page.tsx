@@ -1134,7 +1134,7 @@ export default function QuestionBankPage() {
                     {t("emptyTitle")}
                   </h3>
                   <p className="text-gray-500 mt-1">{t("emptySubtitle")}</p>
-                  <Button className="mt-4 bg-enspire-green" asChild>
+                  <Button className="mt-4 bg-Clever School-green" asChild>
                     <Link
                       href={`${localePrefix}/manage/question-bank/create-question`}
                     >
@@ -1961,7 +1961,7 @@ function QuestionCard({
             <div className="flex md:flex-col gap-1 md:mt-auto">
               <Button
                 size="sm"
-                className="text-white text-xs px-3 h-8 bg-enspire-blue"
+                className="text-white text-xs px-3 h-8 bg-Clever School-blue"
                 asChild
               >
                 <Link

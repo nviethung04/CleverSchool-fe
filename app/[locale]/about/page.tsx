@@ -24,7 +24,7 @@ export default function AboutPage() {
               <iframe
                 className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
                 src={youtubeEmbedUrl}
-                title="Enspire Education Video"
+                title="Clever School Education Video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
@@ -40,16 +40,16 @@ export default function AboutPage() {
               <p>
                 <strong>
                   <span className="text-[#FF870D]">
-                    Học viện Anh ngữ ENSPIRE
+                    Học viện Anh ngữ Clever School
                   </span>
                 </strong>{" "}
                 tiền thân là Vietedutech được thành lập năm 2006. Sau gần 15 năm
-                xây dựng và phát triển, ENSPIRE đã cung cấp nhiều khóa học Ngoại
+                xây dựng và phát triển, Clever School đã cung cấp nhiều khóa học Ngoại
                 ngữ và phương pháp giảng dạy chất lượng cao, đào tạo cho hàng
                 trăm ngàn lượt học sinh và học viên từ mầm non, tiểu học, THCS…
                 và các khóa học ngoại ngữ chuyên ngành chất lượng cao cho người
                 lớn. Với đội ngũ Quản lý và giáo viên chuyên nghiệp, đạt chuẩn,
-                Enspire luôn tự hào và cam kết chất lượng đào tạo, đáp ứng nhu
+                Clever School luôn tự hào và cam kết chất lượng đào tạo, đáp ứng nhu
                 cầu của người học.
               </p>
             </div>
@@ -75,7 +75,7 @@ export default function AboutPage() {
               TẦM NHÌN
             </h3>
             <p className="text-[#003A8C] text-center leading-relaxed">
-              Enspire định hướng phát triển trở thành Tập đoàn Giáo dục và Công
+              Clever School định hướng phát triển trở thành Tập đoàn Giáo dục và Công
               nghệ hàng đầu trong khu vực, với triết lý giáo dục phương tây, giá
               trị phương đông.
             </p>
@@ -132,7 +132,7 @@ export default function AboutPage() {
             <div className="relative w-full h-full min-h-[400px] rounded-lg overflow-hidden">
               <Image
                 src="/about/image1.png"
-                alt="Enspire Education"
+                alt="Clever School Education"
                 fill
                 className="object-cover"
               />
@@ -147,7 +147,7 @@ export default function AboutPage() {
             <div className="space-y-4 text-[#003A8C] leading-relaxed mb-8">
               <p>
                 <strong>
-                  <span className="text-[#FF870D]">Enspire</span>
+                  <span className="text-[#FF870D]">Clever School</span>
                 </strong>{" "}
                 là nhà cung cấp dịch vụ tư vấn, giảng dạy hàng đầu luôn làm hài
                 lòng đối tác và các nhà đầu tư với giải pháp tối ưu cho các yêu
@@ -382,7 +382,7 @@ export default function AboutPage() {
               Đối tác trong nước
             </h2>
             <p className="text-[#003A8C] font-bold text-center text-3xl md:text-4xl mb-8">
-              Những đối tác trong nước đã liên kết với Enspire
+              Những đối tác trong nước đã liên kết với Clever School
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6 md:gap-8">
               {/* Images 48-55 for Domestic Partners */}
@@ -409,7 +409,7 @@ export default function AboutPage() {
               Đối tác nước ngoài
             </h2>
             <p className="text-[#003A8C] font-bold text-center text-3xl md:text-4xl mb-8">
-              Những đối tác nước ngoài đã liên kết với Enspire
+              Những đối tác nước ngoài đã liên kết với Clever School
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8">
               {/* Images 56-61 for International Partners */}
@@ -431,7 +431,7 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* LMS System Section */}
+        {/* Clever School System Section */}
         <div className="mb-12 md:mb-16 mt-12 md:mt-16">
           {/* Title Section */}
           <div className="text-center mb-8">
@@ -439,11 +439,11 @@ export default function AboutPage() {
               Hệ thống quản lý học tập toàn diện
             </h2>
             <h3 className="text-3xl md:text-4xl font-bold text-[#FF870D] mb-6">
-              Enspire LMS
+              Clever School
             </h3>
             <p className="text-[#003A8C] text-lg md:text-xl max-w-4xl mx-auto leading-relaxed font-semibold">
               <strong>
-                <span className="text-[#FF870D]">Enspire LMS</span>
+                <span className="text-[#FF870D]">Clever School</span>
               </strong>{" "}
               kết nối học sinh, giáo viên, nhà trường và phụ huynh, giúp tối ưu
               việc giảng dạy, học tập và quản lý chỉ trong một nền tảng duy
@@ -458,13 +458,13 @@ export default function AboutPage() {
               <div className="relative w-full h-[300px] md:h-[400px] rounded-lg overflow-hidden shadow-lg border-2 border-[#CCF487]">
                 <Image
                   src="/about/image3.jpg"
-                  alt="LMS được sử dụng trong lớp học"
+                  alt="Clever School được sử dụng trong lớp học"
                   fill
                   className="object-cover"
                 />
               </div>
               <p className="text-[#003A8C] text-center mt-4 italic font-medium text-lg">
-                LMS được sử dụng trong lớp học
+                Clever School được sử dụng trong lớp học
               </p>
             </div>
 
@@ -473,13 +473,13 @@ export default function AboutPage() {
               <div className="relative w-full h-[300px] md:h-[400px] rounded-lg overflow-hidden shadow-lg border-2 border-[#FFBE78]">
                 <Image
                   src="/about/image4.jpg"
-                  alt="Học sinh sử dụng LMS trên máy tính cá nhân"
+                  alt="Học sinh sử dụng Clever School trên máy tính cá nhân"
                   fill
                   className="object-cover"
                 />
               </div>
               <p className="text-[#003A8C] text-center mt-4 italic font-medium text-lg">
-                Học sinh sử dụng LMS trên máy tính cá nhân
+                Học sinh sử dụng Clever School trên máy tính cá nhân
               </p>
             </div>
           </div>

@@ -236,7 +236,7 @@ export default function SchoolReportTab({
                             </span>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Số HS có vào LMS trong tuần chọn</p>
+                            <p>Số HS có vào Clever School trong tuần chọn</p>
                           </TooltipContent>
                         </Tooltip>
                       </TableHead>
@@ -248,7 +248,7 @@ export default function SchoolReportTab({
                             </span>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Số GV có vào LMS trong tuần gần nhất</p>
+                            <p>Số GV có vào Clever School trong tuần gần nhất</p>
                           </TooltipContent>
                         </Tooltip>
                       </TableHead>

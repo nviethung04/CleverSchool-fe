@@ -86,11 +86,11 @@ function convertApiMessageToUIMessage(apiMessage: any, allMessages?: any[]): Cha
         size: media.file_size || 0,
         url: media.static_url?.startsWith('http')
             ? media.static_url
-            : `https://cdn-dev.xlms.vn/${media.static_url}`,
+            : `https://cdn-dev.xClever School.vn/${media.static_url}`,
         thumbnailUrl: media.file_type?.startsWith('image/')
             ? (media.static_url?.startsWith('http')
                 ? media.static_url
-                : `https://cdn-dev.xlms.vn/${media.static_url}`)
+                : `https://cdn-dev.xClever School.vn/${media.static_url}`)
             : undefined,
         mimeType: media.file_type || "application/octet-stream",
     })) || []
@@ -207,7 +207,7 @@ export function useWebSocketChat(options: WebSocketChatOptions | null) {
                                     size: media.file_size || 0,
                                     url: media.static_url?.startsWith('http')
                                         ? media.static_url
-                                        : `https://cdn-dev.xlms.vn/${media.static_url}`,
+                                        : `https://cdn-dev.xClever School.vn/${media.static_url}`,
                                     mimeType: media.file_type,
                                 })) || []
                             }
@@ -313,7 +313,7 @@ export function useWebSocketChat(options: WebSocketChatOptions | null) {
         }
 
         // Build WebSocket URL from NEXT_PUBLIC_CHAT_API_BASE_URL
-        // baseUrl format: "https://lmsx-pre-api-chat.xlms.vn/api/"
+        // baseUrl format: "https://Clever Schoolx-pre-api-chat.xClever School.vn/api/"
         const chatBaseUrl = process.env.NEXT_PUBLIC_CHAT_API_BASE_URL || baseUrl
 
         // Extract domain without protocol and /api/ path

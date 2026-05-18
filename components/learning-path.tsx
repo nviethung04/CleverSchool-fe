@@ -81,9 +81,9 @@ export function LearningPath() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <LucideStar className="h-5 w-5 text-enspire-yellow" />
+        return <LucideStar className="h-5 w-5 text-Clever School-yellow" />
       case "in-progress":
-        return <LucidePlayCircle className="h-5 w-5 text-enspire-blue" />
+        return <LucidePlayCircle className="h-5 w-5 text-Clever School-blue" />
       case "locked":
         return <LucideLock className="h-5 w-5 text-gray-400" />
       default:
@@ -100,15 +100,15 @@ export function LearningPath() {
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
                 module.status === "completed"
-                  ? "bg-enspire-yellow bg-opacity-20"
+                  ? "bg-Clever School-yellow bg-opacity-20"
                   : module.status === "in-progress"
-                    ? "bg-enspire-blue bg-opacity-20"
+                    ? "bg-Clever School-blue bg-opacity-20"
                     : "bg-gray-100"
               }`}
             >
               {getStatusIcon(module.status)}
             </div>
-            <div className={`bg-white rounded-2xl border-2 border-enspire-${module.color} p-4 flex-grow card-kid`}>
+            <div className={`bg-white rounded-2xl border-2 border-Clever School-${module.color} p-4 flex-grow card-kid`}>
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <h3 className="font-bold">{module.title}</h3>
@@ -124,9 +124,9 @@ export function LearningPath() {
                   }
                   className={
                     module.status === "completed"
-                      ? "bg-enspire-yellow bg-opacity-10 text-enspire-yellow border-enspire-yellow"
+                      ? "bg-Clever School-yellow bg-opacity-10 text-Clever School-yellow border-Clever School-yellow"
                       : module.status === "in-progress"
-                        ? "bg-enspire-blue bg-opacity-10 text-enspire-blue border-enspire-blue"
+                        ? "bg-Clever School-blue bg-opacity-10 text-Clever School-blue border-Clever School-blue"
                         : "text-gray-400 bg-gray-50"
                   }
                 >
@@ -161,8 +161,8 @@ export function LearningPath() {
                 <Button
                   className={
                     module.status === "completed"
-                      ? "rounded-full bg-enspire-yellow text-black hover:bg-yellow-400"
-                      : "rounded-full bg-enspire-blue text-white hover:bg-blue-600"
+                      ? "rounded-full bg-Clever School-yellow text-black hover:bg-yellow-400"
+                      : "rounded-full bg-Clever School-blue text-white hover:bg-blue-600"
                   }
                 >
                   {module.status === "completed" ? "Xem lại" : "Tiếp tục học"}

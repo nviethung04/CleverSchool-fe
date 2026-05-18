@@ -13,7 +13,7 @@ export default function TeachingStaffPage() {
         {/* Title Section at Top */}
         <div className="text-center mb-8 md:mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-[#FF870D] mb-3">
-            Đội ngũ giáo viên Enspire
+            Đội ngũ giáo viên Clever School
           </h1>
           <h2 className="text-2xl md:text-3xl font-bold text-[#003A8C]">
             Chuyên nghiệp, tận tâm, và đầy kinh nghiệm
@@ -27,7 +27,7 @@ export default function TeachingStaffPage() {
             <div className="relative w-full h-full min-h-[400px] rounded-lg overflow-hidden border-2 border-[#FF870D]">
               <Image
                 src="/teaching-staff/image1.jpg"
-                alt="Đội ngũ giáo viên Enspire"
+                alt="Đội ngũ giáo viên Clever School"
                 fill
                 className="object-cover"
               />
@@ -39,7 +39,7 @@ export default function TeachingStaffPage() {
             <div className="space-y-4 text-[#003A8C] leading-relaxed mb-8 font-medium">
               <p>
                 <strong>
-                  <span className="text-[#FF870D]">Tại Enspire,</span>
+                  <span className="text-[#FF870D]">Tại Clever School,</span>
                 </strong>{" "}
                 chúng tôi tự hào sở hữu đội ngũ giáo viên xuất sắc đến từ Việt
                 Nam và quốc tế. Mỗi thầy cô đều là những người tận tâm, am hiểu
@@ -100,7 +100,7 @@ export default function TeachingStaffPage() {
           <div className="relative w-full h-[600px] md:h-[700px] rounded-lg overflow-hidden shadow-lg border-2 border-[#A5C54B]">
             <Image
               src="/teaching-staff/image2.jpg"
-              alt="Giáo viên và học sinh Enspire"
+              alt="Giáo viên và học sinh Clever School"
               fill
               className="object-cover"
             />
@@ -113,7 +113,7 @@ export default function TeachingStaffPage() {
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">
               <span className="text-[#003A8C]">Sức mạnh đội ngũ </span>
-              <span className="text-[#FF870D]">Enspire</span>
+              <span className="text-[#FF870D]">Clever School</span>
             </h2>
           </div>
 
@@ -252,7 +252,7 @@ export default function TeachingStaffPage() {
         <div className="text-center mb-8 md:mb-12 max-w-4xl mx-auto">
           <p className="text-[#003A8C] text-lg md:text-xl leading-relaxed font-semibold">
             Các chuyên gia học thuật hàng đầu hỗ trợ xây dựng chương trình, đào
-            tạo và phát triển năng lực giảng dạy cho toàn bộ giáo viên Enspire.
+            tạo và phát triển năng lực giảng dạy cho toàn bộ giáo viên Clever School.
           </p>
         </div>
 
@@ -261,7 +261,7 @@ export default function TeachingStaffPage() {
           <div className="relative w-full h-[800px] md:h-[900px] rounded-lg overflow-hidden shadow-lg border-2 border-[#FF870D]">
             <Image
               src="/teaching-staff/image3.jpg"
-              alt="Giáo viên và học sinh Enspire"
+              alt="Giáo viên và học sinh Clever School"
               fill
               className="object-cover"
             />
@@ -272,7 +272,7 @@ export default function TeachingStaffPage() {
           <div className="relative w-full h-[800px] md:h-[900px] rounded-lg overflow-hidden shadow-lg border-2 border-[#8ADCF8]">
             <Image
               src="/teaching-staff/image4.jpg"
-              alt="Giáo viên và học sinh Enspire"
+              alt="Giáo viên và học sinh Clever School"
               fill
               className="object-cover"
             />

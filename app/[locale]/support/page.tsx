@@ -35,9 +35,9 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "support" });
 
   return {
-    title: "Hỗ trợ - Enspire LMS",
+    title: "Hỗ trợ - Clever School",
     description:
-      "Trung tâm hỗ trợ Enspire LMS - Liên hệ với chúng tôi để được giải đáp thắc mắc và hỗ trợ sử dụng hệ thống",
+      "Trung tâm hỗ trợ Clever School - Liên hệ với chúng tôi để được giải đáp thắc mắc và hỗ trợ sử dụng hệ thống",
   };
 }
 
@@ -97,7 +97,7 @@ export default function SupportPage() {
                   Chúng tôi có thể giúp gì cho bạn?
                 </CardTitle>
                 <CardDescription className="text-base leading-relaxed">
-                  Đội ngũ hỗ trợ của Enspire LMS luôn sẵn sàng giải đáp mọi thắc
+                  Đội ngũ hỗ trợ của Clever School luôn sẵn sàng giải đáp mọi thắc
                   mắc và hỗ trợ bạn sử dụng hệ thống một cách hiệu quả nhất.
                 </CardDescription>
               </div>
@@ -141,10 +141,10 @@ export default function SupportPage() {
                     Email
                   </p>
                   <a
-                    href="mailto:support@enspire.edu.vn"
+                    href="mailto:support@Clever School.edu.vn"
                     className="text-blue-600 dark:text-blue-400 hover:underline"
                   >
-                    support@enspire.edu.vn
+                    support@Clever School.edu.vn
                   </a>
                 </div>
               </div> */}
@@ -157,7 +157,7 @@ export default function SupportPage() {
                     Địa chỉ
                   </p>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    Trung tâm anh ngữ Enspire, 80A Láng Hạ, Đống Đa
+                    Trung tâm anh ngữ Clever School, 80A Láng Hạ, Đống Đa
                     <br />
                     Thành phố Hà Nội, Việt Nam
                   </p>
@@ -286,7 +286,7 @@ export default function SupportPage() {
                 <div className="px-4">
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                     Vui lòng chụp ảnh màn hình lỗi và gửi qua email
-                    support@enspire.edu.vn hoặc gọi hotline. Đội ngũ kỹ thuật sẽ
+                    support@Clever School.edu.vn hoặc gọi hotline. Đội ngũ kỹ thuật sẽ
                     hỗ trợ bạn ngay lập tức.
                   </p>
                 </div>
@@ -302,7 +302,7 @@ export default function SupportPage() {
                 </div>
                 <div className="px-4">
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-3">
-                    Enspire LMS hỗ trợ đầy đủ trên các thiết bị:
+                    Clever School hỗ trợ đầy đủ trên các thiết bị:
                   </p>
                   <ul className="space-y-2 ml-4">
                     <li className="flex items-start gap-2">
