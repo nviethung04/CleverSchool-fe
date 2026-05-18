@@ -99,6 +99,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/react-window": "^1.8.8",
+    "baseline-browser-mapping": "^2.10.30",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "postcss": "^8.5.6",
