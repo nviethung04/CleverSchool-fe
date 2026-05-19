@@ -27,16 +27,25 @@ const nextConfig = {
         : false,
   },
   async rewrites() {
-    return [
-      {
+    const rewrites = [];
+    const h5pBaseUrl = process.env.NEXT_PUBLIC_H5P_URL;
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    if (h5pBaseUrl) {
+      rewrites.push({
         source: "/h5p/:path*",
-        destination: `${process.env.NEXT_PUBLIC_H5P_URL}/h5p/:path*`,
-      },
-      {
+        destination: `${h5pBaseUrl}/h5p/:path*`,
+      });
+    }
+
+    if (apiBaseUrl) {
+      rewrites.push({
         source: "/api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/:path*`,
-      },
-    ];
+        destination: `${apiBaseUrl}/:path*`,
+      });
+    }
+
+    return rewrites;
   },
   async headers() {
     return [
