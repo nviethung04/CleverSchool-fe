@@ -28,7 +28,7 @@ Nếu `build` lỗi, Vercel cũng sẽ lỗi.
 3. Chọn repo frontend của bạn (`fe` hoặc repo chứa `fe`)
 4. Nếu repo chứa cả `be` và `fe`, ở mục **Root Directory** chọn `fe`
 
-## 4. Cấu hình Build trên Vercel  
+## 4. Cấu hình Build trên Vercel     
 
 Thông thường Vercel tự nhận đúng Next.js. Kiểm tra lại:
 
