@@ -98,8 +98,8 @@ export function Footer() {
           <div>
             <h3 className="font-bold text-lg mb-4">Liên hệ</h3>
             <ul className="space-y-2">
-              <li className="text-gray-400">Email: info@edu.vn</li>
-              <li className="text-gray-400">Hotline: 1800 599 989</li>
+              <li className="text-gray-400">Email: 2251172361@e.tlu.edu.vn</li>
+              <li className="text-gray-400">Hotline: 0369589101</li>
               <li className="text-gray-400">Địa chỉ: Hà Nội, Việt Nam</li>
             </ul>
           </div>

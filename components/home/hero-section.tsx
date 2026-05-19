@@ -25,7 +25,7 @@ export function HeroSection({ stats }: HeroSectionProps) {
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-              Học tiếng Anh <span className="text-Clever School-blue">vui vẻ</span> cùng Clever School!
+              Staging Học tiếng Anh <span className="text-Clever School-blue">vui vẻ</span> cùng Clever School!
             </h1>
             <p className="text-lg text-gray-600 mb-6">
               Hệ thống học tập thông minh giúp người học phát triển kỹ năng tiếng Anh theo lộ trình riêng, phù hợp với khả
