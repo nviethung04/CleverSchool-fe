@@ -14,9 +14,9 @@ Tài liệu này hướng dẫn từ đầu đến cuối cách đưa frontend (
 Trong thư mục `fe` chạy:
 
 ```bash
-npm install
-npm run build
-npm run dev
+pnpm install
+pnpm build
+pnpm dev
 ```
 
 Nếu `build` lỗi, Vercel cũng sẽ lỗi.
@@ -33,9 +33,11 @@ Nếu `build` lỗi, Vercel cũng sẽ lỗi.
 Thông thường Vercel tự nhận đúng Next.js. Kiểm tra lại:
 
 - Framework Preset: `Next.js`
-- Build Command: `npm run build`
-- Install Command: `npm install`
+- Build Command: `pnpm build`
+- Install Command: `pnpm install`
 - Output Directory: để trống (mặc định Next.js)
+
+Nếu repo chỉ dùng Vercel để deploy, không cần tạo GitHub Actions workflow riêng cho bước deploy. Vercel sẽ tự build và deploy khi có push vào branch đã kết nối.
 
 ## 5. Cấu hình Environment Variables (rất quan trọng)
 
@@ -141,16 +143,16 @@ Cách xử lý:
 
 ```bash
 # Cài dependency
-npm install
+pnpm install
 
 # Chạy local
-npm run dev
+pnpm dev
 
 # Build giống Vercel
-npm run build
+pnpm build
 
 # Chạy bản build local
-npm run start
+pnpm start
 ```
 
 ---
