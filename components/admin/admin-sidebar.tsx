@@ -43,8 +43,6 @@ import {
   MessageSquare,
   Bell,
   HelpCircle,
-  ShieldCheck,
-  List,
   Presentation,
   FileStack,
   User,
@@ -61,8 +59,9 @@ import {
 import { GetUserLogin } from "@/lib/api/users";
 import { BRAND_COLORS } from "@/lib/constants/colors";
 import { useTranslations } from "next-intl";
+import { filterSidebarItems } from "@/lib/nav/filter-nav";
 import NotificationPermissionButton from "../notification-permission-button";
-import { User as UserLogin} from "@/lib/types/auth";
+import { User as UserLogin } from "@/lib/types/auth";
 
 type SidebarItem = {
   icon: React.ReactNode;
@@ -98,22 +97,6 @@ export function AdminSidebar() {
       icon: <Users className="h-5 w-5" />,
       label: t("userManagement"),
       href: `/${locale}/admin/users/list`,
-      submenu: [
-        {
-          icon: <List className="h-4 w-4" />,
-          label: t("userList"),
-          href: `/${locale}/admin/users/list`,
-        },
-        ...(userLogin.sub_type !== "school"
-        ? [
-            {
-              icon: <ShieldCheck className="h-4 w-4" />,
-              label: t("permissions"),
-              href: `/${locale}/admin/users/permissions`,
-            },
-          ]
-        : []),
-      ],
     },
     {
       icon: <School className="h-5 w-5" />,
@@ -173,7 +156,7 @@ export function AdminSidebar() {
       ],
     },
     ...(userLogin.sub_type !== "school"
-    ? [
+      ? [
         {
           icon: <Star className="h-5 w-5" />,
           label: t("criteriaValuate"),
@@ -202,22 +185,24 @@ export function AdminSidebar() {
           href: `/${locale}/admin/settings`,
         },
       ]
-    : []),
+      : []),
     ...(userLogin.sub_type !== "school"
-    ? [
+      ? [
         {
           icon: <MessageSquare className="h-5 w-5" />,
           label: t("feedback"),
           href: `/${locale}/admin/feedback`,
         },
       ]
-    : []),
+      : []),
     {
       icon: <Bell className="h-5 w-5" />,
       label: t("notices"),
       href: `/${locale}/admin/notices`,
     },
   ];
+
+  const filteredSidebarItems = filterSidebarItems(sidebarItems);
 
   // Use safe hook that won't throw if context is unavailable
   const sidebarContext = useAdminSidebarSafe();
@@ -251,7 +236,7 @@ export function AdminSidebar() {
 
   // Open submenu if current path is in a submenu
   useEffect(() => {
-    sidebarItems.forEach((item) => {
+    filteredSidebarItems.forEach((item) => {
       if (item.submenu) {
         const isInSubmenu = item.submenu.some(
           (subItem) =>
@@ -413,7 +398,7 @@ export function AdminSidebar() {
             </p> */}
             <nav className="flex-1 space-y-1 overflow-y-auto pr-2 scrollbar-thin">
               <TooltipProvider delayDuration={0}>
-                {sidebarItems.map((item) => {
+                {filteredSidebarItems.map((item) => {
                   const isActive =
                     pathname === item.href ||
                     pathname?.startsWith(`${item.href}/`);

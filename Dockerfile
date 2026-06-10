@@ -1,23 +1,30 @@
-# Sử dụng image Node.js chính thức
-FROM node:20-alpine
+# syntax=docker/dockerfile:1
 
-# Thiết lập thư mục làm việc
+FROM node:20-alpine AS deps
 WORKDIR /app
-
-# Cài đặt dependencies
 COPY package.json package-lock.json ./
-RUN npm install --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 
-# Copy toàn bộ mã nguồn
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN npm install -g pnpm
+ARG NEXT_PUBLIC_API_BASE_URL=/api
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Build ứng dụng Next.js
 RUN npm run build
 
-# Expose port mặc định của Next.js
-EXPOSE 3000
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Chạy ứng dụng
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+EXPOSE 3000
 CMD ["npm", "start"]

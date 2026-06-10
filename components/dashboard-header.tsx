@@ -33,6 +33,7 @@ import { Logo } from "./logo";
 import { getGravatarUrl } from "@/utils/avatar";
 import { useTypedTranslations } from "@/lib/i18n/client";
 import Image from "next/image";
+import { filterNavByHref } from "@/lib/nav/filter-nav";
 
 export function DashboardHeader() {
   const pathname = usePathname();
@@ -114,28 +115,28 @@ export function DashboardHeader() {
     return `/${targetLocale}${suffix}`;
   };
 
+  const studentNavItems = filterNavByHref([
+    { href: `/${locale}/assignments`, label: t("nav.home"), icon: Home },
+    { href: `/${locale}/courses`, label: t("nav.courses"), icon: BookOpen },
+    {
+      href: `/${locale}/progress-report`,
+      label: t("nav.reports"),
+      icon: BarChart3,
+    },
+    { href: `/${locale}/ranking`, label: t("nav.ranking"), icon: Trophy },
+    {
+      href: `/${locale}/feedback`,
+      label: t("nav.feedback"),
+      icon: MessageCircle,
+    },
+  ]);
+
   const getCurrentPageName = () => {
-    if (pathname?.includes('/profile')) {
+    if (pathname?.includes("/profile")) {
       return t("menu.profile");
     }
 
-    const menuItems = [
-      { href: `/${locale}/assignments`, label: t("nav.home"), icon: Home },
-      { href: `/${locale}/courses`, label: t("nav.courses"), icon: BookOpen },
-      {
-        href: `/${locale}/progress-report`,
-        label: t("nav.reports"),
-        icon: BarChart3,
-      },
-      { href: `/${locale}/ranking`, label: t("nav.ranking"), icon: Trophy },
-      {
-        href: `/${locale}/feedback`,
-        label: t("nav.feedback"),
-        icon: MessageCircle,
-      },
-    ];
-
-    const currentItem = menuItems.find((item) => isActive(item.href));
+    const currentItem = studentNavItems.find((item) => isActive(item.href));
     return currentItem?.label || t("nav.home");
   };
 
@@ -203,33 +204,7 @@ export function DashboardHeader() {
 
               {/* Desktop Navigation */}
               <nav className="hidden xl:flex items-center gap-2 md:gap-4 lg:gap-6">
-                {[
-                  {
-                    href: `/${locale}/assignments`,
-                    label: t("nav.home"),
-                    icon: Home,
-                  },
-                  {
-                    href: `/${locale}/courses`,
-                    label: t("nav.courses"),
-                    icon: BookOpen,
-                  },
-                  {
-                    href: `/${locale}/progress-report`,
-                    label: t("nav.reports"),
-                    icon: BarChart3,
-                  },
-                  {
-                    href: `/${locale}/ranking`,
-                    label: t("nav.ranking"),
-                    icon: Trophy,
-                  },
-                  {
-                    href: `/${locale}/feedback`,
-                    label: t("nav.feedback"),
-                    icon: MessageCircle,
-                  },
-                ].map((item) => (
+                {studentNavItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -505,33 +480,7 @@ export function DashboardHeader() {
 
             {/* Menu Items */}
             <nav className="flex-1 px-2 py-4 flex flex-col gap-1 overflow-y-auto">
-              {[
-                {
-                  href: `/${locale}/assignments`,
-                  label: t("nav.home"),
-                  icon: Home,
-                },
-                {
-                  href: `/${locale}/courses`,
-                  label: t("nav.courses"),
-                  icon: BookOpen,
-                },
-                {
-                  href: `/${locale}/progress-report`,
-                  label: t("nav.reports"),
-                  icon: BarChart3,
-                },
-                {
-                  href: `/${locale}/ranking`,
-                  label: t("nav.ranking"),
-                  icon: Trophy,
-                },
-                {
-                  href: `/${locale}/feedback`,
-                  label: t("nav.feedback"),
-                  icon: MessageCircle,
-                },
-              ].map((item) => (
+              {studentNavItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}

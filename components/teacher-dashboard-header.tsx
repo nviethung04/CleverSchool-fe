@@ -44,6 +44,7 @@ import { useTypedTranslations } from "@/lib/i18n/client";
 import { Logo } from "./logo";
 import { getGravatarUrl } from "@/utils/avatar";
 import NotificationPermissionButton from "./notification-permission-button";
+import { filterNavByHref } from "@/lib/nav/filter-nav";
 
 export function TeacherDashboardHeader() {
   const pathname = usePathname();
@@ -141,7 +142,7 @@ export function TeacherDashboardHeader() {
     return currentItem?.label || t("nav.home");
   };
 
-  const navItems = [
+  const navItems = filterNavByHref([
     {
       href: `/${locale}/teacher/weekly-lessons`,
       label: t("nav.home"),
@@ -152,21 +153,19 @@ export function TeacherDashboardHeader() {
       label: t("nav.reports"),
       icon: ChartBar,
     },
-    //{ href: "/teacher/dashboard", label: t("nav.overview"), icon: LucideHome },
     {
       href: `/${locale}/teacher/courses`,
       label: t("nav.courses"),
       icon: LucideBook,
     },
-    // { href: "/teacher/classes", label: t("nav.classes"), icon: GraduationCap },
     {
       href: `/${locale}/teacher/feedback`,
       label: t("nav.feedback"),
       icon: MessageSquare,
     },
-  ];
+  ]);
 
-  const resourceItems = [
+  const resourceItems = filterNavByHref([
     {
       href: `/${locale}/teacher/lessons`,
       label: t("resources.lessons"),
@@ -191,13 +190,7 @@ export function TeacherDashboardHeader() {
       icon: LucidePlaySquare,
       color: "green",
     },
-    /* {
-      href: "/teacher/images", 
-      label: "Quản lý media",
-      icon: LucidePlaySquare,
-      color: "red"
-    }, */
-  ];
+  ]);
 
   return (
     <>
@@ -262,51 +255,52 @@ export function TeacherDashboardHeader() {
                   </Link>
                 ))}
 
-                {/* Resources Dropdown - Organized */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 flex items-center gap-2 rounded-lg transition-all duration-200"
+                {resourceItems.length > 0 && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 flex items-center gap-2 rounded-lg transition-all duration-200"
+                      >
+                        <LucideBookOpen className="h-4 w-4" />
+                        {t("resources.title")}
+                        <LucideChevronDown className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="start"
+                      className="w-56 mt-2 shadow-xl border-0 bg-white rounded-xl p-2"
                     >
-                      <LucideBookOpen className="h-4 w-4" />
-                      {t("resources.title")}
-                      <LucideChevronDown className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="start"
-                    className="w-56 mt-2 shadow-xl border-0 bg-white rounded-xl p-2"
-                  >
-                    {resourceItems.map((item, index) => (
-                      <div key={item.href}>
-                        <DropdownMenuItem
-                          asChild
-                          className="rounded-lg p-0 focus:bg-transparent"
-                        >
-                          <Link
-                            href={item.href}
-                            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors w-full"
+                      {resourceItems.map((item, index) => (
+                        <div key={item.href}>
+                          <DropdownMenuItem
+                            asChild
+                            className="rounded-lg p-0 focus:bg-transparent"
                           >
-                            <div
-                              className={`w-8 h-8 bg-${item.color}-100 rounded-lg flex items-center justify-center`}
+                            <Link
+                              href={item.href}
+                              className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors w-full"
                             >
-                              <item.icon
-                                className={`h-4 w-4 text-${item.color}-600`}
-                              />
-                            </div>
-                            <span className="font-medium text-gray-900 text-sm">
-                              {item.label}
-                            </span>
-                          </Link>
-                        </DropdownMenuItem>
-                        {index < resourceItems.length - 1 && (
-                          <DropdownMenuSeparator className="my-1" />
-                        )}
-                      </div>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                              <div
+                                className={`w-8 h-8 bg-${item.color}-100 rounded-lg flex items-center justify-center`}
+                              >
+                                <item.icon
+                                  className={`h-4 w-4 text-${item.color}-600`}
+                                />
+                              </div>
+                              <span className="font-medium text-gray-900 text-sm">
+                                {item.label}
+                              </span>
+                            </Link>
+                          </DropdownMenuItem>
+                          {index < resourceItems.length - 1 && (
+                            <DropdownMenuSeparator className="my-1" />
+                          )}
+                        </div>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </nav>
             </div>
 
@@ -512,55 +506,58 @@ export function TeacherDashboardHeader() {
                 </Link>
               ))}
 
-              {/* Nút cho Tài liệu */}
-              <button
-                type="button"
-                onClick={() =>
-                  setMobileResourcesOpen((currentValue) => !currentValue)
-                }
-                className={cn(
-                  "w-full rounded-md px-3 py-3 mb-3 text-base font-medium flex items-center gap-3 border-b border-slate-200 transition-colors",
-                  mobileResourcesOpen
-                    ? "bg-emerald-50 text-emerald-700"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-emerald-700"
-                )}
-              >
-                <LucideBookOpen className="h-5 w-5" />
-                <span>{t("resources.title")}</span>
-                <LucideChevronDown
-                  className={cn(
-                    "h-4 w-4 ml-auto transition-transform",
-                    mobileResourcesOpen && "rotate-180"
-                  )}
-                />
-              </button>
-              {mobileResourcesOpen && (
-                <div className="animate-in fade-in slide-in-from-left duration-300">
-                  {resourceItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => {
-                        setMobileOpen(false);
-                        setMobileResourcesOpen(false);
-                      }}
+              {resourceItems.length > 0 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setMobileResourcesOpen((currentValue) => !currentValue)
+                    }
+                    className={cn(
+                      "w-full rounded-md px-3 py-3 mb-3 text-base font-medium flex items-center gap-3 border-b border-slate-200 transition-colors",
+                      mobileResourcesOpen
+                        ? "bg-emerald-50 text-emerald-700"
+                        : "text-slate-600 hover:bg-slate-100 hover:text-emerald-700"
+                    )}
+                  >
+                    <LucideBookOpen className="h-5 w-5" />
+                    <span>{t("resources.title")}</span>
+                    <LucideChevronDown
                       className={cn(
-                        "w-full rounded-md px-3 py-2 mb-1 text-sm flex items-center justify-between gap-2 pl-8 transition-colors",
-                        isActive(item.href)
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "text-slate-600 hover:bg-slate-100 hover:text-emerald-700"
+                        "h-4 w-4 ml-auto transition-transform",
+                        mobileResourcesOpen && "rotate-180"
                       )}
-                    >
-                      <div className="flex items-center gap-2">
-                        <item.icon className="h-4 w-4 text-emerald-600" />
-                        <span>{item.label}</span>
-                      </div>
-                      {isActive(item.href) && (
-                        <span className="h-2 w-2 rounded-full bg-emerald-700" />
-                      )}
-                    </Link>
-                  ))}
-                </div>
+                    />
+                  </button>
+                  {mobileResourcesOpen && (
+                    <div className="animate-in fade-in slide-in-from-left duration-300">
+                      {resourceItems.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => {
+                            setMobileOpen(false);
+                            setMobileResourcesOpen(false);
+                          }}
+                          className={cn(
+                            "w-full rounded-md px-3 py-2 mb-1 text-sm flex items-center justify-between gap-2 pl-8 transition-colors",
+                            isActive(item.href)
+                              ? "bg-emerald-50 text-emerald-600"
+                              : "text-slate-600 hover:bg-slate-100 hover:text-emerald-700"
+                          )}
+                        >
+                          <div className="flex items-center gap-2">
+                            <item.icon className="h-4 w-4 text-emerald-600" />
+                            <span>{item.label}</span>
+                          </div>
+                          {isActive(item.href) && (
+                            <span className="h-2 w-2 rounded-full bg-emerald-700" />
+                          )}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </nav>
 
