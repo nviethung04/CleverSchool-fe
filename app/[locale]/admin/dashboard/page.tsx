@@ -45,13 +45,13 @@ import { useEffect, useRef, useState } from "react";
 import {
   getAdminDashboard,
   getListSchool,
+  getListProgram,
   getListCourse,
   getListTeacher,
   getActiveUsersList,
 } from "@/lib/api/dashboard";
 import { cn, sortAlphabetGeneric, sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
 import { useTranslations } from "next-intl";
-import { GetProgramList } from "@/lib/api/programs";
 import { useAuth } from "@/lib/context/auth-context";
 
 export default function AdminDashboard() {
@@ -289,8 +289,7 @@ export default function AdminDashboard() {
     async function fetchPrograms() {
       setProgramsLoading(true);
       try {
-        const res = await GetProgramList({
-          fields: 'id,name,programs',
+        const res = await getListProgram({
           school_id:
             filters.school_id !== "all-school" ? filters.school_id : "",
         });
@@ -457,6 +456,11 @@ export default function AdminDashboard() {
 
       // Reset teacher_id khi course_id thay đổi
       if (filterType === "course_id") {
+        newFilters.teacher_id = "all-teacher";
+      }
+
+      if (filterType === "program_id") {
+        newFilters.course_id = "all-course";
         newFilters.teacher_id = "all-teacher";
       }
 

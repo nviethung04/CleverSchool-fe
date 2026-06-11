@@ -670,6 +670,17 @@ export async function getListSchool() {
   return res.data;
 }
 
+export async function getListProgram({
+  school_id,
+}: {
+  school_id?: string;
+} = {}) {
+  const res = await axiosInstance.get("/dashboard/program-list", {
+    params: school_id ? { school_id } : {},
+  });
+  return res.data;
+}
+
 export async function getListClassMain({
   page,
   limit,
