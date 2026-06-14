@@ -67,8 +67,8 @@ export function EngagementChart() {
 
       // Draw bar
       const gradient = ctx.createLinearGradient(x, y, x, 30 + chartHeight)
-      gradient.addColorStop(0, "rgba(74, 144, 226, 0.8)") // Clever School-blue
-      gradient.addColorStop(1, "rgba(74, 144, 226, 0.4)") // Clever School-blue with opacity
+      gradient.addColorStop(0, "rgba(74, 144, 226, 0.8)") // cs-blue
+      gradient.addColorStop(1, "rgba(74, 144, 226, 0.4)") // cs-blue with opacity
 
       ctx.fillStyle = gradient
       ctx.beginPath()
@@ -93,8 +93,8 @@ export function EngagementChart() {
 
       // Draw bar
       const gradient = ctx.createLinearGradient(x, y, x, 30 + chartHeight)
-      gradient.addColorStop(0, "rgba(126, 217, 87, 0.8)") // Clever School-green
-      gradient.addColorStop(1, "rgba(126, 217, 87, 0.4)") // Clever School-green with opacity
+      gradient.addColorStop(0, "rgba(126, 217, 87, 0.8)") // cs-green
+      gradient.addColorStop(1, "rgba(126, 217, 87, 0.4)") // cs-green with opacity
 
       ctx.fillStyle = gradient
       ctx.beginPath()
@@ -121,7 +121,7 @@ export function EngagementChart() {
     const legendY = 20
 
     // Minutes legend
-    ctx.fillStyle = "rgba(74, 144, 226, 0.8)" // Clever School-blue
+    ctx.fillStyle = "rgba(74, 144, 226, 0.8)" // cs-blue
     ctx.beginPath()
     ctx.rect(legendX, legendY, 15, 15)
     ctx.fill()
@@ -133,7 +133,7 @@ export function EngagementChart() {
     ctx.fillText("Thời gian học (phút)", legendX + 25, legendY + 7.5)
 
     // Engagement legend
-    ctx.fillStyle = "rgba(126, 217, 87, 0.8)" // Clever School-green
+    ctx.fillStyle = "rgba(126, 217, 87, 0.8)" // cs-green
     ctx.beginPath()
     ctx.rect(legendX, legendY + 25, 15, 15)
     ctx.fill()

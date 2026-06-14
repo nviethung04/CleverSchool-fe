@@ -81,9 +81,9 @@ export function LearningPath() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <LucideStar className="h-5 w-5 text-Clever School-yellow" />
+        return <LucideStar className="h-5 w-5 text-cs-yellow" />
       case "in-progress":
-        return <LucidePlayCircle className="h-5 w-5 text-Clever School-blue" />
+        return <LucidePlayCircle className="h-5 w-5 text-cs-blue" />
       case "locked":
         return <LucideLock className="h-5 w-5 text-gray-400" />
       default:
@@ -100,9 +100,9 @@ export function LearningPath() {
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
                 module.status === "completed"
-                  ? "bg-Clever School-yellow bg-opacity-20"
+                  ? "bg-cs-yellow bg-opacity-20"
                   : module.status === "in-progress"
-                    ? "bg-Clever School-blue bg-opacity-20"
+                    ? "bg-cs-blue bg-opacity-20"
                     : "bg-gray-100"
               }`}
             >
@@ -124,9 +124,9 @@ export function LearningPath() {
                   }
                   className={
                     module.status === "completed"
-                      ? "bg-Clever School-yellow bg-opacity-10 text-Clever School-yellow border-Clever School-yellow"
+                      ? "bg-cs-yellow bg-opacity-10 text-cs-yellow border-cs-yellow"
                       : module.status === "in-progress"
-                        ? "bg-Clever School-blue bg-opacity-10 text-Clever School-blue border-Clever School-blue"
+                        ? "bg-cs-blue bg-opacity-10 text-cs-blue border-cs-blue"
                         : "text-gray-400 bg-gray-50"
                   }
                 >
@@ -161,8 +161,8 @@ export function LearningPath() {
                 <Button
                   className={
                     module.status === "completed"
-                      ? "rounded-full bg-Clever School-yellow text-black hover:bg-yellow-400"
-                      : "rounded-full bg-Clever School-blue text-white hover:bg-blue-600"
+                      ? "rounded-full bg-cs-yellow text-black hover:bg-yellow-400"
+                      : "rounded-full bg-cs-blue text-white hover:bg-blue-600"
                   }
                 >
                   {module.status === "completed" ? "Xem lại" : "Tiếp tục học"}

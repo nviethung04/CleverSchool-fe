@@ -71,6 +71,13 @@ const config = {
           900: "#7c2d12",
           950: "#431407",
         },
+        cs: {
+          blue: "#4a90e2",
+          "light-blue": "#8fd3f4",
+          green: "#7ed957",
+          yellow: "#ffd900",
+          orange: "#ff9f00",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

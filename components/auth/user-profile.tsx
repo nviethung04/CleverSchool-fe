@@ -40,7 +40,7 @@ export function UserProfile() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarFallback className="bg-Clever School-blue text-white">{getInitials(user.name)}</AvatarFallback>
+            <AvatarFallback className="bg-cs-blue text-white">{getInitials(user.name)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

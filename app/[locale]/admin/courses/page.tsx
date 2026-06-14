@@ -35,6 +35,7 @@ import {
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useState, useEffect, useRef } from "react"
+import { adminPrimaryButtonClass } from "@/components/admin/admin-list-header"
 
 const skillTabs = ["listening", "speaking", "reading", "writing"]
 const DEFAULT_SCHOOL_ID = 1
@@ -201,7 +202,7 @@ export default function AdminCoursesPage() {
             <p className="text-gray-600">Quản lý và phát triển các khóa học tiếng Anh</p>
           </div>
           <div className="mt-4 md:mt-0 flex gap-3">
-            <Button className="rounded-full bg-Clever School-green text-white hover:bg-opacity-90" onClick={() =>
+            <Button className={`rounded-full ${adminPrimaryButtonClass}`} onClick={() =>
               {
                 setShowAddCourseDialog(true)
                 setSelectedCourse(null);

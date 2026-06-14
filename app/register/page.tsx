@@ -131,7 +131,7 @@ export default function RegisterPage() {
                   <p className="text-gray-600 mt-2">{successMessage}</p>
                   <p className="text-sm text-gray-500 mt-4">Vui lòng đợi chúng tôi liên hệ lại...</p>
                 </div>
-                <Button onClick={() => router.push("/login")} className="w-full bg-Clever School-blue hover:bg-blue-600">
+                <Button onClick={() => router.push("/login")} className="w-full bg-cs-blue hover:bg-blue-600">
                   Đăng nhập ngay
                 </Button>
               </div>
@@ -225,13 +225,13 @@ export default function RegisterPage() {
             </CardContent>
 
             <CardFooter className="flex flex-col space-y-4">
-              <Button type="submit" className="w-full bg-Clever School-blue hover:bg-blue-600" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-cs-blue hover:bg-blue-600" disabled={isLoading}>
                 {isLoading ? "Đang đăng ký..." : "Đăng ký"}
               </Button>
 
               <div className="text-center text-sm">
                 Đã có tài khoản?{" "}
-                <Link href="/login" className="text-Clever School-blue hover:text-blue-600 font-medium">
+                <Link href="/login" className="text-cs-blue hover:text-blue-600 font-medium">
                   Đăng nhập
                 </Link>
               </div>

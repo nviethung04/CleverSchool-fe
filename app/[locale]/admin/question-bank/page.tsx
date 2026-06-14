@@ -524,11 +524,11 @@ export default function TeacherQuestionBankPage() {
                 placeholder="Tìm kiếm câu hỏi..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-1 focus:ring-Clever School-green"
+                className="pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-1 focus:ring-cs-green"
               />
             </div>
             <Button
-              className="rounded-full bg-Clever School-green text-white hover:bg-opacity-90 flex items-center gap-2"
+              className="rounded-full bg-cs-green text-white hover:bg-opacity-90 flex items-center gap-2"
               asChild
             >
               <Link href="/admin/question-bank/create-question">
@@ -592,17 +592,17 @@ export default function TeacherQuestionBankPage() {
         {/* Danh sách câu hỏi */}
         <Tabs defaultValue="all" className="mb-8">
           <TabsList className="mb-6">
-            <TabsTrigger value="all" className="data-[state=active]:bg-Clever School-blue data-[state=active]:text-white">
+            <TabsTrigger value="all" className="data-[state=active]:bg-cs-blue data-[state=active]:text-white">
               <HelpCircle className="h-4 w-4 mr-2" />
               Tất cả câu hỏi
             </TabsTrigger>
-            <TabsTrigger value="recent" className="data-[state=active]:bg-Clever School-green data-[state=active]:text-white">
+            <TabsTrigger value="recent" className="data-[state=active]:bg-cs-green data-[state=active]:text-white">
               <Clipboard className="h-4 w-4 mr-2" />
               Gần đây
             </TabsTrigger>
             <TabsTrigger
               value="most-used"
-              className="data-[state=active]:bg-Clever School-yellow data-[state=active]:text-white"
+              className="data-[state=active]:bg-cs-yellow data-[state=active]:text-white"
             >
               <FileText className="h-4 w-4 mr-2" />
               Sử dụng nhiều
@@ -658,7 +658,7 @@ export default function TeacherQuestionBankPage() {
                 <HelpCircle className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                 <h3 className="text-lg font-medium text-gray-600">Không tìm thấy câu hỏi nào</h3>
                 <p className="text-gray-500 mt-1">Thử thay đổi bộ lọc hoặc tạo câu hỏi mới</p>
-                <Button className="mt-4 bg-Clever School-green" asChild>
+                <Button className="mt-4 bg-cs-green" asChild>
                   <Link href="/admin/question-bank/create-question">
                     <Plus className="h-4 w-4 mr-2" />
                     Tạo câu hỏi mới
@@ -1235,7 +1235,7 @@ function QuestionCard({ question }: { question: any }) {
             </div>
 
             <div className="flex md:flex-col gap-1 md:mt-auto">
-              <Button size="sm" className="text-white text-xs px-3 h-8 bg-Clever School-blue" asChild>
+              <Button size="sm" className="text-white text-xs px-3 h-8 bg-cs-blue" asChild>
                 <Link href={`/admin/question-bank/${question.id}`}>
                   <Eye className="h-3.5 w-3.5 mr-1.5" />
                   Chi tiết

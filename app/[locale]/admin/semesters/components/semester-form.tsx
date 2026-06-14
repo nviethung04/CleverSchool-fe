@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Save, Plus, Trash2 } from "lucide-react";
+import { adminPrimaryButtonClass } from "@/components/admin/admin-list-header";
 import { useTranslations } from "next-intl";
 import { getWeeks, Week } from "@/lib/api/students";
 import { GetSemestersList, Semester } from "@/lib/api/semesters";
@@ -508,7 +509,7 @@ export default function SemesterForm({
         </Button>
         <Button
           type="submit"
-          className="bg-Clever School-green text-white hover:bg-opacity-90"
+          className={adminPrimaryButtonClass}
           disabled={isSubmitting}
         >
           <Save className="mr-2 h-4 w-4" />

@@ -13,11 +13,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { LucidePlus, Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import { GetSubjectsList, DeleteSubject } from "@/lib/api/subjects";
 import { useToast } from "@/hooks/use-toast";
 import Loading from "@/app/loading";
 import { useTranslations } from "next-intl";
+import {
+  AdminCreateButton,
+  AdminListToolbar,
+  AdminPageHeading,
+} from "@/components/admin/admin-list-header";
 
 interface Subject {
   id: string;
@@ -29,8 +34,8 @@ interface Subject {
 }
 
 export default function SubjectsPage() {
-  const tCommon = useTranslations('common')
-  const t = useTranslations('manageSubject')
+  const tCommon = useTranslations("common");
+  const t = useTranslations("manageSubject");
   const router = useRouter();
   const params = useParams();
   const locale = params?.locale as string;
@@ -50,7 +55,7 @@ export default function SubjectsPage() {
     } catch (error: any) {
       console.error("Error fetching subjects:", error);
       toast({
-        title: tCommon('error'),
+        title: tCommon("error"),
         description: t("loadError"),
         variant: "destructive",
       });
@@ -65,21 +70,21 @@ export default function SubjectsPage() {
   }, []);
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(t("deleteConfirm", {name}))) {
+    if (!confirm(t("deleteConfirm", { name }))) {
       return;
     }
 
     try {
       await DeleteSubject(id);
       toast({
-        title: tCommon('success'),
+        title: tCommon("success"),
         description: t("deleteSuccess"),
       });
       fetchSubjects();
     } catch (error: any) {
       console.error("Error deleting subject:", error);
       toast({
-        title: tCommon('error'),
+        title: tCommon("error"),
         description: error?.response?.data?.message || t("deleteError"),
         variant: "destructive",
       });
@@ -101,51 +106,50 @@ export default function SubjectsPage() {
   return (
     <div className="min-h-screen">
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-              {t("title")}
-            </h1>
-            <p className="text-gray-600 mt-2">
-              {t("description")}
-            </p>
-          </div>
-          <Button
-            className="mt-4 md:mt-0 bg-Clever School-green text-white hover:bg-opacity-90"
-            onClick={handleCreate}
-          >
-            <LucidePlus className="mr-2 h-4 w-4" />
-              {t("createNew")}
-          </Button>
-        </div>
+        <AdminPageHeading title={t("title")} description={t("description")} />
 
         <Card>
           <CardHeader>
-            <div className="text-sm text-gray-600">
-              {t("totalCount")}:{" "}
-              <span className="font-semibold">{subjects.length}</span>
-            </div>
+            <AdminListToolbar
+              summary={
+                <>
+                  {t("totalCount")}:{" "}
+                  <span className="font-semibold">{subjects.length}</span>
+                </>
+              }
+              action={
+                <AdminCreateButton onClick={handleCreate}>
+                  {t("createNew")}
+                </AdminCreateButton>
+              }
+            />
           </CardHeader>
           <CardContent>
             <div className="rounded-md border overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-16 text-center">{t("table.no")}</TableHead>
+                    <TableHead className="w-16 text-center">
+                      {t("table.no")}
+                    </TableHead>
                     <TableHead>{t("table.name")}</TableHead>
                     <TableHead>{t("table.description")}</TableHead>
-                    <TableHead className="text-center">{t("table.status")}</TableHead>
-                    <TableHead className="text-center">{t("table.createdAt")}</TableHead>
-                    <TableHead className="text-center w-32">{t("table.actions")}</TableHead>
+                    <TableHead className="text-center">
+                      {t("table.status")}
+                    </TableHead>
+                    <TableHead className="text-center">
+                      {t("table.createdAt")}
+                    </TableHead>
+                    <TableHead className="text-center w-32">
+                      {t("table.actions")}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {subjects.length > 0 ? (
                     subjects.map((subject, index) => (
                       <TableRow key={subject.id}>
-                        <TableCell className="text-center">
-                          {index + 1}
-                        </TableCell>
+                        <TableCell className="text-center">{index + 1}</TableCell>
                         <TableCell className="font-medium">
                           {subject.name}
                         </TableCell>
@@ -154,9 +158,13 @@ export default function SubjectsPage() {
                         </TableCell>
                         <TableCell className="text-center">
                           <Badge
-                            variant={subject.status ? "default" : "destructive"}
+                            variant={
+                              subject.status ? "default" : "destructive"
+                            }
                           >
-                            {subject.status ? t("status.active") : t("status.inactive")}
+                            {subject.status
+                              ? t("status.active")
+                              : t("status.inactive")}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center">

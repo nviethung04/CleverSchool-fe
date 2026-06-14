@@ -18,9 +18,9 @@ export function ToolUsageChart() {
 
     // Data for the chart
     const data = [
-      { name: "Wordwall", value: 42, color: "#4a90e2" }, // Clever School-blue
-      { name: "Quizizz", value: 35, color: "#ffd900" }, // Clever School-yellow
-      { name: "TinyTap", value: 23, color: "#7ed957" }, // Clever School-green
+      { name: "Wordwall", value: 42, color: "#4a90e2" }, // cs-blue
+      { name: "Quizizz", value: 35, color: "#ffd900" }, // cs-yellow
+      { name: "TinyTap", value: 23, color: "#7ed957" }, // cs-green
     ]
 
     // Calculate total

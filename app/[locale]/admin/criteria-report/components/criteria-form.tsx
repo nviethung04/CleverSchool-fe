@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { adminPrimaryButtonClass } from "@/components/admin/admin-list-header";
 import {
   Select,
   SelectContent,
@@ -1906,7 +1907,7 @@ export default function CriteriaForm({
           </Button>
           <Button
             type="submit"
-            className="bg-Clever School-green text-white hover:bg-opacity-90"
+            className={adminPrimaryButtonClass}
             disabled={isSubmitting}
           >
             {isSubmitting

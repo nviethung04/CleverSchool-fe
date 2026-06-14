@@ -30,7 +30,6 @@ interface CreateProgramFormState {
   target: string;
   description: string;
   cover: string;
-  coverType: "upload" | "link";
   duration: number;
   startDate: string;
   endDate: string;
@@ -156,7 +155,7 @@ function CreateProgramForm({
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      Mục tiêu chương trình
+                      Mục tiêu chương trình <span className="text-red-500">*</span>
                     </label>
                     <Input
                       value={form.target}
@@ -192,7 +191,7 @@ function CreateProgramForm({
 
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Mô tả chi tiết
+                  Mô tả chi tiết <span className="text-red-500">*</span>
                 </label>
                 <Textarea
                   value={form.description}
@@ -226,71 +225,22 @@ function CreateProgramForm({
 
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Ảnh bìa
+                  Ảnh bìa <span className="text-red-500">*</span>
                 </label>
-                <div className="flex gap-3 mb-4 flex-wrap w-full sm:w-auto">
-                  <Button
-                    variant={
-                      form.coverType === "upload" ? "default" : "outline"
-                    }
-                    onClick={() =>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  className="rounded-xl border-gray-200 focus:border-emerald-300 focus:ring-emerald-200 px-4 pt-3 pb-6 text-gray-900 file:mr-4 file:py-2 file:px-6 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 flex items-start min-h-[60px]"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
                       setForm((f: CreateProgramFormState) => ({
                         ...f,
-                        coverType: "upload",
-                      }))
+                        cover: URL.createObjectURL(file),
+                      }));
                     }
-                    className={`w-full sm:w-auto rounded-xl px-6 py-2 font-medium ${
-                      form.coverType === "upload"
-                        ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                        : "border-gray-200 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600"
-                    }`}
-                  >
-                    Tải lên ảnh
-                  </Button>
-                  <Button
-                    variant={form.coverType === "link" ? "default" : "outline"}
-                    onClick={() =>
-                      setForm((f: CreateProgramFormState) => ({
-                        ...f,
-                        coverType: "link",
-                      }))
-                    }
-                    className={`w-full sm:w-auto rounded-xl px-6 py-2 font-medium ${
-                      form.coverType === "link"
-                        ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                        : "border-gray-200 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600"
-                    }`}
-                  >
-                    Liên kết ảnh
-                  </Button>
-                </div>
-                {form.coverType === "upload" ? (
-                  <Input
-                    type="file"
-                    className="rounded-xl border-gray-200 focus:border-emerald-300 focus:ring-emerald-200 px-4 pt-3 pb-6 text-gray-900 file:mr-4 file:py-2 file:px-6 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 flex items-start min-h-[60px]"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setForm((f: CreateProgramFormState) => ({
-                          ...f,
-                          cover: URL.createObjectURL(file),
-                        }));
-                      }
-                    }}
-                  />
-                ) : (
-                  <Input
-                    value={form.cover}
-                    onChange={(e) =>
-                      setForm((f: CreateProgramFormState) => ({
-                        ...f,
-                        cover: e.target.value,
-                      }))
-                    }
-                    placeholder="Dán liên kết ảnh vào đây"
-                    className="rounded-xl border-gray-200 focus:border-emerald-300 focus:ring-emerald-200 px-4 py-3 text-gray-900 placeholder:text-gray-400"
-                  />
-                )}
+                  }}
+                />
                 {form.cover && (
                   <div className="mt-6 flex justify-center">
                     <div className="relative bg-gray-50 rounded-2xl p-4 border border-gray-200">
@@ -371,7 +321,6 @@ export default function CreateProgramPage() {
     target: "",
     description: "",
     cover: "",
-    coverType: "upload",
     duration: 1,
     startDate: "",
     endDate: "",
@@ -422,45 +371,45 @@ export default function CreateProgramPage() {
 
   // Hàm tạo chương trình
   const handleCreateProgram = async () => {
+    const showValidationError = (description: string) => {
+      toast({
+        title: "Thiếu thông tin",
+        description,
+        variant: "destructive",
+      });
+    };
+
     // Validate các trường bắt buộc
     if (!form.name.trim()) {
-      alert("Vui lòng nhập tên chương trình.");
+      showValidationError("Vui lòng nhập tên chương trình.");
       return;
     }
     if (!form.subject_id) {
-      alert("Vui lòng chọn môn học.");
+      showValidationError("Vui lòng chọn môn học.");
       return;
     }
     if (!form.target.trim()) {
-      alert("Vui lòng nhập mục tiêu chương trình.");
+      showValidationError("Vui lòng nhập mục tiêu chương trình.");
       return;
     }
     if (!form.description.trim()) {
-      alert("Vui lòng nhập mô tả chi tiết cho chương trình.");
+      showValidationError("Vui lòng nhập mô tả chi tiết cho chương trình.");
       return;
     }
 
-    // Validate ngày bắt đầu
-    // Removed date validation
-
     if (!form.cover.trim()) {
-      alert("Vui lòng nhập hoặc upload ảnh cover cho chương trình.");
+      showValidationError("Vui lòng upload ảnh bìa cho chương trình.");
       return;
     }
 
     let coverUrl = form.cover;
-    // Nếu user upload file từ máy, cover là objectURL => cần upload lên server
-    if (
-      form.coverType === "upload" &&
-      form.cover &&
-      form.cover.startsWith("blob:")
-    ) {
+    if (form.cover.startsWith("blob:")) {
       const fileInput = document.querySelector(
         'input[type="file"]'
       ) as HTMLInputElement;
       const file = fileInput?.files?.[0];
       if (!file) {
-        alert("Vui lòng chọn file ảnh cover.");
+        showValidationError("Vui lòng chọn file ảnh bìa.");
         return;
       }
       try {
@@ -481,17 +430,6 @@ export default function CreateProgramPage() {
             error.message || "Không thể tải lên ảnh cover. Vui lòng thử lại.",
           variant: "destructive",
         });
-        return;
-      }
-    } else if (form.coverType === "link") {
-      // Validate url ảnh
-      const isImageUrl = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|svg)$/i.test(
-        form.cover.trim()
-      );
-      if (!isImageUrl) {
-        alert(
-          "Vui lòng nhập đúng url ảnh cover (jpg, jpeg, png, gif, webp, svg)"
-        );
         return;
       }
     }
@@ -540,8 +478,18 @@ export default function CreateProgramPage() {
       const res = await CreateProgram(data);
       setCreatedProgramId(res?.data?.id || res?.id || res?.program_id || null);
       setShowSuccess(true);
-    } catch (err) {
+      toast({
+        title: "Thành công",
+        description: "Chương trình đã được tạo thành công.",
+      });
+    } catch (err: any) {
       console.error("Tạo chương trình thất bại:", err);
+      toast({
+        title: "Lỗi",
+        description:
+          err?.message || "Không thể tạo chương trình. Vui lòng thử lại.",
+        variant: "destructive",
+      });
     }
   };
 

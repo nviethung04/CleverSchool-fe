@@ -21,6 +21,7 @@ import {
   UpdateSetting,
 } from "@/lib/api/settings";
 import { Plus } from "lucide-react";
+import { adminPrimaryButtonClass } from "@/components/admin/admin-list-header";
 import {
   Select,
   SelectContent,
@@ -141,7 +142,7 @@ export default function AdminSettingsPage() {
         <div className="flex gap-2">
           <Button
             onClick={() => router.push(`/${locale}/admin/settings/create`)}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className={adminPrimaryButtonClass}
           >
             <Plus className="h-4 w-4" />
             {t("createNew")}

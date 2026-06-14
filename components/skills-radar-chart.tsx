@@ -22,11 +22,11 @@ export function SkillsRadarChart() {
 
     // Skills data (values from 0 to 1)
     const skills = [
-      { name: "Nghe", value: 0.7, color: "#4a90e2" }, // Clever School-blue
-      { name: "Nói", value: 0.5, color: "#ffd900" }, // Clever School-yellow
-      { name: "Đọc", value: 0.8, color: "#7ed957" }, // Clever School-green
-      { name: "Viết", value: 0.6, color: "#ff9f00" }, // Clever School-orange
-      { name: "Từ vựng", value: 0.75, color: "#4a90e2" }, // Clever School-blue
+      { name: "Nghe", value: 0.7, color: "#4a90e2" }, // cs-blue
+      { name: "Nói", value: 0.5, color: "#ffd900" }, // cs-yellow
+      { name: "Đọc", value: 0.8, color: "#7ed957" }, // cs-green
+      { name: "Viết", value: 0.6, color: "#ff9f00" }, // cs-orange
+      { name: "Từ vựng", value: 0.75, color: "#4a90e2" }, // cs-blue
     ]
 
     const numSkills = skills.length
@@ -82,9 +82,9 @@ export function SkillsRadarChart() {
       }
     }
     ctx.closePath()
-    ctx.fillStyle = "rgba(74, 144, 226, 0.2)" // Clever School-blue with opacity
+    ctx.fillStyle = "rgba(74, 144, 226, 0.2)" // cs-blue with opacity
     ctx.fill()
-    ctx.strokeStyle = "#4a90e2" // Clever School-blue
+    ctx.strokeStyle = "#4a90e2" // cs-blue
     ctx.lineWidth = 2
     ctx.stroke()
 

@@ -666,7 +666,7 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
         <main className="container mx-auto px-4 py-8">
           <div className="flex justify-center items-center py-16">
             <div className="text-center">
-              <Loader2 className="h-12 w-12 text-Clever School-green mx-auto mb-4 animate-spin" />
+              <Loader2 className="h-12 w-12 text-cs-green mx-auto mb-4 animate-spin" />
               <h3 className="text-xl font-medium text-gray-700">Đang tải thông tin câu hỏi</h3>
               <p className="text-gray-500 mt-2">Vui lòng đợi trong giây lát...</p>
             </div>
@@ -686,7 +686,7 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
               <HelpCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-medium text-gray-700">Không tìm thấy câu hỏi</h3>
               <p className="text-gray-500 mt-2">Câu hỏi không tồn tại hoặc đã bị xóa.</p>
-              <Button className="mt-4 bg-Clever School-green" asChild>
+              <Button className="mt-4 bg-cs-green" asChild>
                 <Link href="/admin/question-bank">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Quay lại ngân hàng câu hỏi
@@ -717,7 +717,7 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="border-Clever School-green">
+            <Card className="border-cs-green">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg">Thông tin cơ bản</CardTitle>
               </CardHeader>
@@ -769,7 +769,7 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
 
           {/* Main content */}
           <div className="lg:col-span-3">
-            <Card className="border-Clever School-green">
+            <Card className="border-cs-green">
               <CardHeader>
                 <CardTitle>Nội dung câu hỏi</CardTitle>
                 <CardDescription>{question.metadata?.instructions || "Hướng dẫn: Chọn đáp án đúng."}</CardDescription>

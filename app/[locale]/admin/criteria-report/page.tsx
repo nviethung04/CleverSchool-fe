@@ -3,6 +3,10 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import {
+  AdminPageHeading,
+  adminPrimaryButtonClass,
+} from "@/components/admin/admin-list-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -231,30 +235,13 @@ export default function CriteriaReportPage() {
   return (
     <div className="min-h-screen">
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-              {t("title")}
-            </h1>
-            <p className="text-gray-600 mt-2">{t("description")}</p>
-          </div>
-          <Button
-            asChild
-            className="mt-4 md:mt-0 bg-Clever School-green text-white hover:bg-opacity-90"
-          >
-            <Link href={`/${locale}/admin/criteria-report/create`}>
-              <LucidePlus className="mr-2 h-4 w-4" />
-              {t("createNew")}
-            </Link>
-          </Button>
-        </div>
+        <AdminPageHeading title={t("title")} description={t("description")} />
 
         {/* Filter Section */}
         <Card className="mb-6">
           <CardContent className="pt-6">
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center w-full sm:w-auto flex-1">
                 <Select
                   value={selectedSubjectId}
                   onValueChange={setSelectedSubjectId}
@@ -275,6 +262,12 @@ export default function CriteriaReportPage() {
                   </SelectContent>
                 </Select>
               </div>
+              <Button asChild className={adminPrimaryButtonClass}>
+                <Link href={`/${locale}/admin/criteria-report/create`}>
+                  <LucidePlus className="mr-2 h-4 w-4" />
+                  {t("createNew")}
+                </Link>
+              </Button>
             </div>
           </CardContent>
         </Card>

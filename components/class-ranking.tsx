@@ -36,7 +36,7 @@ export function ClassRanking({ subject = "overall" }: { subject: RankingSubject 
           <Button
             variant={timeRange === "week" ? "default" : "outline"}
             size="sm"
-            className={`rounded-full ${timeRange === "week" ? "bg-Clever School-yellow text-black" : ""}`}
+            className={`rounded-full ${timeRange === "week" ? "bg-cs-yellow text-black" : ""}`}
             onClick={() => setTimeRange("week")}
           >
             Tuần này
@@ -44,7 +44,7 @@ export function ClassRanking({ subject = "overall" }: { subject: RankingSubject 
           <Button
             variant={timeRange === "month" ? "default" : "outline"}
             size="sm"
-            className={`rounded-full ${timeRange === "month" ? "bg-Clever School-yellow text-black" : ""}`}
+            className={`rounded-full ${timeRange === "month" ? "bg-cs-yellow text-black" : ""}`}
             onClick={() => setTimeRange("month")}
           >
             Tháng này
@@ -52,7 +52,7 @@ export function ClassRanking({ subject = "overall" }: { subject: RankingSubject 
           <Button
             variant={timeRange === "semester" ? "default" : "outline"}
             size="sm"
-            className={`rounded-full ${timeRange === "semester" ? "bg-Clever School-yellow text-black" : ""}`}
+            className={`rounded-full ${timeRange === "semester" ? "bg-cs-yellow text-black" : ""}`}
             onClick={() => setTimeRange("semester")}
           >
             Học kỳ
@@ -67,17 +67,17 @@ export function ClassRanking({ subject = "overall" }: { subject: RankingSubject 
             <div className="relative">
               {index === 0 && (
                 <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
-                  <LucideTrophy className="h-8 w-8 text-Clever School-yellow" />
+                  <LucideTrophy className="h-8 w-8 text-cs-yellow" />
                 </div>
               )}
               {index === 1 && (
                 <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
-                  <LucideMedal className="h-7 w-7 text-Clever School-blue" />
+                  <LucideMedal className="h-7 w-7 text-cs-blue" />
                 </div>
               )}
               {index === 2 && (
                 <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
-                  <LucideMedal className="h-6 w-6 text-Clever School-green" />
+                  <LucideMedal className="h-6 w-6 text-cs-green" />
                 </div>
               )}
               <div className={`relative ${index === 0 ? "w-20 h-20" : index === 1 ? "w-16 h-16" : "w-14 h-14"}`}>
@@ -87,27 +87,27 @@ export function ClassRanking({ subject = "overall" }: { subject: RankingSubject 
                   width={80}
                   height={80}
                   className={`rounded-full border-4 ${
-                    index === 0 ? "border-Clever School-yellow" : index === 1 ? "border-Clever School-blue" : "border-Clever School-green"
+                    index === 0 ? "border-cs-yellow" : index === 1 ? "border-cs-blue" : "border-cs-green"
                   }`}
                 />
                 <div
                   className={`absolute -bottom-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center ${
                     index === 0
-                      ? "bg-Clever School-yellow text-black"
+                      ? "bg-cs-yellow text-black"
                       : index === 1
-                        ? "bg-Clever School-blue text-white"
-                        : "bg-Clever School-green text-white"
+                        ? "bg-cs-blue text-white"
+                        : "bg-cs-green text-white"
                   }`}
                 >
                   {index + 1}
                 </div>
               </div>
             </div>
-            <p className={`mt-2 font-bold text-sm ${student.isCurrentUser ? "text-Clever School-blue" : ""}`}>
+            <p className={`mt-2 font-bold text-sm ${student.isCurrentUser ? "text-cs-blue" : ""}`}>
               {student.name}
             </p>
             <div className="flex items-center mt-1">
-              <LucideStar className="h-4 w-4 text-Clever School-yellow" />
+              <LucideStar className="h-4 w-4 text-cs-yellow" />
               <span className="ml-1 text-sm">{student.points} điểm</span>
             </div>
           </div>
@@ -120,7 +120,7 @@ export function ClassRanking({ subject = "overall" }: { subject: RankingSubject 
           <div
             key={student.id}
             className={`flex items-center p-3 rounded-lg border ${
-              student.isCurrentUser ? "bg-Clever School-blue bg-opacity-5 border-Clever School-blue" : "border-gray-200"
+              student.isCurrentUser ? "bg-cs-blue bg-opacity-5 border-cs-blue" : "border-gray-200"
             }`}
           >
             <div className="w-8 h-8 flex items-center justify-center font-bold text-gray-500">{index + 4}</div>
@@ -133,12 +133,12 @@ export function ClassRanking({ subject = "overall" }: { subject: RankingSubject 
                 className="rounded-full mr-3"
               />
               <div>
-                <p className={`font-medium ${student.isCurrentUser ? "text-Clever School-blue" : ""}`}>{student.name}</p>
+                <p className={`font-medium ${student.isCurrentUser ? "text-cs-blue" : ""}`}>{student.name}</p>
                 <p className="text-xs text-gray-500">Lớp {student.class}</p>
               </div>
             </div>
             <div className="flex items-center">
-              <LucideStar className="h-4 w-4 text-Clever School-yellow mr-1" />
+              <LucideStar className="h-4 w-4 text-cs-yellow mr-1" />
               <span className="font-medium">{student.points}</span>
             </div>
           </div>
@@ -149,7 +149,7 @@ export function ClassRanking({ subject = "overall" }: { subject: RankingSubject 
       {currentUserPosition >= 10 && (
         <>
           <div className="my-2 text-center text-sm text-gray-500">...</div>
-          <div className="flex items-center p-3 rounded-lg border bg-Clever School-blue bg-opacity-5 border-Clever School-blue">
+          <div className="flex items-center p-3 rounded-lg border bg-cs-blue bg-opacity-5 border-cs-blue">
             <div className="w-8 h-8 flex items-center justify-center font-bold text-gray-500">
               {currentUserPosition + 1}
             </div>
@@ -162,12 +162,12 @@ export function ClassRanking({ subject = "overall" }: { subject: RankingSubject 
                 className="rounded-full mr-3"
               />
               <div>
-                <p className="font-medium text-Clever School-blue">{rankingData[currentUserPosition].name}</p>
+                <p className="font-medium text-cs-blue">{rankingData[currentUserPosition].name}</p>
                 <p className="text-xs text-gray-500">Lớp {rankingData[currentUserPosition].class}</p>
               </div>
             </div>
             <div className="flex items-center">
-              <LucideStar className="h-4 w-4 text-Clever School-yellow mr-1" />
+              <LucideStar className="h-4 w-4 text-cs-yellow mr-1" />
               <span className="font-medium">{rankingData[currentUserPosition].points}</span>
             </div>
           </div>

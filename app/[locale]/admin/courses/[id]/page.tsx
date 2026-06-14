@@ -852,7 +852,7 @@ export default function CourseDetailPage({ params, onEdit }: { params: { id: str
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <CardTitle>Nội dung khóa học</CardTitle>
-                  <Button className="rounded-full bg-Clever School-green text-white hover:bg-opacity-90" onClick={() =>
+                  <Button className="rounded-full bg-cs-green text-white hover:bg-opacity-90" onClick={() =>
                    {
                       setShowAddChapterDialog(true)
                       setFormData({
@@ -954,7 +954,7 @@ export default function CourseDetailPage({ params, onEdit }: { params: { id: str
                 <div className="flex justify-between items-center">
                   <CardTitle>Danh sách học sinh</CardTitle>
                   <Button
-                    className="rounded-full bg-Clever School-green text-white hover:bg-opacity-90"
+                    className="rounded-full bg-cs-green text-white hover:bg-opacity-90"
                     onClick={() => {
                       setShowAddStudentDialog(true);
                     }}

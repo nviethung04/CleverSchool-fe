@@ -70,6 +70,7 @@ import { useToast } from "@/hooks/use-toast"
 import Loading from "@/app/loading"
 import { useQueryString } from "@/hooks/use-query-string"
 import { sortAlphabetGeneric } from "@/lib/utils"
+import { adminPrimaryButtonClass } from "@/components/admin/admin-list-header"
 
 // School data interface
 interface SchoolFormData {
@@ -634,7 +635,7 @@ export default function SchoolPage() {
                             accept={".csv,.xlsx"}
                             label="Nhập dữ liệu"
                         />
-                        <Button className="rounded-full bg-Clever School-green text-white hover:bg-opacity-90" onClick={openCreateSchool}>
+                        <Button className={`rounded-full ${adminPrimaryButtonClass}`} onClick={openCreateSchool}>
                             <LucidePlus className="mr-2 h-4 w-4" />
                             {t("createNew")}
                         </Button>

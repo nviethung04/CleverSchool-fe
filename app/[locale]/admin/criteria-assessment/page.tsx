@@ -21,6 +21,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { LucidePlus, Eye, Info, Edit, Trash2, Check, Copy } from "lucide-react";
+import {
+  AdminCreateButton,
+  AdminPageHeading,
+} from "@/components/admin/admin-list-header";
 import { GetGroupList, DeleteGroup, CreateGroupWithCriteria } from "@/lib/api/group-criteria";
 import { GetSubjectsList } from "@/lib/api/subjects";
 import { useToast } from "@/hooks/use-toast";
@@ -201,29 +205,16 @@ export default function CriteriaAssessmentPage() {
   return (
     <div className="min-h-screen">
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-              Quản lý tiêu chí đánh giá
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Quản lý các tiêu chí đánh giá theo môn học
-            </p>
-          </div>
-          <Button
-            className="mt-4 md:mt-0 bg-[#EB8922] hover:bg-[#d97a1a] text-white"
-            onClick={handleCreate}
-          >
-            <LucidePlus className="mr-2 h-4 w-4" />
-            Tạo mới
-          </Button>
-        </div>
+        <AdminPageHeading
+          title="Quản lý tiêu chí đánh giá"
+          description="Quản lý các tiêu chí đánh giá theo môn học"
+        />
 
         {/* Filter Section */}
         <Card className="mb-6">
           <CardContent className="pt-6">
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center w-full sm:w-auto flex-1">
                 <Select
                   value={selectedSubjectId}
                   onValueChange={handleSubjectFilterChange}
@@ -242,9 +233,14 @@ export default function CriteriaAssessmentPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg border border-blue-200">
-                <Info className="h-4 w-4" />
-                <span className="font-medium">Tổng số: {total}</span>
+              <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full sm:w-auto">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg border border-blue-200">
+                  <Info className="h-4 w-4" />
+                  <span className="font-medium">Tổng số: {total}</span>
+                </div>
+                <AdminCreateButton onClick={handleCreate}>
+                  Tạo mới
+                </AdminCreateButton>
               </div>
             </div>
           </CardContent>

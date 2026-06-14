@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
+import { adminPrimaryButtonClass } from "@/components/admin/admin-list-header";
 import { useTranslations } from "next-intl";
 
 export interface SubjectFormData {
@@ -121,7 +122,7 @@ export default function SubjectForm({
         </Button>
         <Button
           type="submit"
-          className="bg-Clever School-green text-white hover:bg-opacity-90"
+          className={adminPrimaryButtonClass}
           disabled={isSubmitting}
         >
           <Save className="mr-2 h-4 w-4" />

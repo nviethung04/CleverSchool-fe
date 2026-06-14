@@ -71,58 +71,22 @@
   }
 }
 
-/* Clever School Theme Colors */
-.bg-Clever School-blue {
-  background-color: #4a90e2;
-}
+/* Clever School brand — dùng class không khoảng trắng: bg-cs-green, text-cs-blue, ... */
+.bg-cs-blue { background-color: #4a90e2; }
+.bg-cs-light-blue { background-color: #8fd3f4; }
+.bg-cs-green { background-color: #7ed957; }
+.bg-cs-yellow { background-color: #ffd900; }
+.bg-cs-orange { background-color: #ff9f00; }
 
-.bg-Clever School-light-blue {
-  background-color: #8fd3f4;
-}
+.text-cs-blue { color: #4a90e2; }
+.text-cs-green { color: #7ed957; }
+.text-cs-yellow { color: #ffd900; }
+.text-cs-orange { color: #ff9f00; }
 
-.bg-Clever School-green {
-  background-color: #7ed957;
-}
-
-.bg-Clever School-yellow {
-  background-color: #ffd900;
-}
-
-.bg-Clever School-orange {
-  background-color: #ff9f00;
-}
-
-.text-Clever School-blue {
-  color: #4a90e2;
-}
-
-.text-Clever School-green {
-  color: #7ed957;
-}
-
-.text-Clever School-yellow {
-  color: #ffd900;
-}
-
-.text-Clever School-orange {
-  color: #ff9f00;
-}
-
-.border-Clever School-blue {
-  border-color: #4a90e2;
-}
-
-.border-Clever School-green {
-  border-color: #7ed957;
-}
-
-.border-Clever School-yellow {
-  border-color: #ffd900;
-}
-
-.border-Clever School-orange {
-  border-color: #ff9f00;
-}
+.border-cs-blue { border-color: #4a90e2; }
+.border-cs-green { border-color: #7ed957; }
+.border-cs-yellow { border-color: #ffd900; }
+.border-cs-orange { border-color: #ff9f00; }
 
 /* Cloud Background */
 .cloud-bg {
