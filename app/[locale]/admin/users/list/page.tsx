@@ -52,6 +52,12 @@ import { exportUser, importUser } from "@/lib/api/export-import";
 import { useQueryString } from "@/hooks/use-query-string";
 import { sortAlphabetGeneric, sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
 import { useAuth } from "@/lib/context/auth-context";
+import { HIDDEN_USER_LIST_TABS } from "@/config/hiddenModules";
+
+const USER_LIST_TABS = ["students", "teachers", "admins", "schools"] as const;
+const VISIBLE_USER_LIST_TABS = USER_LIST_TABS.filter(
+  (tab) => !HIDDEN_USER_LIST_TABS.includes(tab)
+);
 
 const roleMap: { [key: string]: number } = {
   students: 3,
@@ -102,7 +108,7 @@ export default function UserListPage() {
     const tabFromUrl = getValueFromQueryString("tab");
     if (
       tabFromUrl &&
-      ["students", "teachers", "admins", "schools"].includes(tabFromUrl)
+      VISIBLE_USER_LIST_TABS.includes(tabFromUrl)
     ) {
       return tabFromUrl;
     }
@@ -110,6 +116,13 @@ export default function UserListPage() {
   };
 
   const [activeTab, setActiveTab] = useState(getInitialTab);
+
+  useEffect(() => {
+    if (HIDDEN_USER_LIST_TABS.includes(activeTab)) {
+      setActiveTab("students");
+      setQueryParams({ tab: "students" });
+    }
+  }, [activeTab, setQueryParams]);
 
   useEffect(() => {
     fetchAllSchools();
@@ -376,8 +389,13 @@ export default function UserListPage() {
     if (getValueFromQueryString('schoolId')) {
       setSelectedTypeSchool(getValueFromQueryString('schoolId') as string);
     }
-    if (getValueFromQueryString('tab') && getValueFromQueryString('tab') !== activeTab) {
-      setActiveTab(getValueFromQueryString('tab') as string);
+    const tabFromUrl = getValueFromQueryString("tab");
+    if (
+      tabFromUrl &&
+      tabFromUrl !== activeTab &&
+      VISIBLE_USER_LIST_TABS.includes(tabFromUrl)
+    ) {
+      setActiveTab(tabFromUrl);
     }
   }, [searchParamsUrl])
 
@@ -547,7 +565,12 @@ export default function UserListPage() {
               setTimeout(() => setIsTabChanging(false), 300);
             }}
           >
-            <TabsList className="grid w-full grid-cols-4 mb-4">
+            <TabsList
+              className="grid w-full mb-4"
+              style={{
+                gridTemplateColumns: `repeat(${VISIBLE_USER_LIST_TABS.length}, minmax(0, 1fr))`,
+              }}
+            >
               <TabsTrigger value="students" className="text-xs sm:text-sm">
                 <span className="hidden sm:inline">{t("studentRole")}</span>
                 <span className="sm:hidden">{u("studentShort")}</span>
@@ -560,10 +583,12 @@ export default function UserListPage() {
                 <span className="hidden sm:inline">{t("adminRole")}</span>
                 <span className="sm:hidden">{u("adminShort")}</span>
               </TabsTrigger>
-              <TabsTrigger value="schools" className="text-xs sm:text-sm">
-                <span className="hidden sm:inline">{t("schoolRole")}</span>
-                <span className="sm:hidden">{u("schoolShort")}</span>
-              </TabsTrigger>
+              {!HIDDEN_USER_LIST_TABS.includes("schools") && (
+                <TabsTrigger value="schools" className="text-xs sm:text-sm">
+                  <span className="hidden sm:inline">{t("schoolRole")}</span>
+                  <span className="sm:hidden">{u("schoolShort")}</span>
+                </TabsTrigger>
+              )}
             </TabsList>
 
             <div className="mt-6 flex items-center gap-4 mb-6">
@@ -947,6 +972,7 @@ export default function UserListPage() {
               )}
             </TabsContent>
 
+            {!HIDDEN_USER_LIST_TABS.includes("schools") && (
             <TabsContent value="schools">
               {isTabChanging || loading ? (
                 <div className="flex items-center justify-center py-8">
@@ -972,6 +998,7 @@ export default function UserListPage() {
                 />
               )}
             </TabsContent>
+            )}
           </Tabs>
         </CardContent>
         <CardFooter className="flex flex-col xl:flex-row items-center justify-between gap-4 pt-4">

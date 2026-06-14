@@ -33,3 +33,6 @@ export const HIDDEN_MODULES: string[] = [
   "ranking",
   "feedback",
 ];
+
+/** Tabs hidden on /admin/users/list (MVP — hide school accounts tab) */
+export const HIDDEN_USER_LIST_TABS: string[] = ["schools"];

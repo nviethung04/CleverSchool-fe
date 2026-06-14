@@ -9,8 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoginField } from "@/components/auth/login-field";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -164,51 +164,52 @@ export function LoginForm() {
           <form onSubmit={handleSubmit} className="w-full">
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="username">Tên đăng nhập</Label>
-                <Input
+                <LoginField
                   id="username"
                   name="username"
+                  label="Tên đăng nhập"
+                  testId="login-field-account"
                   type="text"
-                  placeholder="Nhập tên đăng nhập"
                   value={values.username}
                   onChange={handleChange}
                   disabled={isLoading || isSubmitting}
                   autoComplete="username"
+                  enterKeyHint="next"
                 />
                 {errors.username && (
                   <p className="text-sm text-red-500">{errors.username}</p>
                 )}
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Mật khẩu</Label>
-                </div>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Nhập mật khẩu"
-                    value={values.password}
-                    onChange={handleChange}
-                    disabled={isLoading || isSubmitting}
-                    autoComplete="current-password"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3"
-                    onClick={() => setShowPassword(!showPassword)}
-                    disabled={isLoading || isSubmitting}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
+                <LoginField
+                  id="password"
+                  name="password"
+                  label="Mật khẩu"
+                  testId="login-field-password"
+                  type={showPassword ? "text" : "password"}
+                  value={values.password}
+                  onChange={handleChange}
+                  disabled={isLoading || isSubmitting}
+                  autoComplete="current-password"
+                  enterKeyHint="done"
+                  suffix={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-0 h-full px-3"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isLoading || isSubmitting}
+                      aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
+                  }
+                />
                 {errors.password && (
                   <p className="text-sm text-red-500">{errors.password}</p>
                 )}

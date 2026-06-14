@@ -55,6 +55,9 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        text: {
+          2: "hsl(var(--text-2))",
+        },
         orange: {
           50: "#fff7ed",
           100: "#ffedd5",
@@ -73,6 +76,9 @@ const config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      lineHeight: {
+        "4_5": "1.125rem",
       },
       keyframes: {
         "accordion-down": {

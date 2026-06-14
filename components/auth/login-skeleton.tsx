@@ -10,15 +10,8 @@ export function LoginSkeleton() {
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-10 w-full" />
-          </div>
-          <div className="grid gap-2">
-            <Skeleton className="h-4 w-16" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-4 w-24 ml-auto" />
-          </div>
+          <Skeleton className="h-14 w-full" />
+          <Skeleton className="h-14 w-full" />
         </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
