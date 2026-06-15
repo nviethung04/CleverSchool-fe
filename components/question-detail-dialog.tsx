@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -437,6 +437,12 @@ export function QuestionDetailDialog({ questionId, open, onOpenChange }: Questio
       <DialogContent 
         className="max-w-lg max-h-[60vh] overflow-auto z-[1300]"
       >
+        <DialogHeader className="sr-only">
+          <DialogTitle>Chi tiết câu hỏi</DialogTitle>
+          <DialogDescription>
+            Xem nội dung và metadata của câu hỏi
+          </DialogDescription>
+        </DialogHeader>
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <LucideLoader2 className="h-8 w-8 animate-spin text-gray-400" />
@@ -449,23 +455,21 @@ export function QuestionDetailDialog({ questionId, open, onOpenChange }: Questio
           </div>
         ) : question ? (
           <>
-            <DialogHeader>
-              <DialogTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span>Question Details</span>
-                  <Badge variant="outline">{question.id}</Badge>
-                </div>
-                <Badge
-                  className={
-                    question.status === 1
-                      ? "bg-green-100 text-green-800 hover:bg-green-200"
-                      : "bg-amber-100 text-amber-800 hover:bg-amber-200"
-                  }
-                >
-                  {question.status === 1 ? "Active" : "Draft"}
-                </Badge>
-              </DialogTitle>
-            </DialogHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
+                <span>Question Details</span>
+                <Badge variant="outline">{question.id}</Badge>
+              </div>
+              <Badge
+                className={
+                  question.status === 1
+                    ? "bg-green-100 text-green-800 hover:bg-green-200"
+                    : "bg-amber-100 text-amber-800 hover:bg-amber-200"
+                }
+              >
+                {question.status === 1 ? "Active" : "Draft"}
+              </Badge>
+            </div>
 
             <Tabs defaultValue="question" className="w-full">
               <TabsList className="mb-4">

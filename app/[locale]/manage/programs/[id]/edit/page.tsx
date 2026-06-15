@@ -52,7 +52,7 @@ import {
 } from "@/lib/api/chapters";
 import { GetLessons, UpdateLesson } from "@/lib/api/lessons";
 import { GetSchoolList } from "@/lib/api/schools";
-import { UploadMedia } from "@/lib/api/picture";
+import { UploadFile } from "@/lib/api/picture";
 import { GetProgramDetail, UpdateProgram } from "@/lib/api/programs";
 import { GetSubjectsList } from "@/lib/api/subjects";
 import type { Lesson } from "@/lib/api/lessons";
@@ -210,6 +210,7 @@ function EditProgramContent({
     ? programIdParam[0]
     : programIdParam;
   const router = useRouter();
+  const { toast } = useToast();
 
   // State
   const [form, setForm] = useState({
@@ -323,7 +324,8 @@ function EditProgramContent({
         const detail = await GetProgramDetail(programId);
         if (cancelled) return;
 
-        if (detail?.data) {
+        const program = detail?.data?.data ?? detail?.data;
+        if (program) {
           const {
             name = "",
             target = "",
@@ -333,7 +335,7 @@ function EditProgramContent({
             chapters = [],
             subject_id = "",
             book_url = "",
-          } = detail.data;
+          } = program;
 
           setForm((f) => ({
             ...f,
@@ -347,7 +349,7 @@ function EditProgramContent({
             chapters: chapters || [],
             subject_id: subject_id ? String(subject_id) : "",
           }));
-          setProgramData(detail.data);
+          setProgramData(program);
         }
       } catch (err) {
         console.error("Error fetching program detail:", err);
@@ -402,36 +404,75 @@ function EditProgramContent({
   // Handlers
   const handleSaveProgram = async () => {
     if (!programId) return;
+    if (!form.subject_id) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng chọn môn học.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSavingProgram(true);
 
     try {
       let imageUrl = form.cover;
 
-      if (selectedImageFile) {
-        const uploadResult = await UploadMedia(selectedImageFile);
-        if (uploadResult && uploadResult.url) {
-          imageUrl = uploadResult.url;
+      if (form.cover.startsWith("blob:")) {
+        if (!selectedImageFile) {
+          toast({
+            title: "Lỗi",
+            description: "Vui lòng chọn file ảnh bìa để tải lên.",
+            variant: "destructive",
+          });
+          return;
+        }
+        const uploadResponse = await UploadFile(
+          selectedImageFile,
+          "programs/covers"
+        );
+        const fileUrl =
+          uploadResponse?.data?.url ||
+          uploadResponse?.url ||
+          uploadResponse?.data?.data?.url;
+        if (!fileUrl) {
+          throw new Error("Không nhận được URL file từ server");
+        }
+        imageUrl = fileUrl;
+      } else if (selectedImageFile) {
+        const uploadResponse = await UploadFile(
+          selectedImageFile,
+          "programs/covers"
+        );
+        const fileUrl =
+          uploadResponse?.data?.url ||
+          uploadResponse?.url ||
+          uploadResponse?.data?.data?.url;
+        if (fileUrl) {
+          imageUrl = fileUrl;
         }
       }
 
-      const selectedSubject = subjects.find((s) => s.id === form.subject_id);
+      const selectedSubject = subjects.find(
+        (s) => String(s.id) === String(form.subject_id)
+      );
       const updateData = {
+        id: Number(programId),
         name: form.name,
         description: form.description,
         target: form.target,
-        duration: form.duration,
+        duration: Number(form.duration) || 1,
         book_url: form.book_url,
         image: imageUrl,
-        ...(form.subject_id && {
-          subject_id: Number(form.subject_id),
-          ...(selectedSubject && {
-            subject: {
-              id: Number(selectedSubject.id),
-              name: selectedSubject.name,
-              description: selectedSubject.description || "",
-              status: selectedSubject.status,
-            },
-          }),
+        status: programData?.status ?? true,
+        subject_id: Number(form.subject_id),
+        ...(selectedSubject && {
+          subject: {
+            id: Number(selectedSubject.id),
+            name: selectedSubject.name,
+            description: selectedSubject.description || "",
+            status: selectedSubject.status,
+          },
         }),
         ...(selectedSchoolId && {
           schools: [
@@ -459,7 +500,11 @@ function EditProgramContent({
       alert("Cập nhật chương trình thành công!");
     } catch (error) {
       console.error("Error updating program:", error);
-      alert("Có lỗi khi cập nhật chương trình");
+      toast({
+        title: "Lỗi",
+        description: "Có lỗi khi cập nhật chương trình",
+        variant: "destructive",
+      });
     } finally {
       setIsSavingProgram(false);
     }
@@ -906,7 +951,7 @@ function EditProgramContent({
                         subjects.map((subject: any) => (
                           <SelectItem
                             key={subject.id}
-                            value={subject.id}
+                            value={String(subject.id)}
                             className="rounded-xl"
                           >
                             {subject.name}
@@ -1567,6 +1612,7 @@ function EditProgramContent({
                   <LessonForm
                     hideSidebar
                     mode="create"
+                    chapterId={currentChapterId}
                     onCancel={() => setShowCreateLesson(false)}
                     onSuccess={async (res: any) => {
                       setShowCreateLesson(false);

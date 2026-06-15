@@ -41,14 +41,16 @@ import {
   LucideEye,
   LucideSave,
   LucideArchive,
+  ChevronDown,
 } from "lucide-react";
 import Image from "next/image";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
 } from "@/components/ui/accordion";
+import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { uploadFile } from "@/lib/api/questions";
 import {
@@ -1015,7 +1017,13 @@ export default function LectureForm({
                         onDrop={(e) => handleDrop(e, section.id)}
                         onDragEnd={handleDragEnd}
                       >
-                        <AccordionTrigger className="hover:bg-gray-50/50 data-[state=open]:bg-gray-50/80 transition-colors gap-0 px-3 py-2 md:px-6 md:py-4">
+                        <AccordionPrimitive.Header className="flex items-center">
+                          <AccordionPrimitive.Trigger
+                            className={cn(
+                              "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg.chevron-icon]:rotate-180",
+                              "hover:bg-gray-50/50 data-[state=open]:bg-gray-50/80 gap-0 px-3 py-2 md:px-6 md:py-4"
+                            )}
+                          >
                           <div className="flex items-center justify-between w-full flex-wrap gap-2">
                             <div className="flex items-center flex-wrap gap-2 md:gap-4">
                               <div className="flex items-center gap-3">
@@ -1049,71 +1057,42 @@ export default function LectureForm({
                                 </div>
                               </div>
                             </div>
-
-                            <div className="flex items-center gap-2 ml-4">
-                              {console.log(
-                                "Rendering delete button for section:",
-                                section.id,
-                                "hasCourseId:",
-                                hasCourseId,
-                                "is_program:",
-                                section.is_program,
-                                "condition:",
-                                !hasCourseId ||
-                                (hasCourseId && !section.is_program),
-                                "sections.length:",
-                                lessonSections.length,
-                                "disabled:",
-                                lessonSections.length <= 1
-                              )}
-                              {(!hasCourseId ||
-                                (hasCourseId && !section.is_program)) && (
-                                  <div className="flex items-center gap-1">
-                                    <Button
-                                      type="button"
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDuplicateSection(section.id);
-                                      }}
-                                      className="h-9 w-9 p-0 rounded-2xl border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-                                      title="Nhân đôi phần"
-                                    >
-                                      <LucideCopy className="h-4 w-4" />
-                                    </Button>
-                                  </div>
-                                )}
-                              {(!hasCourseId ||
-                                (hasCourseId && !section.is_program)) && (
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      console.log(
-                                        "Delete button clicked for section:",
-                                        section.id
-                                      );
-                                      console.log("hasCourseId:", hasCourseId);
-                                      console.log(
-                                        "section.is_program:",
-                                        section.is_program
-                                      );
-                                      e.stopPropagation();
-                                      handleRemoveSection(section.id);
-                                    }}
-                                    className="h-9 w-9 p-0 rounded-2xl border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50 relative z-10"
-                                    disabled={lessonSections.length <= 1}
-                                    style={{ pointerEvents: "auto" }}
-                                    title="Xóa phần"
-                                  >
-                                    <LucideTrash2 className="h-4 w-4" />
-                                  </Button>
-                                )}
-                            </div>
                           </div>
-                        </AccordionTrigger>
+                          <ChevronDown className="chevron-icon h-4 w-4 shrink-0 transition-transform duration-200" />
+                          </AccordionPrimitive.Trigger>
+                          {(!hasCourseId ||
+                            (hasCourseId && !section.is_program)) && (
+                            <div className="flex items-center gap-2 px-3 md:px-4 shrink-0">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDuplicateSection(section.id);
+                                }}
+                                className="h-9 w-9 p-0 rounded-2xl border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                                title="Nhân đôi phần"
+                              >
+                                <LucideCopy className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveSection(section.id);
+                                }}
+                                className="h-9 w-9 p-0 rounded-2xl border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50"
+                                disabled={lessonSections.length <= 1}
+                                title="Xóa phần"
+                              >
+                                <LucideTrash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </AccordionPrimitive.Header>
                         <AccordionContent className="border-t bg-white p-3 md:p-6">
                           <div className="space-y-6">
                             {/* Basic section info - 4 column layout */}

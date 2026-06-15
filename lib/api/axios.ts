@@ -11,9 +11,85 @@ declare global {
   }
 }
 import axios from "axios";
+import type { AxiosRequestConfig } from "axios";
 import { logoutFn } from "@/lib/context/auth-context";
 
 const baseURL = `/api`;
+
+export function getDirectApiBaseUrl(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
+  if (fromEnv) {
+    return fromEnv.replace(/\/$/, "");
+  }
+  return "http://localhost:8080/api";
+}
+
+export function getAuthHeaders(): Record<string, string> {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  if (!token) return {};
+  return {
+    Authorization: `Bearer ${token}`,
+    Token: token,
+  };
+}
+
+/** Let the browser set multipart boundary; axios instance defaults to application/json. */
+export const multipartUploadOptions = (
+  timeoutMs = 10 * 60 * 1000
+): AxiosRequestConfig => ({
+  timeout: timeoutMs,
+  transformRequest: [
+    (data, headers) => {
+      if (typeof FormData !== "undefined" && data instanceof FormData) {
+        delete headers["Content-Type"];
+      }
+      return data;
+    },
+  ],
+});
+
+/** Upload large files directly to the API server (bypasses Next.js rewrite proxy). */
+export async function postMultipartUpload(
+  formData: FormData,
+  endpoint = "/upload-file"
+) {
+  const path = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = `${getDirectApiBaseUrl()}${path}`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    body: formData,
+    headers: getAuthHeaders(),
+    credentials: "include",
+  });
+
+  let data: unknown = null;
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    data = await response.json();
+  } else {
+    const text = await response.text();
+    data = text ? { message: text } : null;
+  }
+
+  if (!response.ok) {
+    const message =
+      (data as { message?: string })?.message ||
+      `Upload failed (${response.status})`;
+    const error = new Error(message) as Error & {
+      response?: { status: number; data: unknown };
+    };
+    error.response = { status: response.status, data };
+    throw error;
+  }
+
+  return {
+    data,
+    status: response.status,
+    headers: response.headers,
+  };
+}
 
 // Update the axios instance to include the Type: json header
 const axiosInstance = axios.create({

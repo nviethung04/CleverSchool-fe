@@ -113,7 +113,7 @@ function LessonCard({
   onDelete: (lessonId: string) => void;
   userType?: string;
   locale: string;
-  t: (key: string) => string;
+  t: ReturnType<typeof useTypedTranslations>;
 }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -380,7 +380,7 @@ function LessonCard({
             {t("confirmDeleteTitle")}
           </div>
           <div className="mb-4 text-gray-700">
-            {t("confirmDeleteMessage").replace("{title}", lesson.title)}
+            {t("confirmDeleteMessage", { title: lesson.title })}
           </div>
           <DialogFooter className="flex gap-2 justify-center">
             <Button

@@ -1,5 +1,5 @@
 import { FOLDER } from "@/lib/constants/folder";
-import axiosInstance from "./axios";
+import axiosInstance, { postMultipartUpload } from "./axios";
 import { percentageToPixel } from "@/lib/utils/coordinate-utils";
 
 // Updated interface for question media
@@ -364,14 +364,10 @@ export async function uploadFile(file: File, path?: string) {
     const newPath = path && FOLDER.some(folder => path.includes(folder)) ? path : 'user/' + path
     
     const formData = new FormData();
-    formData.append("file", file);
     formData.append("path", newPath);
+    formData.append("file", file);
 
-    const response = await axiosInstance.post("/upload-file", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await postMultipartUpload(formData, "/upload-file");
 
     return response.data;
   } catch (error) {

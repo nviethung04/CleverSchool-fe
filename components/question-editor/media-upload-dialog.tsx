@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import axiosInstance from "@/lib/api/axios";
+import { postMultipartUpload } from "@/lib/api/axios";
 import { useTranslations } from "next-intl";
 import { useAppSelector } from "@/lib/redux/hooks";
 
@@ -91,14 +91,10 @@ export function MediaUploadDialog({
     try {
       // Tạo FormData để gửi file
       const formData = new FormData();
+      formData.append("path", "user/media");
       formData.append("file", uploadedFile);
 
-      // Gọi API upload file
-      const response = await axiosInstance.post("/upload-file", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await postMultipartUpload(formData, "/upload-file");
 
       console.log("Upload response:", response.data);
 

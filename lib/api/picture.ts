@@ -1,16 +1,12 @@
-import axiosInstance from "./axios";
+import { postMultipartUpload } from "./axios";
 
 export async function UploadMedia(file: File, path: string = "user/avatars") {
     try {
         const formData = new FormData();
+        formData.append("path", path);
         formData.append("file", file);
-        formData.append("path", path); // Mặc định là 'avatars'
 
-        const response = await axiosInstance.post("/upload-file", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+        const response = await postMultipartUpload(formData, "/upload-file");
 
         return response.data;
     } catch (error: any) {
@@ -33,14 +29,10 @@ export async function UploadMedia(file: File, path: string = "user/avatars") {
 export async function UploadLogo(file: File, path: string = "logos") {
     try {
         const formData = new FormData();
+        formData.append("path", path);
         formData.append("file", file);
-        formData.append("path", path); // Mặc định là 'logo'
 
-        const response = await axiosInstance.post("/upload-file", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+        const response = await postMultipartUpload(formData, "/upload-file");
 
         return response.data;
     } catch (error: any) {
@@ -63,14 +55,10 @@ export async function UploadLogo(file: File, path: string = "logos") {
 export async function UploadFile(file: File, path: string = "certificates") {
     try {
         const formData = new FormData();
+        formData.append("path", path);
         formData.append("file", file);
-        formData.append("path", path); // Mặc định là 'files'
 
-        const response = await axiosInstance.post("/upload-file", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+        const response = await postMultipartUpload(formData, "/upload-file");
 
         return response.data;
     } catch (error: any) {

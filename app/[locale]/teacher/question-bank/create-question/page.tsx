@@ -45,17 +45,18 @@ import {
   convertWritingToApiFormat,
   convertSpeakingToApiFormat,
   convertCategoryToApiFormat,
-  getQuestionAttributes,
-  QuestionAttributeNode,
   type QuestionAttributePayload,
 } from "@/lib/api/questions";
 import { useToast } from "@/components/ui/use-toast";
 import { useParams, useRouter } from "next/navigation";
 import { EditableMathField } from "react-mathquill";
 import { RoleBasedHeaderSidebar } from "@/components/layout/role-based-header-sidebar";
-import { GetSubjectsList } from "@/lib/api/subjects";
 import { useTranslations } from "next-intl";
-import { sortAlphabetGeneric } from "@/lib/utils";
+import {
+  useQuestionMetadata,
+  validateQuestionMetadata,
+} from "@/hooks/use-question-metadata";
+import { QuestionMetadataFields } from "@/components/question-editor/question-metadata-fields";
 
 function QuestionEditor() {
   const dispatch = useAppDispatch();
@@ -74,39 +75,17 @@ function QuestionEditor() {
 
   const questionState = useAppSelector((state) => state.question);
   const { questionType, points } = questionState;
-
-  // State cho attributes và lựa chọn
-  const [attributes, setAttributes] = useState<QuestionAttributeNode[]>([]);
-  const [selectedSkillId, setSelectedSkillId] = useState<string>("");
-  const [selectedLevelId, setSelectedLevelId] = useState<string>("");
-  const [selectedCognitionId, setSelectedCognitionId] = useState<string>("");
-  const [selectedSubjectId, setSelectedSubjectId] = useState<string>("");
+  const metadata = useQuestionMetadata();
+  const {
+    skillAttr,
+    levelAttr,
+    cognitionAttr,
+    selectedSkillId,
+    selectedLevelId,
+    selectedCognitionId,
+    selectedSubjectId,
+  } = metadata;
   const [customInstructions, setCustomInstructions] = useState<string>("");
-  const [subjectOptions, setSubjectOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
-
-  // Fetch subjects for subject select
-  useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      try {
-        const res = await GetSubjectsList();
-        const subjects = res?.data?.subjects || [];
-        const options = subjects.map((s: any) => ({
-          value: String(s.id),
-          label: s.name,
-        }));
-        if (!isMounted) return;
-        setSubjectOptions(options);
-      } catch (e) {
-        // keep silent, subjectOptions stays empty
-      }
-    })();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   // Kiểm tra token khi component mount và reset state
   useEffect(() => {
@@ -123,19 +102,7 @@ function QuestionEditor() {
 
     // Reset state khi component mount để xóa dữ liệu câu hỏi cũ
     dispatch(resetState());
-  }, [dispatch, toast]);
-
-  // Tải attributes ngay khi component mount (không phụ thuộc môn học)
-  useEffect(() => {
-    getQuestionAttributes("1").then((attrs) => {
-      setAttributes(attrs);
-    });
-  }, []);
-
-  // Lấy từng attribute (theo thứ tự)
-  const skillAttr = attributes[0];
-  const levelAttr = attributes[1];
-  const cognitionAttr = attributes[2];
+  }, [dispatch, toast, t]);
 
   // Question type options
   const questionTypes = [
@@ -260,41 +227,9 @@ function QuestionEditor() {
       return false;
     }
 
-    // kiểm tra xem đã chọn môn học chưa
-    if (!selectedSubjectId) {
-      toast({
-        title: "Lỗi",
-        description: t("validation.subjectRequired"),
-        variant: "destructive",
-      });
-      return false
-    }
-    // kiểm tra xem đã chọn kỹ năng chưa
-    if (!selectedSkillId) {
-      toast({
-        title: "Lỗi",
-        description: t("validation.skillRequired"),
-        variant: "destructive",
-      });
-      return false
-    }
-    // kiểm tra xem đã chọn mức độ chưa
-    if (!selectedLevelId) {
-      toast({
-        title: "Lỗi",
-        description: t("validation.levelRequired"),
-        variant: "destructive",
-      });
-      return false
-    }
-    // kiểm tra xem đã chọn mức độ nhận thức chưa
-    if (!selectedCognitionId) {
-      toast({
-        title: "Lỗi",
-        description: t("validation.cognitionRequired"),
-        variant: "destructive",
-      });
-      return false
+    // kiểm tra metadata (môn học, kỹ năng, mức độ...)
+    if (!validateQuestionMetadata(metadata, toast, t)) {
+      return false;
     }
 
     // Kiểm tra câu hỏi có nội dung không
@@ -1040,54 +975,30 @@ function QuestionEditor() {
             </div>
           </div>
 
-          {/* Subject selection */}
-          <div className="flex flex-wrap gap-4 mb-4">
-            <CustomSelect
-              options={sortAlphabetGeneric(subjectOptions, (item: any) => item.label, true)}
-              value={selectedSubjectId}
-              onValueChange={setSelectedSubjectId}
-              placeholder={t("selectSubject")}
-              className="w-full md:w-[150px]"
-            />
-
-            {/* 3 select cho attributes */}
-            {skillAttr && (
-              <CustomSelect
-                options={skillAttr.nodes.map((node) => ({
-                  value: node.id,
-                  label: node.name,
-                }))}
-                value={selectedSkillId}
-                onValueChange={setSelectedSkillId}
-                placeholder={`${skillAttr.name}`}
-                className="w-full md:w-[150px]"
-              />
-            )}
-            {levelAttr && (
-              <CustomSelect
-                options={levelAttr.nodes.map((node) => ({
-                  value: node.id,
-                  label: node.name,
-                }))}
-                value={selectedLevelId}
-                onValueChange={setSelectedLevelId}
-                placeholder={`${levelAttr.name}`}
-                className="w-full md:w-[200px]"
-              />
-            )}
-            {cognitionAttr && (
-              <CustomSelect
-                options={cognitionAttr.nodes.map((node) => ({
-                  value: node.id,
-                  label: node.name,
-                }))}
-                value={selectedCognitionId}
-                onValueChange={setSelectedCognitionId}
-                placeholder={`${cognitionAttr.name}`}
-                className="w-full md:w-[250px]"
-              />
-            )}
-          </div>
+          <QuestionMetadataFields
+            subjectLabel={t("subjectLabel")}
+            selectSubjectPlaceholder={t("selectSubject")}
+            selectSkillPlaceholder={t("selectSkill")}
+            selectLevelPlaceholder={t("selectLevel")}
+            selectCognitionPlaceholder={t("selectCognition")}
+            loadingAttributesText={t("loadingAttributes")}
+            attributesNotLoadedText={t("attributesNotLoaded")}
+            subjectOptions={metadata.subjectOptions}
+            selectedSubjectId={metadata.selectedSubjectId}
+            onSubjectChange={metadata.setSelectedSubjectId}
+            attributesLoading={metadata.attributesLoading}
+            attributesCount={metadata.attributes.length}
+            skillAttr={metadata.skillAttr}
+            levelAttr={metadata.levelAttr}
+            cognitionAttr={metadata.cognitionAttr}
+            selectedSkillId={metadata.selectedSkillId}
+            onSkillChange={metadata.setSelectedSkillId}
+            selectedLevelId={metadata.selectedLevelId}
+            onLevelChange={metadata.setSelectedLevelId}
+            selectedCognitionId={metadata.selectedCognitionId}
+            onCognitionChange={metadata.setSelectedCognitionId}
+            toNodeOptions={metadata.toNodeOptions}
+          />
 
           {/* Instructions input */}
           <div className="mb-4">

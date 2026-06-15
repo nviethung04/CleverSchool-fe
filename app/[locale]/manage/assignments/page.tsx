@@ -104,6 +104,7 @@ import {
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ProfessionalPagination from "@/components/ui/professional-pagination";
+import { ASSESSMENTS_ENABLED } from "@/config/featureFlags";
 
 // Utility function to format Unix timestamp to readable date
 const formatTimestamp = (
@@ -257,6 +258,7 @@ export default function ExamsPage() {
       activeTab === "all" && debouncedSearchTerm
         ? debouncedSearchTerm
         : undefined,
+    enabled: activeTab === "all",
   }) as {
     data: { exams: any[]; totalPages: number; total: number } | undefined;
     isLoading: boolean;
@@ -275,6 +277,7 @@ export default function ExamsPage() {
       activeTab === "homework" && debouncedSearchTerm
         ? debouncedSearchTerm
         : undefined,
+    enabled: activeTab === "homework",
   }) as {
     data: { homeworks: any[]; totalPages: number; total: number } | undefined;
     isLoading: boolean;
@@ -293,6 +296,7 @@ export default function ExamsPage() {
       activeTab === "assessment" && debouncedSearchTerm
         ? debouncedSearchTerm
         : undefined,
+    enabled: ASSESSMENTS_ENABLED && activeTab === "assessment",
   }) as {
     data: { assessment: any[]; totalPages: number; total: number } | undefined;
     isLoading: boolean;
@@ -1007,7 +1011,7 @@ export default function ExamsPage() {
                   </TabsTrigger>
                 )}
 
-                {user?.type === "admin" && (
+                {ASSESSMENTS_ENABLED && user?.type === "admin" && (
                   <TabsTrigger
                     value="assessment"
                     className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700 data-[state=active]:border-orange-200 rounded-xl px-6 py-3 font-medium transition-all duration-200 max-md:flex max-md:justify-start w-full md:w-auto"
@@ -1888,6 +1892,7 @@ export default function ExamsPage() {
             )}
           </TabsContent>
 
+          {ASSESSMENTS_ENABLED && (
           <TabsContent value="assessment">
             {/* Assessment Cards */}
             {assessmentLoading ? (
@@ -2081,6 +2086,7 @@ export default function ExamsPage() {
               />
             )}
           </TabsContent>
+          )}
         </Tabs>
 
         {/* Clone Dialog */}
@@ -2336,7 +2342,7 @@ export default function ExamsPage() {
                   )}
                 </Button>
               )}
-              {user?.type === "admin" && (
+              {ASSESSMENTS_ENABLED && user?.type === "admin" && (
                 <Button
                   className="flex items-center gap-4 h-auto py-6 px-6 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl transition-all duration-200"
                   onClick={handleCreateAssessment}

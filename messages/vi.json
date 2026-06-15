@@ -4034,6 +4034,12 @@
     "saveQuestion": "Lưu câu hỏi",
     "saving": "Đang lưu...",
     "selectSubject": "Chọn môn học",
+    "selectSkill": "Chọn kỹ năng",
+    "selectLevel": "Chọn mức độ",
+    "selectCognition": "Chọn mức độ nhận thức",
+    "subjectLabel": "Môn học",
+    "loadingAttributes": "Đang tải thuộc tính câu hỏi...",
+    "attributesNotLoaded": "Chưa có dữ liệu kỹ năng/mức độ cho môn học này. Liên hệ quản trị viên hoặc chạy seed QuestionAttribute trên server.",
     "editTitle": "Chỉnh sửa câu hỏi",
     "time": "Thời gian",
     "minutesShort": "phút",
@@ -4064,7 +4070,7 @@
       "speaking": "Nói"
     },
     "validation": {
-      "skillRequired": "Vui lòng chọn kỹ năng",
+      "skillRequired": "Vui lòng chọn kỹ năng (dropdown bên cạnh Môn học)",
       "levelRequired": "Vui lòng chọn mức độ",
       "cognitionRequired": "Vui lòng chọn mức độ nhận thức",
       "subjectRequired": "Vui lòng chọn môn học",

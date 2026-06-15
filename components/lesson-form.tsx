@@ -36,6 +36,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { getTagsList, getTopicsList, getSkillsList } from "@/lib/api/utils";
 import { getQuestions, type QuestionType } from "@/lib/api/questions";
@@ -56,6 +57,7 @@ import { ArrowLeft } from "lucide-react";
 interface LessonFormProps {
   mode: "create" | "edit";
   lessonId?: string;
+  chapterId?: string;
   onSuccess?: (res?: any) => void;
   onCancel?: () => void;
   hideSidebar?: boolean;
@@ -64,6 +66,7 @@ interface LessonFormProps {
 export function LessonForm({
   mode,
   lessonId,
+  chapterId,
   onSuccess,
   onCancel,
   hideSidebar,
@@ -2000,7 +2003,11 @@ export function LessonForm({
         title: form.title,
         description: form.description,
         status: true,
-        chapter: originalLessonData ? originalLessonData.chapter : undefined,
+        chapter: chapterId
+          ? { id: Number(chapterId), title: "" }
+          : originalLessonData
+            ? originalLessonData.chapter
+            : undefined,
         dependencies: undefined,
         tags: form.tags.map((name, idx) => ({ id: idx + 1, name })),
         topics: topicsField,
@@ -3059,6 +3066,9 @@ export function LessonForm({
         <DialogContent className="max-w-6xl h-[85vh] flex flex-col">
           <DialogHeader>
             <DialogTitle>{t("createExercise")}</DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("selectHomeworksForLesson")}
+            </DialogDescription>
           </DialogHeader>
           <div className="flex-1 overflow-auto sm:p-8">
             <ExerciseForm
@@ -3204,6 +3214,12 @@ export function LessonForm({
       {/* Popup tạo bài tập về nhà */}
       <Dialog open={showCreateHomework} onOpenChange={setShowCreateHomework}>
         <DialogContent className="max-w-6xl h-[85vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>{t("exercises")}</DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("selectExercisesForLesson")}
+            </DialogDescription>
+          </DialogHeader>
           <div className="flex-1 overflow-auto sm:p-8">
             <HomeworkForm
               mode="create"
@@ -3332,6 +3348,12 @@ export function LessonForm({
         onOpenChange={setShowCreateAssessment}
       >
         <DialogContent className="max-w-6xl h-[85vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>{t("createAssessment")}</DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("selectAssessmentForLesson")}
+            </DialogDescription>
+          </DialogHeader>
           <div className="flex-1 overflow-auto sm:p-8">
             <AssessmentForm
               mode="create"
@@ -3397,6 +3419,12 @@ export function LessonForm({
       {/* Popup tạo bài kiểm tra */}
       <Dialog open={showCreateExam} onOpenChange={setShowCreateExam}>
         <DialogContent className="max-w-6xl h-[85vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>{t("createTest")}</DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("selectTestsForLesson")}
+            </DialogDescription>
+          </DialogHeader>
           <div className="flex-1 overflow-auto sm:p-8">
             <ExamForm
               // Basic exam info
@@ -3557,6 +3585,9 @@ export function LessonForm({
             <DialogTitle className="text-xl font-semibold text-gray-900">
               {t("selectLecture")}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("selectLectureForLesson")}
+            </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col flex-1 overflow-hidden">
             <div className="px-4 pt-2.5 pb-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 flex-shrink-0">
@@ -3755,6 +3786,9 @@ export function LessonForm({
             <DialogTitle className="text-xl font-semibold text-gray-900">
               {t("selectExercises")}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("selectExercisesForLesson")}
+            </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col flex-1 overflow-hidden">
             <div className="px-4 pt-2.5 pb-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 flex-shrink-0">
@@ -4022,6 +4056,9 @@ export function LessonForm({
             <DialogTitle className="text-xl font-semibold text-gray-900">
               {t("selectAssessment")}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("selectAssessmentForLesson")}
+            </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col flex-1 overflow-hidden">
             <div className="px-4 pt-2.5 pb-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 flex-shrink-0">
@@ -4289,6 +4326,9 @@ export function LessonForm({
             <DialogTitle className="text-xl font-semibold text-gray-900">
               {t("selectExercises")}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("selectHomeworksForLesson")}
+            </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col flex-1 overflow-hidden">
             <div className="px-4 pt-2.5 pb-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 flex-shrink-0">
@@ -4563,6 +4603,9 @@ export function LessonForm({
             <DialogTitle className="text-xl font-semibold text-gray-900">
               {t("selectTests")}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("selectTestsForLesson")}
+            </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col flex-1 overflow-hidden">
             <div className="px-4 pt-2.5 pb-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 flex-shrink-0">
@@ -4817,6 +4860,9 @@ export function LessonForm({
             <DialogTitle className="text-xl font-semibold text-gray-900">
               Chọn từ vựng
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Chọn từ vựng cho bài học từ thư viện
+            </DialogDescription>
           </DialogHeader>
 
           <div className="px-4 pb-4 border-b border-gray-100 flex-shrink-0">
