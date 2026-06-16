@@ -2748,6 +2748,24 @@
     "uploadSuccessDescription": "Cover image has been uploaded successfully.",
     "uploadErrorTitle": "Upload error",
     "uploadErrorDescription": "Cannot upload cover image. Please try again later.",
+    "lessonForm": {
+      "missingInfo": "Missing information",
+      "enterExamName": "Please enter exam name",
+      "enterHomeworkName": "Please enter homework name",
+      "enterExerciseName": "Please enter exercise name",
+      "success": "Success",
+      "error": "Error",
+      "examCreatedSuccess": "Exam created successfully",
+      "cannotCreateExam": "Cannot create exam. Please try again later",
+      "exerciseCreatedSuccess": "Exercise created successfully",
+      "cannotCreateExercise": "Cannot create exercise. Please try again later"
+    },
+    "homeworkForm": {
+      "alreadyAssignedTitle": "Homework already assigned",
+      "alreadyAssignedDesc": "This homework has been assigned. Therefore it cannot be edited.",
+      "updateSuccess": "Homework updated successfully",
+      "cannotUpdateHomework": "Cannot update homework. Please try again later."
+    },
     "common": {
       "cancel": "Cancel"
     },
@@ -2903,7 +2921,9 @@
       "uploadErrorTitle": "Upload error",
       "uploadErrorDesc": "Cannot upload cover image. Please try again later.",
       "alreadyAssignedTitle": "Exam already assigned",
-      "alreadyAssignedDesc": "This exam has been assigned. Therefore it cannot be edited."
+      "alreadyAssignedDesc": "This exam has been assigned. Therefore it cannot be edited.",
+      "updateSuccess": "Exam updated successfully",
+      "cannotUpdateExam": "Cannot update exam. Please try again later."
     },
     "exerciseForm": {
       "infoTitle": "Exercise Information",
@@ -2985,7 +3005,9 @@
       "uploadErrorTitle": "Upload error",
       "uploadErrorDesc": "Cannot upload cover image. Please try again later.",
       "alreadyAssignedTitle": "Exercise already assigned",
-      "alreadyAssignedDesc": "This exercise has been assigned. Therefore it cannot be edited."
+      "alreadyAssignedDesc": "This exercise has been assigned. Therefore it cannot be edited.",
+      "updateSuccess": "Exercise updated successfully",
+      "cannotUpdateExercise": "Cannot update exercise. Please try again later."
     },
     "assessmentForm": {
       "createTitle": "Create Assessment Test",
@@ -4138,6 +4160,7 @@
       "addOption": "Add option",
       "removeOption": "Remove option",
       "correctAnswer": "Correct answer",
+      "correctAnswerHint": "Click the ✓ icon at the top-right of an option to mark it as correct. Students may select only one answer.",
       "allowMultipleAnswers": "Allow multiple answers",
       "option": "Option",
       "addImage": "Add image",

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { Button } from "@/components/ui/button";
@@ -30,16 +30,13 @@ import Link from "next/link";
 import Image from "next/image";
 import type { QuestionType } from "@/lib/api/questions";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState, useRef, useId } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import { QuestionBankDialog } from "@/components/QuestionBankDialog";
 import { LatexText } from "@/components/latex-text";
 import { CreateQuestionDialog } from "@/components/ui/dialog";
 import { useTypedTranslations } from "@/lib/i18n/client";
 import { useParams } from "next/navigation";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { LucideUpload, LucideFileText } from "lucide-react";
-import { uploadFile } from "@/lib/api/questions";
 const CreateQuestionModal = dynamic(
   () =>
     import("@/components/question-editor/create-question-modal").then(
@@ -115,7 +112,7 @@ interface HomeworkFormProps {
   homeworkId?: string | number;
   exerciseId?: string | number;
 
-  // Đóng modal chọn câu hỏi và lưu localStorage
+  // ÄÃ³ng modal chá»n cÃ¢u há»i vÃ  lÆ°u localStorage
   handleCloseQuestionBank?: () => void;
 
   // State setters for questions
@@ -126,10 +123,6 @@ interface HomeworkFormProps {
   setQuestionScores: React.Dispatch<
     React.SetStateAction<Record<string, number>>
   >;
-
-  // Initial values for edit mode
-  initialAssignmentMode?: "question-bank" | "file-upload";
-  initialUploadedFiles?: { type: string; url: string; name?: string }[];
 }
 
 export function HomeworkForm({
@@ -174,8 +167,6 @@ export function HomeworkForm({
   setSelectedQuestions,
   setSelectedQuestionsData,
   setQuestionScores,
-  initialAssignmentMode,
-  initialUploadedFiles,
 }: HomeworkFormProps) {
   const params = useParams();
   const t = useTypedTranslations("manageAssignments");
@@ -188,15 +179,6 @@ export function HomeworkForm({
 
   const { toast } = useToast();
   const [showCreateQuestion, setShowCreateQuestion] = useState(false);
-  const [assignmentMode, setAssignmentMode] = useState<
-    "question-bank" | "file-upload"
-  >(initialAssignmentMode || "question-bank");
-  const [uploadedFiles, setUploadedFiles] = useState<
-    { type: string; url: string; name?: string }[]
-  >(initialUploadedFiles || []);
-  const [uploadingFile, setUploadingFile] = useState(false);
-  const moreFilesInputRef = useRef<HTMLInputElement>(null);
-  const moreFilesInputId = useId();
 
   // Helper function to render media content
   const renderMediaContent = (media: any) => {
@@ -366,65 +348,10 @@ export function HomeworkForm({
                     />
                   </div>
                 </div>
-
-                {/* Assignment Mode Selection */}
-                <div className="space-y-3 pt-4">
-                  <Label className="text-sm font-medium text-gray-700">
-                    Phương thức tạo bài tập
-                  </Label>
-                  <RadioGroup
-                    value={assignmentMode}
-                    onValueChange={(value) =>
-                      setAssignmentMode(
-                        value as "question-bank" | "file-upload"
-                      )
-                    }
-                    className="flex flex-row gap-2 sm:gap-6 flex-wrap"
-                  >
-                    <Label
-                      htmlFor="assignment-mode-question-bank"
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 cursor-pointer transition-colors w-full md:w-auto
-      ${
-        assignmentMode === "question-bank"
-          ? "border-green-400 bg-green-50"
-          : "border-gray-200 bg-white hover:border-green-300"
-      }`}
-                    >
-                      <RadioGroupItem
-                        value="question-bank"
-                        id="assignment-mode-question-bank"
-                      />
-                      <LucideBookOpen className="h-5 w-5 text-blue-600" />
-                      <span className="font-medium text-gray-900">
-                        Ngân hàng câu hỏi
-                      </span>
-                    </Label>
-                    <Label
-                      htmlFor="assignment-mode-file-upload"
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 cursor-pointer transition-colors w-full md:w-auto
-      ${
-        assignmentMode === "file-upload"
-          ? "border-green-400 bg-green-50"
-          : "border-gray-200 bg-white hover:border-green-300"
-      }`}
-                    >
-                      <RadioGroupItem
-                        value="file-upload"
-                        id="assignment-mode-file-upload"
-                      />
-                      <LucideUpload className="h-5 w-5 text-purple-600" />
-                      <span className="font-medium text-gray-900">
-                        Upload file
-                      </span>
-                    </Label>
-                  </RadioGroup>
-                </div>
               </div>
             </div>
 
-            {/* Questions - Conditional Display */}
-            {assignmentMode === "question-bank" && (
-              <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 sm:p-8">
                   <div className="mb-6">
                     <h2 className="text-xl font-semibold text-gray-900 mb-2">
@@ -487,12 +414,12 @@ export function HomeworkForm({
                                 (question, index) => {
                                   if (!question) {
                                     console.log(
-                                      "⚠️ Null question at index:",
+                                      "âš ï¸ Null question at index:",
                                       index
                                     );
                                     return null;
                                   }
-                                  console.log("🎯 Rendering question:", {
+                                  console.log("ðŸŽ¯ Rendering question:", {
                                     id: question.id,
                                     type: question.type,
                                     index,
@@ -524,11 +451,11 @@ export function HomeworkForm({
                                               />
                                             </div>
 
-                                            {/* Question Media - ưu tiên medias array */}
+                                            {/* Question Media - Æ°u tiÃªn medias array */}
                                             {question.content?.medias &&
                                             question.content.medias.length >
                                               0 ? (
-                                              // Hiển thị tất cả media từ medias array
+                                              // Hiá»ƒn thá»‹ táº¥t cáº£ media tá»« medias array
                                               <div className="space-y-2">
                                                 {question.content.medias.map(
                                                   (media: any, idx: number) => (
@@ -541,7 +468,7 @@ export function HomeworkForm({
                                                 )}
                                               </div>
                                             ) : (
-                                              // Fallback về media cũ
+                                              // Fallback vá» media cÅ©
                                               question.content?.media &&
                                               renderMediaContent(
                                                 question.content.media
@@ -704,7 +631,7 @@ export function HomeworkForm({
                                                   </div>
                                                   <div>
                                                     <div className="text-xs font-medium text-pink-600 mb-2">
-                                                      Đích:
+                                                      ÄÃ­ch:
                                                     </div>
                                                     <div className="space-y-2">
                                                       {(
@@ -949,7 +876,7 @@ export function HomeworkForm({
                                                               {correctPosition >
                                                                 0 && (
                                                                 <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                                                                  Vị trí{" "}
+                                                                  Vá»‹ trÃ­{" "}
                                                                   {
                                                                     correctPosition
                                                                   }
@@ -970,7 +897,7 @@ export function HomeworkForm({
                                                       +
                                                       {question.options.answers
                                                         .length - 4}{" "}
-                                                      items nữa
+                                                      items ná»¯a
                                                     </div>
                                                   )}
                                                 </div>
@@ -1097,12 +1024,12 @@ export function HomeworkForm({
                                               className="h-8 w-8 p-0 rounded-xl hover:bg-red-50"
                                               onClick={() => {
                                                 console.log(
-                                                  "🗑️ Remove button clicked for question:",
+                                                  "ðŸ—‘ï¸ Remove button clicked for question:",
                                                   question.id,
                                                   question.id.toString()
                                                 );
                                                 console.log(
-                                                  "🗑️ Current selected questions:",
+                                                  "ðŸ—‘ï¸ Current selected questions:",
                                                   selectedQuestions
                                                 );
                                                 handleQuestionToggle(
@@ -1154,7 +1081,7 @@ export function HomeworkForm({
                                 onSuccess={(question) => {
                                   setShowCreateQuestion(false);
                                   console.log(
-                                    "[HomeworkForm] onSuccess callback nhận:",
+                                    "[HomeworkForm] onSuccess callback nháº­n:",
                                     question
                                   );
                                   if (question && question.id) {
@@ -1182,7 +1109,7 @@ export function HomeworkForm({
                                     );
                                   } else {
                                     console.warn(
-                                      "[HomeworkForm] Không có id trong object question:",
+                                      "[HomeworkForm] KhÃ´ng cÃ³ id trong object question:",
                                       question
                                     );
                                   }
@@ -1196,370 +1123,6 @@ export function HomeworkForm({
                   </Tabs>
                 </div>
               </div>
-            )}
-
-            {/* File Upload Section - Conditional Display */}
-            {assignmentMode === "file-upload" && (
-              <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-4 sm:p-8">
-                  <div className="mb-6">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                      Upload file bài tập
-                    </h2>
-                    <p className="text-gray-500">
-                      Tải lên file bài tập dưới dạng PDF, Word, hoặc ảnh
-                    </p>
-                  </div>
-
-                  <div className="space-y-6">
-                    {uploadedFiles.length === 0 ? (
-                      <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center hover:border-purple-400 transition-all duration-200 bg-gradient-to-br from-purple-50/30 to-blue-50/30">
-                        <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                          <LucideUpload className="h-8 w-8 text-purple-600" />
-                        </div>
-                        <div className="space-y-3">
-                          <p className="text-lg font-semibold text-gray-900">
-                            Kéo thả file vào đây hoặc nhấn để chọn
-                          </p>
-                          <p className="text-sm text-gray-500 max-w-md mx-auto">
-                            Hỗ trợ các định dạng: PDF, DOC, DOCX, PNG, JPG, JPEG
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            Kích thước tối đa: 50MB
-                          </p>
-                        </div>
-                        <input
-                          type="file"
-                          multiple
-                          accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                          onChange={async (e) => {
-                            if (e.target.files && e.target.files.length > 0) {
-                              setUploadingFile(true);
-                              const files = Array.from(e.target.files);
-                              const results: {
-                                type: string;
-                                url: string;
-                                name?: string;
-                              }[] = [];
-                              const errors: string[] = [];
-
-                              try {
-                                for (const file of files) {
-                                  try {
-                                    if (file.size > 50 * 1024 * 1024) {
-                                      errors.push(
-                                        `File ${file.name} vượt quá 50MB`
-                                      );
-                                      continue;
-                                    }
-                                    const ext = file.name
-                                      .split(".")
-                                      .pop()
-                                      ?.toLowerCase();
-                                    let mappedType: string = "image";
-                                    if (ext === "pdf") mappedType = "pdf";
-                                    else if (ext === "doc" || ext === "docx")
-                                      mappedType = "doc";
-                                    else if (
-                                      [
-                                        "png",
-                                        "jpg",
-                                        "jpeg",
-                                        "gif",
-                                        "webp",
-                                        "bmp",
-                                      ].includes(ext || "")
-                                    )
-                                      mappedType = "image";
-                                    // Upload từng file - API trả về code 200 = thành công
-                                    const uploadRes = await uploadFile(
-                                      file,
-                                      "homework-files"
-                                    );
-
-                                    // Kiểm tra code 200 = thành công
-                                    if (
-                                      uploadRes?.code === 200 &&
-                                      uploadRes?.data?.url
-                                    ) {
-                                      results.push({
-                                        type: mappedType,
-                                        url: uploadRes.data.url,
-                                        name:
-                                          uploadRes.data.file_name || file.name,
-                                      });
-                                    } else {
-                                      // API trả về lỗi (code !== 200)
-                                      errors.push(
-                                        uploadRes?.message ||
-                                          `Không thể tải file ${file.name} lên`
-                                      );
-                                    }
-                                  } catch (fileErr: any) {
-                                    // Lỗi khi gọi API (500, network error, etc)
-                                    errors.push(
-                                      fileErr?.response?.data?.message ||
-                                        fileErr?.message ||
-                                        `Không thể tải file ${file.name} lên`
-                                    );
-                                  }
-                                }
-
-                                // Hiển thị kết quả - đơn giản: API 200 = thành công, lỗi = thất bại
-                                if (results.length > 0) {
-                                  // Có ít nhất 1 file thành công (API trả về 200)
-                                  setUploadedFiles((prev) => [
-                                    ...prev,
-                                    ...results,
-                                  ]);
-                                  toast({
-                                    title: "Tải lên thành công",
-                                    description: `${results.length} file đã được tải lên`,
-                                  });
-                                } else {
-                                  // Tất cả file đều lỗi (API trả về 500, etc)
-                                  toast({
-                                    title: "Lỗi upload",
-                                    description:
-                                      errors[0] || "Không thể tải file lên",
-                                    variant: "destructive",
-                                  });
-                                }
-                              } catch (err: any) {
-                                // Lỗi không mong muốn
-                                toast({
-                                  title: "Lỗi upload",
-                                  description:
-                                    err?.message || "Không thể tải file lên",
-                                  variant: "destructive",
-                                });
-                              } finally {
-                                // Reset input - safely check if element still exists
-                                try {
-                                  if (
-                                    e.target &&
-                                    e.target instanceof HTMLInputElement
-                                  ) {
-                                    e.target.value = "";
-                                  }
-                                } catch (resetError) {
-                                  // Silently handle error if reset fails
-                                  console.warn(
-                                    "Could not reset file input:",
-                                    resetError
-                                  );
-                                }
-                                setUploadingFile(false);
-                              }
-                            }
-                          }}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                          disabled={uploadingFile}
-                        />
-                        {uploadingFile && (
-                          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center rounded-2xl">
-                            <div className="text-center">
-                              <LucideLoader2 className="h-8 w-8 animate-spin text-purple-600 mx-auto mb-2" />
-                              <p className="text-sm font-medium text-gray-700">
-                                Đang tải lên...
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <div className="grid gap-3">
-                          {uploadedFiles.map((f, idx) => (
-                            <div
-                              key={`${f.url}-${idx}`}
-                              className="flex items-center justify-between p-4 rounded-2xl border border-gray-200 bg-gray-50"
-                            >
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                  <LucideFileText className="h-5 w-5 text-green-600" />
-                                </div>
-                                <div className="min-w-0">
-                                  <p className="text-sm font-medium text-gray-900 truncate max-w-[280px]">
-                                    {f.name || f.url.split("/").pop()}
-                                  </p>
-                                  <div className="flex items-center gap-2 mt-1">
-                                    <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                                      Đã tải lên
-                                    </Badge>
-                                    <span className="text-xs text-gray-400">
-                                      •
-                                    </span>
-                                    <span className="text-xs text-gray-500 uppercase">
-                                      {f.type}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                onClick={() =>
-                                  setUploadedFiles((prev) =>
-                                    prev.filter((_, i) => i !== idx)
-                                  )
-                                }
-                              >
-                                <LucideX className="h-5 w-5" />
-                              </Button>
-                            </div>
-                          ))}
-                        </div>
-                        <div>
-                          <input
-                            type="file"
-                            multiple
-                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            onChange={async (e) => {
-                              if (e.target.files && e.target.files.length > 0) {
-                                setUploadingFile(true);
-                                const files = Array.from(e.target.files);
-                                const results: {
-                                  type: string;
-                                  url: string;
-                                  name?: string;
-                                }[] = [];
-                                const errors: string[] = [];
-
-                                try {
-                                  for (const file of files) {
-                                    try {
-                                      if (file.size > 50 * 1024 * 1024) {
-                                        errors.push(
-                                          `File ${file.name} vượt quá 50MB`
-                                        );
-                                        continue;
-                                      }
-                                      const ext = file.name
-                                        .split(".")
-                                        .pop()
-                                        ?.toLowerCase();
-                                      let mappedType: string = "image";
-                                      if (ext === "pdf") mappedType = "pdf";
-                                      else if (ext === "doc" || ext === "docx")
-                                        mappedType = "doc";
-                                      else if (
-                                        [
-                                          "png",
-                                          "jpg",
-                                          "jpeg",
-                                          "gif",
-                                          "webp",
-                                          "bmp",
-                                        ].includes(ext || "")
-                                      )
-                                        mappedType = "image";
-                                      // Upload từng file - API trả về code 200 = thành công
-                                      const uploadRes = await uploadFile(
-                                        file,
-                                        "homework-files"
-                                      );
-
-                                      // Kiểm tra code 200 = thành công
-                                      if (
-                                        uploadRes?.code === 200 &&
-                                        uploadRes?.data?.url
-                                      ) {
-                                        results.push({
-                                          type: mappedType,
-                                          url: uploadRes.data.url,
-                                          name:
-                                            uploadRes.data.file_name ||
-                                            file.name,
-                                        });
-                                      } else {
-                                        // API trả về lỗi (code !== 200)
-                                        errors.push(
-                                          uploadRes?.message ||
-                                            `Không thể tải file ${file.name} lên`
-                                        );
-                                      }
-                                    } catch (fileErr: any) {
-                                      // Lỗi khi gọi API (500, network error, etc)
-                                      errors.push(
-                                        fileErr?.response?.data?.message ||
-                                          fileErr?.message ||
-                                          `Không thể tải file ${file.name} lên`
-                                      );
-                                    }
-                                  }
-
-                                  // Hiển thị kết quả - đơn giản: API 200 = thành công, lỗi = thất bại
-                                  if (results.length > 0) {
-                                    // Có ít nhất 1 file thành công (API trả về 200)
-                                    setUploadedFiles((prev) => [
-                                      ...prev,
-                                      ...results,
-                                    ]);
-                                    toast({
-                                      title: "Tải lên thành công",
-                                      description: `${results.length} file đã được tải lên`,
-                                    });
-                                  } else {
-                                    // Tất cả file đều lỗi (API trả về 500, etc)
-                                    toast({
-                                      title: "Lỗi upload",
-                                      description:
-                                        errors[0] || "Không thể tải file lên",
-                                      variant: "destructive",
-                                    });
-                                  }
-                                } catch (err: any) {
-                                  // Lỗi không mong muốn
-                                  toast({
-                                    title: "Lỗi upload",
-                                    description:
-                                      err?.message || "Không thể tải file lên",
-                                    variant: "destructive",
-                                  });
-                                } finally {
-                                  // Reset input
-                                  try {
-                                    if (
-                                      e.target &&
-                                      e.target instanceof HTMLInputElement
-                                    ) {
-                                      e.target.value = "";
-                                    }
-                                  } catch (resetError) {
-                                    console.warn(
-                                      "Could not reset file input:",
-                                      resetError
-                                    );
-                                  }
-                                  setUploadingFile(false);
-                                }
-                              }
-                            }}
-                            className="hidden"
-                            id={moreFilesInputId}
-                            ref={moreFilesInputRef}
-                            disabled={uploadingFile}
-                          />
-                          <Button
-                            variant="outline"
-                            className="rounded-2xl border-gray-200"
-                            onClick={() => {
-                              if (!uploadingFile) {
-                                moreFilesInputRef.current?.click();
-                              }
-                            }}
-                          >
-                            Thêm file
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-4 flex-wrap">
@@ -1573,13 +1136,7 @@ export function HomeworkForm({
               <Button
                 className="bg-green-600 hover:bg-green-700 text-white rounded-2xl px-6 py-3 w-full md:w-auto"
                 onClick={() => {
-                  const question_form =
-                    assignmentMode === "file-upload" ? "write" : "question";
-                  const question_files =
-                    assignmentMode === "file-upload"
-                      ? uploadedFiles
-                      : undefined;
-                  handleSave({ question_form, question_files });
+                  handleSave({ question_form: "question" });
                 }}
                 disabled={isSaving}
               >
@@ -1614,7 +1171,7 @@ export function HomeworkForm({
                 </div>
 
                 <div className="space-y-4">
-                  {/* Bước 1 */}
+                  {/* BÆ°á»›c 1 */}
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-green-600 text-white rounded-2xl flex items-center justify-center flex-shrink-0 font-semibold text-sm">
                       1
@@ -1633,30 +1190,26 @@ export function HomeworkForm({
                     </div>
                   </div>
 
-                  {/* Bước 2 - thay đổi theo assignmentMode */}
+                  {/* BÆ°á»›c 2 - thay Ä‘á»•i theo assignmentMode */}
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-green-600 text-white rounded-2xl flex items-center justify-center flex-shrink-0 font-semibold text-sm">
                       2
                     </div>
                     <div>
                       <p className="font-medium text-gray-900 mb-1">
-                        {assignmentMode === "file-upload"
-                          ? "Tải file từ thiết bị"
-                          : mode === "create"
+                        {mode === "create"
                           ? t("form.sidebar.step3TitleCreate")
                           : t("form.sidebar.step3TitleEdit")}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {assignmentMode === "file-upload"
-                          ? "Chọn file bài tập từ máy tính của bạn để upload. Hỗ trợ PDF, Word, ảnh."
-                          : mode === "create"
+                        {mode === "create"
                           ? t("form.sidebar.step3DescCreate")
                           : t("form.sidebar.step3DescEdit")}
                       </p>
                     </div>
                   </div>
 
-                  {/* Bước 3 - Tạo bài luyện tập */}
+                  {/* BÆ°á»›c 3 - Táº¡o bÃ i luyá»‡n táº­p */}
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-green-600 text-white rounded-2xl flex items-center justify-center flex-shrink-0 font-semibold text-sm">
                       3
@@ -1677,7 +1230,7 @@ export function HomeworkForm({
                 </div>
               </div>
             </div>
-            {/* ...phần Important Notes giữ nguyên... */}
+            {/* ...pháº§n Important Notes giá»¯ nguyÃªn... */}
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-6">
                 <div className="mb-4">

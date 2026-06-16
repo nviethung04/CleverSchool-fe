@@ -15,6 +15,7 @@ import {
   type QuestionType,
 } from "@/lib/api/questions";
 import { getAssignmentsRoute } from "@/lib/utils/route-utils";
+import { getUploadedFileUrl, isBlobUrl } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useTypedTranslations } from "@/lib/i18n/client";
 
@@ -32,6 +33,7 @@ export default function CreateExercisePage() {
   const [deadline, setDeadline] = useState<Date | undefined>(undefined);
   const [deadlineTime, setDeadlineTime] = useState<string>("00:00:00");
   const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
   const [selectedQuestionsData, setSelectedQuestionsData] = useState<
@@ -122,6 +124,7 @@ export default function CreateExercisePage() {
   ) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
+      setCoverImageFile(file);
       const objectUrl = URL.createObjectURL(file);
       setCoverImageUrl(objectUrl);
 
@@ -133,7 +136,7 @@ export default function CreateExercisePage() {
           throw new Error(uploadResponse.error);
         }
 
-        const fileUrl = uploadResponse?.url || uploadResponse?.data?.url;
+        const fileUrl = getUploadedFileUrl(uploadResponse);
         if (!fileUrl) {
           throw new Error("Không nhận được URL file từ server");
         }
@@ -161,6 +164,25 @@ export default function CreateExercisePage() {
   // Handle remove cover image
   const handleRemoveCoverImage = () => {
     setCoverImageUrl("");
+    setCoverImageFile(null);
+  };
+
+  const resolveCoverImageUrl = async (): Promise<string | undefined> => {
+    if (!coverImageUrl) return undefined;
+    if (!isBlobUrl(coverImageUrl)) return coverImageUrl;
+    if (!coverImageFile) {
+      throw new Error("Ảnh bìa chưa tải lên xong. Vui lòng chọn lại ảnh.");
+    }
+    const uploadResponse = await uploadFile(coverImageFile, "exercise-covers");
+    if (uploadResponse.error) {
+      throw new Error(uploadResponse.error);
+    }
+    const fileUrl = getUploadedFileUrl(uploadResponse);
+    if (!fileUrl) {
+      throw new Error("Không nhận được URL file từ server");
+    }
+    setCoverImageUrl(fileUrl);
+    return fileUrl;
   };
 
   // Handle question toggle (giống homework form)
@@ -278,9 +300,19 @@ export default function CreateExercisePage() {
       return;
     }
 
+    if (uploadingCover) {
+      toast({
+        title: t("lessonForm.missingInfo"),
+        description: "Ảnh bìa đang được tải lên. Vui lòng đợi.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSaving(true);
     try {
       const deadlineTimestamp = getDeadlineTimestamp();
+      const resolvedCoverImage = await resolveCoverImageUrl();
 
       const exerciseData = {
         name,
@@ -292,7 +324,7 @@ export default function CreateExercisePage() {
           0
         ),
         lesson_id: 0, // Có thể được cập nhật sau hoặc để user chọn
-        cover_image: coverImageUrl || undefined,
+        cover_image: resolvedCoverImage,
         deadline: deadlineTimestamp,
       };
 

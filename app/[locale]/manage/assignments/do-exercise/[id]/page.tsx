@@ -456,19 +456,28 @@ export default function ExercisePage() {
   const handleFillInBlankUpdate = useCallback(
     (answer: any) => {
       if (currentQuestion && answer.answers) {
-        // Convert từ format { id, text }[] về format blankId -> text
         const questionAnswers: Record<string, string> = {};
+        const options = currentQuestion.options?.answers || [];
 
-        answer.answers.forEach((answerItem: any) => {
-          // Tìm answer option tương ứng để lấy correct_position
-          const answerOption = (currentQuestion.options.answers || []).find(
-            (opt: any) => opt.id?.toString() === answerItem.id
-          );
+        answer.answers.forEach((answerItem: any, idx: number) => {
+          const answerOption =
+            options.find(
+              (opt: any) =>
+                (answerItem.id != null &&
+                  opt.id?.toString() === answerItem.id) ||
+                (answerItem.correct_position != null &&
+                  opt.correct_position?.toString() ===
+                    answerItem.correct_position)
+            ) ?? options[idx];
 
-          if (answerOption) {
-            const blankId = `${currentQuestion.id}_blank_${answerOption.correct_position}`;
-            questionAnswers[blankId] = answerItem.text || "";
-          }
+          const position =
+            answerOption?.correct_position ??
+            (answerItem.correct_position
+              ? Number(answerItem.correct_position)
+              : idx + 1);
+
+          const blankId = `${currentQuestion.id}_blank_${position}`;
+          questionAnswers[blankId] = answerItem.text || "";
         });
 
         setFillInBlankAnswers((prev) => ({

@@ -78,26 +78,6 @@ const QUESTION_TYPES = {
     icon: <MoveHorizontal className="h-4 w-4" />,
     color: "bg-cyan-100 text-cyan-600",
   },
-  labeling: {
-    name: "Gắn nhãn",
-    icon: <Tag className="h-4 w-4" />,
-    color: "bg-pink-100 text-pink-600",
-  },
-  category: {
-    name: "Phân loại",
-    icon: <GripHorizontal className="h-4 w-4" />,
-    color: "bg-orange-100 text-orange-600",
-  },
-  writing: {
-    name: "Viết",
-    icon: <BookOpen className="h-4 w-4" />,
-    color: "bg-indigo-100 text-indigo-600",
-  },
-  speaking: {
-    name: "Nói",
-    icon: <MessageSquare className="h-4 w-4" />,
-    color: "bg-rose-100 text-rose-600",
-  },
 }
 
 // Định nghĩa các mức độ khó

@@ -1821,19 +1821,17 @@ export const questionSlice = createSlice({
 
       // Blank Groups handlers
       .addCase(addBlankGroup, (state) => {
-        if (state.blankGroups.length < state.blankAnswers.length) {
-          const newId =
-            state.blankGroups.length > 0
-              ? Math.max(...state.blankGroups.map((g) => g.id)) + 1
-              : 1;
-          const newPosition = state.blankGroups.length;
-          state.blankGroups.push({
-            id: newId,
-            text: "",
-            color: getColorByIndex(newPosition),
-            position: newPosition,
-          });
-        }
+        const newId =
+          state.blankGroups.length > 0
+            ? Math.max(...state.blankGroups.map((g) => g.id)) + 1
+            : 1;
+        const newPosition = state.blankGroups.length;
+        state.blankGroups.push({
+          id: newId,
+          text: "",
+          color: getColorByIndex(newPosition),
+          position: newPosition,
+        });
       })
       .addCase(updateBlankGroup, (state, action) => {
         const { id, text, image, audio, video } = action.payload;

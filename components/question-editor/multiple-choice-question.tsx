@@ -19,7 +19,7 @@ import { QuestionMediaControls } from "./question-media-controls";
 import { QuestionMediaPreview } from "./question-media-preview";
 import { ItemMediaUpload } from "./item-media-upload";
 import { getColorByIndex } from "@/utils/question-colors";
-import React, { useState, forwardRef } from "react";
+import React, { useState, forwardRef, useEffect } from "react";
 import { TiptapMathEditor } from "./tiptap-math-editor";
 import { MathInput } from "./math-input";
 
@@ -29,6 +29,10 @@ export const MultipleChoiceQuestion = forwardRef(
     const t = useTranslations("questionEditor.multipleChoice");
     const { questionText, allowMultipleAnswers, answerOptions } =
       useAppSelector((state) => state.question);
+
+    useEffect(() => {
+      dispatch(setAllowMultipleAnswers(false));
+    }, [dispatch]);
 
     const handleOptionImageSelect = (
       optionId: number,
@@ -146,30 +150,9 @@ export const MultipleChoiceQuestion = forwardRef(
           )}
         </div>
 
-        <div className="flex justify-between mt-4">
-          <div className="flex flex-wrap gap-2 md:gap-4 w-full md:w-auto">
-            <Button
-              variant="outline"
-              className={`w-full md:w-auto ${!allowMultipleAnswers
-                  ? 'bg-purple-900 text-white border-purple-800 hover:bg-purple-800'
-                  : 'border-purple-800 text-purple-900 hover:bg-purple-100'
-                }`}
-              onClick={() => setAllowMultipleAnswers(false)}
-            >
-              {t('correctAnswer')}
-            </Button>
-            <Button
-              variant="outline"
-              className={`w-full md:w-auto ${allowMultipleAnswers
-                  ? 'bg-purple-900 text-white border-purple-800 hover:bg-purple-800'
-                  : 'border-purple-800 text-purple-900 hover:bg-purple-100'
-                }`}
-              onClick={() => setAllowMultipleAnswers(true)}
-            >
-              {t('allowMultipleAnswers')}
-            </Button>
-          </div>
-        </div>
+        <p className="mt-4 text-sm text-muted-foreground">
+          {t("correctAnswerHint")}
+        </p>
       </>
     );
   }

@@ -18,6 +18,7 @@ import {
   type QuestionType,
 } from "@/lib/api/questions";
 import { getAssignmentsRoute } from "@/lib/utils/route-utils";
+import { getUploadedFileUrl, isBlobUrl } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useTypedTranslations } from "@/lib/i18n/client";
 
@@ -37,6 +38,7 @@ export default function EditExercisePage() {
   const [deadline, setDeadline] = useState<Date | undefined>(undefined);
   const [deadlineTime, setDeadlineTime] = useState<string>("00:00:00");
   const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
   const [questionScores, setQuestionScores] = useState<Record<string, number>>(
@@ -234,6 +236,7 @@ export default function EditExercisePage() {
   ) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
+      setCoverImageFile(file);
       const objectUrl = URL.createObjectURL(file);
       setCoverImageUrl(objectUrl);
 
@@ -245,7 +248,7 @@ export default function EditExercisePage() {
           throw new Error(uploadResponse.error);
         }
 
-        const fileUrl = uploadResponse?.url || uploadResponse?.data?.url;
+        const fileUrl = getUploadedFileUrl(uploadResponse);
         if (!fileUrl) {
           throw new Error(t("exerciseForm.uploadNoUrlError"));
         }
@@ -271,6 +274,25 @@ export default function EditExercisePage() {
   // Handle remove cover image
   const handleRemoveCoverImage = () => {
     setCoverImageUrl("");
+    setCoverImageFile(null);
+  };
+
+  const resolveCoverImageUrl = async (): Promise<string | undefined> => {
+    if (!coverImageUrl) return undefined;
+    if (!isBlobUrl(coverImageUrl)) return coverImageUrl;
+    if (!coverImageFile) {
+      throw new Error(t("exerciseForm.uploadNoUrlError"));
+    }
+    const uploadResponse = await uploadFile(coverImageFile, "exercise-covers");
+    if (uploadResponse.error) {
+      throw new Error(uploadResponse.error);
+    }
+    const fileUrl = getUploadedFileUrl(uploadResponse);
+    if (!fileUrl) {
+      throw new Error(t("exerciseForm.uploadNoUrlError"));
+    }
+    setCoverImageUrl(fileUrl);
+    return fileUrl;
   };
 
   // Handle question toggle
@@ -431,16 +453,26 @@ export default function EditExercisePage() {
       return;
     }
 
+    if (uploadingCover) {
+      toast({
+        title: t("lessonForm.missingInfo"),
+        description: t("exerciseForm.uploadErrorDesc"),
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSaving(true);
     try {
       const deadlineTimestamp = getDeadlineTimestamp();
+      const resolvedCoverImage = await resolveCoverImageUrl();
 
       const exerciseData = {
         name,
         description,
         status,
         time_limit: timeLimit,
-        cover_image: coverImageUrl || undefined,
+        cover_image: resolvedCoverImage,
         deadline: deadlineTimestamp,
       };
 

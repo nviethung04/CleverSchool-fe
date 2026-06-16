@@ -5,6 +5,30 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function isValidSubjectId(
+  id: string | number | null | undefined
+): boolean {
+  const n = Number(id);
+  return Number.isFinite(n) && n > 0;
+}
+
+export function getUploadedFileUrl(response: unknown): string | undefined {
+  if (!response || typeof response !== "object") return undefined;
+  const root = response as Record<string, unknown>;
+  const data = root.data as Record<string, unknown> | undefined;
+  const nested = data?.data as Record<string, unknown> | undefined;
+  for (const candidate of [root.url, data?.url, nested?.url]) {
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate.trim();
+    }
+  }
+  return undefined;
+}
+
+export function isBlobUrl(url: string): boolean {
+  return url.startsWith("blob:");
+}
+
 export function removeVietnameseTones(str: string): string {
   str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
   str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");

@@ -10,9 +10,6 @@ import {
   LucideArrowUpDown,
   LucideArrowLeftRight,
   LucideCheck,
-  LucideMessageSquare,
-  LucideFileText,
-  LucideMic,
   LucideLoader2,
 } from "lucide-react";
 import Link from "next/link";
@@ -30,10 +27,6 @@ import { MultipleChoiceQuestion } from "@/components/question-editor/multiple-ch
 import { FillInBlankQuestion } from "@/components/question-editor/fill-in-blank-question";
 import { DragDropQuestion } from "@/components/question-editor/drag-drop-question";
 import { DefaultQuestion } from "@/components/question-editor/default-question";
-import { LabelingQuestion } from "@/components/question-editor/labeling-question";
-import { CategoryQuestion } from "@/components/question-editor/category-question";
-import { WritingQuestion } from "@/components/question-editor/writing-question";
-import { SpeakingQuestion } from "@/components/question-editor/speaking-question";
 import {
   createQuestion,
   convertMultipleChoiceToApiFormat,
@@ -41,10 +34,6 @@ import {
   convertOrderingToApiFormat,
   convertMatchingToApiFormat,
   convertDragDropToApiFormat,
-  convertLabelingToApiFormat,
-  convertWritingToApiFormat,
-  convertSpeakingToApiFormat,
-  convertCategoryToApiFormat,
   type QuestionAttributePayload,
 } from "@/lib/api/questions";
 import { useToast } from "@/components/ui/use-toast";
@@ -151,42 +140,6 @@ function QuestionEditor() {
         </div>
       ),
     },
-    {
-      value: "labeling",
-      label: (
-        <div className="flex items-center">
-          <LucideCheck className="h-4 w-4 mr-2" />
-          <span>{t("questionTypes.labeling")}</span>
-        </div>
-      ),
-    },
-    {
-      value: "category",
-      label: (
-        <div className="flex items-center">
-          <LucideMessageSquare className="h-4 w-4 mr-2" />
-          <span>{t("questionTypes.category")}</span>
-        </div>
-      ),
-    },
-    {
-      value: "writing",
-      label: (
-        <div className="flex items-center">
-          <LucideFileText className="h-4 w-4 mr-2" />
-          <span>{t("questionTypes.writing")}</span>
-        </div>
-      ),
-    },
-    {
-      value: "speaking",
-      label: (
-        <div className="flex items-center">
-          <LucideMic className="h-4 w-4 mr-2" />
-          <span>{t("questionTypes.speaking")}</span>
-        </div>
-      ),
-    },
   ];
 
   const renderQuestionEditor = () => {
@@ -201,14 +154,6 @@ function QuestionEditor() {
         return <MatchingQuestion ref={tiptapEditorRef} />;
       case "drag-drop":
         return <DragDropQuestion ref={tiptapEditorRef} />;
-      case "labeling":
-        return <LabelingQuestion ref={tiptapEditorRef} />;
-      case "category":
-        return <CategoryQuestion ref={tiptapEditorRef} />;
-      case "writing":
-        return <WritingQuestion ref={tiptapEditorRef} />;
-      case "speaking":
-        return <SpeakingQuestion ref={tiptapEditorRef} />;
       default:
         return <DefaultQuestion />;
     }
@@ -407,112 +352,6 @@ function QuestionEditor() {
       //   });
       //   return false;
       // }
-    } else if (questionType === "labeling") {
-      // Kiểm tra có ảnh không
-      if (!questionState.labelImage) {
-        toast({
-          title: "Lỗi",
-          description: t("validation.uploadImage"),
-          variant: "destructive",
-        });
-        return false;
-      }
-
-      // Kiểm tra có ít nhất 1 vị trí nhãn
-      if (questionState.labelPositions.length < 1) {
-        toast({
-          title: "Lỗi",
-          description: t("validation.atLeastOneLabel"),
-          variant: "destructive",
-        });
-        return false;
-      }
-
-      // Kiểm tra các vị trí nhãn đã chọn group hợp lệ chưa
-      const emptyLabels = questionState.labelPositions.some(
-        (position) =>
-          typeof position.groupPosition !== "number" ||
-          position.groupPosition === null ||
-          position.groupPosition === undefined ||
-          !questionState.labelGroups[position.groupPosition] ||
-          !questionState.labelGroups[position.groupPosition].text.trim()
-      );
-      if (emptyLabels) {
-        toast({
-          title: "Lỗi",
-          description: t("validation.selectGroupForAllLabels"),
-          variant: "destructive",
-        });
-        return false;
-      }
-    } else if (questionType === "writing") {
-      // Kiểm tra câu hỏi có nội dung không
-      // if (!questionState.questionText.trim()) {
-      //   toast({
-      //     title: "Lỗi",
-      //     description: "Vui lòng nhập nội dung câu hỏi",
-      //     variant: "destructive",
-      //   });
-      //   return false;
-      // }
-      // Kiểm tra câu hỏi có nội dung không
-      // if (!questionState.questionText.trim()) {
-      //   toast({
-      //     title: "Lỗi",
-      //     description: "Vui lòng nhập nội dung câu hỏi",
-      //     variant: "destructive",
-      //   });
-      //   return false;
-      // }
-    } else if (questionType === "category") {
-      // Kiểm tra có ít nhất 2 danh mục
-      if (questionState.categories.length < 2) {
-        toast({
-          title: "Lỗi",
-          description: t("validation.atLeastTwoCategories"),
-          variant: "destructive",
-        });
-        return false;
-      }
-
-      // Kiểm tra các danh mục có tên không
-      // const emptyCategories = questionState.categories.some(
-      //   (category) => !category.name.trim()
-      // );
-      // if (emptyCategories) {
-      //   toast({
-      //     title: "Lỗi",
-      //     description: "Vui lòng nhập tên cho tất cả các danh mục",
-      //     variant: "destructive",
-      //   });
-      //   return false;
-      // }
-
-      // Kiểm tra có ít nhất 1 mục trong mỗi danh mục
-      const emptyCategoryItems = questionState.categories.some(
-        (category) => category.items.length === 0
-      );
-      if (emptyCategoryItems) {
-        toast({
-          title: "Lỗi",
-          description: t("validation.eachCategoryOneItem"),
-          variant: "destructive",
-        });
-        return false;
-      }
-
-      // Kiểm tra các mục có nội dung không
-      // for (const category of questionState.categories) {
-      //   const emptyItems = category.items.some((item) => !item.text.trim());
-      //   if (emptyItems) {
-      //     toast({
-      //       title: "Lỗi",
-      //       description: `Vui lòng nhập nội dung cho tất cả các mục trong danh mục "${category.name}"`,
-      //       variant: "destructive",
-      //     });
-      //     return false;
-      //   }
-      // }
     }
 
     return true;
@@ -601,36 +440,6 @@ function QuestionEditor() {
         console.log("API Data:", apiData);
       } else if (questionType === "drag-drop") {
         apiData = convertDragDropToApiFormat(
-          questionState,
-          attributes,
-          true,
-          customInstructions
-        );
-        console.log("API Data:", apiData);
-      } else if (questionType === "labeling") {
-        apiData = convertLabelingToApiFormat(
-          questionState,
-          attributes,
-          true,
-          customInstructions
-        );
-        console.log("API Data:", apiData);
-      } else if (questionType === "writing") {
-        apiData = convertWritingToApiFormat(
-          questionState,
-          attributes,
-          customInstructions
-        );
-        console.log("API Data:", apiData);
-      } else if (questionType === "speaking") {
-        apiData = convertSpeakingToApiFormat(
-          questionState,
-          attributes,
-          customInstructions
-        );
-        console.log("API Data:", apiData);
-      } else if (questionType === "category") {
-        apiData = convertCategoryToApiFormat(
           questionState,
           attributes,
           true,

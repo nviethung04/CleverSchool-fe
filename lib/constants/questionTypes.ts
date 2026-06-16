@@ -1,13 +1,9 @@
 import {
   ListFilter,
-  BookOpen,
   Layers,
   PenTool,
   Shuffle,
-  Tag,
   MoveHorizontal,
-  GripHorizontal,
-  MessageSquare,
 } from "lucide-react";
 
 export const QUESTION_TYPES = {
@@ -35,26 +31,6 @@ export const QUESTION_TYPES = {
     name: "Drag & drop",
     icon: MoveHorizontal,
     color: "bg-cyan-100 text-cyan-600",
-  },
-  labeling: {
-    name: "Labeling",
-    icon: Tag,
-    color: "bg-pink-100 text-pink-600",
-  },
-  category: {
-    name: "Category",
-    icon: GripHorizontal,
-    color: "bg-orange-100 text-orange-600",
-  },
-  writing: {
-    name: "Writing",
-    icon: BookOpen,
-    color: "bg-indigo-100 text-indigo-600",
-  },
-  speaking: {
-    name: "Speaking",
-    icon: MessageSquare,
-    color: "bg-rose-100 text-rose-600",
   },
 };
 

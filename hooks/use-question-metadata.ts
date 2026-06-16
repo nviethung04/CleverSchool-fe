@@ -6,7 +6,7 @@ import {
   getQuestionAttributes,
   type QuestionAttributeNode,
 } from "@/lib/api/questions";
-import { sortAlphabetGeneric } from "@/lib/utils";
+import { isValidSubjectId, sortAlphabetGeneric } from "@/lib/utils";
 
 export function useQuestionMetadata() {
   const [subjectOptions, setSubjectOptions] = useState<
@@ -43,13 +43,13 @@ export function useQuestionMetadata() {
   }, []);
 
   useEffect(() => {
-    if (subjectOptions.length > 0 && !selectedSubjectId) {
+    if (subjectOptions.length > 0 && !isValidSubjectId(selectedSubjectId)) {
       setSelectedSubjectId(subjectOptions[0].value);
     }
   }, [subjectOptions, selectedSubjectId]);
 
   useEffect(() => {
-    if (!selectedSubjectId) {
+    if (!isValidSubjectId(selectedSubjectId)) {
       setAttributes([]);
       setSelectedSkillId("");
       setSelectedLevelId("");
@@ -118,7 +118,7 @@ export function validateQuestionMetadata(
   toast: MetadataToast,
   t: MetadataTranslator
 ): boolean {
-  if (!meta.selectedSubjectId) {
+  if (!isValidSubjectId(meta.selectedSubjectId)) {
     toast({
       title: "Lỗi",
       description: t("validation.subjectRequired"),

@@ -180,7 +180,7 @@ export const FillInBlankQuestion = forwardRef(function FillInBlankQuestion(
 
   // Xử lý thêm/xóa/sửa group
   const handleAddGroup = () => {
-    if (blankGroups.length < blankAnswers.length) dispatch(addBlankGroup());
+    dispatch(addBlankGroup());
   };
   const handleRemoveGroup = (id: number) => {
     dispatch(removeBlankGroup(id));
@@ -232,14 +232,12 @@ export const FillInBlankQuestion = forwardRef(function FillInBlankQuestion(
           <div className="mb-4">
             <div className="flex items-center mb-2">
               <span className="font-semibold mr-2">{t("groupLabel")}</span>
-              {blankGroups.length < blankAnswers.length && (
-                <button
-                  className="ml-2 px-2 py-1 border rounded text-sm"
-                  onClick={handleAddGroup}
-                >
-                  <LucidePlus className="inline h-4 w-4 mr-1" /> {t("addGroup")}
-                </button>
-              )}
+              <button
+                className="ml-2 px-2 py-1 border rounded text-sm"
+                onClick={handleAddGroup}
+              >
+                <LucidePlus className="inline h-4 w-4 mr-1" /> {t("addGroup")}
+              </button>
             </div>
             <SortableContext
               items={blankGroups.map((g) => `group-${g.id}`)}

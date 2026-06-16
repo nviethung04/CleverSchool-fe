@@ -44,9 +44,6 @@ export default function EditHomeworkPage() {
   const [questionScores, setQuestionScores] = useState<Record<string, number>>(
     {}
   );
-  const [uploadedFiles, setUploadedFiles] = useState<
-    { type: string; url: string; name?: string }[]
-  >([]);
 
   // State for question bank
   const [questionBankOpen, setQuestionBankOpen] = useState(false);
@@ -73,11 +70,6 @@ export default function EditHomeworkPage() {
     []
   );
 
-  // State for assignment mode and uploaded files
-  const [initialAssignmentMode, setInitialAssignmentMode] = useState<
-    "question-bank" | "file-upload" | undefined
-  >(undefined);
-
   // Fetch homework details
   useEffect(() => {
     const fetchHomeworkDetails = async () => {
@@ -92,22 +84,6 @@ export default function EditHomeworkPage() {
         setCoverImageUrl(homeworkData.cover_image || "");
         // Lưu is_assigned vào state
         setIsAssigned(!!homeworkData.is_assigned);
-
-        // Set question_form và question_files nếu có
-        if (
-          homeworkData.question_form === "write" &&
-          homeworkData.question_files
-        ) {
-          setUploadedFiles(
-            homeworkData.question_files.map((f) => ({
-              type: f.type,
-              url: f.url,
-            }))
-          );
-          setInitialAssignmentMode("file-upload");
-        } else {
-          setInitialAssignmentMode("question-bank");
-        }
 
         // Fetch associated questions
         const questionsData = await getQuestions({
@@ -741,8 +717,6 @@ export default function EditHomeworkPage() {
       mode="edit"
       backUrl={getAssignmentsRoute(user)}
       homeworkId={homeworkId}
-      initialAssignmentMode={initialAssignmentMode}
-      initialUploadedFiles={uploadedFiles}
     />
   );
 }

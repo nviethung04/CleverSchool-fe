@@ -89,7 +89,7 @@ import {
 import { RoleBasedHeaderSidebar } from "@/components/layout/role-based-header-sidebar";
 import { GetSubjectsList } from "@/lib/api/subjects";
 import { useTranslations } from "next-intl";
-import { sortAlphabetGeneric } from "@/lib/utils";
+import { isValidSubjectId, sortAlphabetGeneric } from "@/lib/utils";
 
 const EditableMathField = dynamic(
   () => import("react-mathquill").then((mod) => mod.EditableMathField),
@@ -299,8 +299,8 @@ function QuestionEditor() {
         // Map the API data to Redux state
         dispatch(resetState());
         populateFormWithQuestionData(questionData);
-        if (Number(questionData.subject_id)) {
-          setSelectedSubjectId(questionData.subject_id)
+        if (isValidSubjectId(questionData.subject_id)) {
+          setSelectedSubjectId(String(questionData.subject_id));
         }
 
       } catch (error) {
@@ -420,11 +420,6 @@ function QuestionEditor() {
       case "speaking":
         handleSpeakingData(questionData);
         break;
-    }
-
-    // Gán subject hiện tại nếu API trả về
-    if (questionData.subject_id) {
-      setSelectedSubjectId(String(questionData.subject_id));
     }
   };
 
@@ -1161,7 +1156,7 @@ function QuestionEditor() {
     }
 
     // kiểm tra xem đã chọn môn học chưa
-    if (!selectedSubjectId) {
+    if (!isValidSubjectId(selectedSubjectId)) {
       toast({
         title: "Lỗi",
         description: t("validation.subjectRequired"),
@@ -1590,7 +1585,7 @@ function QuestionEditor() {
       }
 
       // Add subject_id to the API data
-      if (selectedSubjectId) {
+      if (isValidSubjectId(selectedSubjectId)) {
         apiData.subject_id = selectedSubjectId;
       }
 

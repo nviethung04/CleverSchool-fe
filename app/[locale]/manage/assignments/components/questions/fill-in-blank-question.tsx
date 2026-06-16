@@ -79,10 +79,14 @@ export function FillInBlankQuestion({
   useEffect(() => {
     onAnswerUpdate({
       isAnswered: answers.some((a) => a.trim() !== ""),
-      answers: answers.map((text, idx) => ({
-        correct_position: (idx + 1).toString(),
-        text,
-      })),
+      answers: answers.map((text, idx) => {
+        const option = question.options.answers?.[idx];
+        return {
+          id: option?.id?.toString() ?? idx.toString(),
+          correct_position: (option?.correct_position ?? idx + 1).toString(),
+          text,
+        };
+      }),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answers]);

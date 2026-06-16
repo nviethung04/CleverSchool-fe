@@ -60,6 +60,25 @@ export default function ExamSubmissionPage({
   const shouldShowPopupButton =
     isMatchingQuestion || isCategoryQuestion || isLabelingQuestion;
 
+  const isFirstQuestion = currentQuestionIndex === 0;
+  const isLastQuestion =
+    Array.isArray(questions) && currentQuestionIndex === questions.length - 1;
+
+  const handleForward = () => {
+    AudioEffects.navigate();
+    if (isLastQuestion) {
+      onSubmit();
+    } else {
+      onNext();
+    }
+  };
+
+  const handleBackward = () => {
+    if (isFirstQuestion) return;
+    AudioEffects.navigate();
+    onBack();
+  };
+
   // Listen for expand events from complex questions
   useEffect(() => {
     const handleLabelingExpand = () => {
@@ -212,6 +231,46 @@ export default function ExamSubmissionPage({
               {renderQuestion()}
             </div>
           </div>
+        </div>
+
+        {/* Bottom navigation — lưu đáp án và chuyển câu */}
+        <div
+          className="flex-shrink-0 px-4 sm:px-6 pb-4 sm:pb-6"
+          style={{ paddingBottom: "max(env(safe-area-inset-bottom), 1rem)" }}
+        >
+          <div className="max-w-4xl mx-auto flex gap-3">
+            <button
+              type="button"
+              onClick={handleBackward}
+              disabled={isFirstQuestion}
+              className="flex-1 bg-white/90 text-[#32428D] font-bold py-3 px-4 rounded-xl border border-[#32428D]/20 shadow-md transition-all hover:bg-white disabled:opacity-40 disabled:hover:bg-white/90 inline-flex items-center justify-center gap-2"
+            >
+              <ChevronLeft className="w-5 h-5" />
+              <span>Quay lại</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleForward}
+              className={`flex-1 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] inline-flex items-center justify-center gap-2 ${
+                isLastQuestion
+                  ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                  : "bg-gradient-to-r from-[#4285F4] to-[#3367D6] hover:from-[#3367D6] hover:to-[#2a56c6]"
+              }`}
+            >
+              <span>{isLastQuestion ? "Nộp bài" : "Tiếp theo"}</span>
+              {isLastQuestion ? (
+                <ClipboardCheck className="w-5 h-5" />
+              ) : (
+                <ChevronRight className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+          {currentQuestion?.type === "fill_in_blanks" && (
+            <p className="text-center text-xs text-[#32428D]/70 mt-2 max-w-4xl mx-auto">
+              Đáp án được lưu tự động khi bạn nhập. Nhấn &quot;Tiếp theo&quot; để
+              sang câu tiếp theo.
+            </p>
+          )}
         </div>
       </div>
 
@@ -409,6 +468,39 @@ export default function ExamSubmissionPage({
         `,
         }}
       />
+
+      {/* Floating navigation when sidebar is hidden */}
+      {!isSidebarOpen && (
+        <div
+          className="fixed top-1/2 left-4 transform -translate-y-1/2 z-[9998] flex flex-col gap-2"
+        >
+          <button
+            type="button"
+            onClick={handleBackward}
+            disabled={isFirstQuestion}
+            className="bg-white text-[#32428D] font-bold transition-all hover:bg-gray-50 disabled:opacity-40 shadow-lg inline-flex items-center justify-center w-12 h-12 rounded-xl border border-gray-200"
+            title="Quay lại"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            onClick={handleForward}
+            className={`text-white font-bold transition-all shadow-lg inline-flex items-center justify-center w-12 h-12 rounded-xl ${
+              isLastQuestion
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-[#4285F4] hover:bg-[#3367D6]"
+            }`}
+            title={isLastQuestion ? "Nộp bài" : "Tiếp theo"}
+          >
+            {isLastQuestion ? (
+              <ClipboardCheck className="w-5 h-5" />
+            ) : (
+              <ChevronRight className="w-5 h-5" />
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Floating Submit Panel - Xuất hiện khi sidebar ẩn */}
       {!isSidebarOpen && (

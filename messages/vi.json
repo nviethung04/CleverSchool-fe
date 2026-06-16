@@ -2746,6 +2746,24 @@
     "uploadSuccessDescription": "Ảnh cover đã được tải lên thành công.",
     "uploadErrorTitle": "Lỗi tải lên",
     "uploadErrorDescription": "Không thể tải lên ảnh cover. Vui lòng thử lại sau.",
+    "lessonForm": {
+      "missingInfo": "Thiếu thông tin",
+      "enterExamName": "Vui lòng nhập tên bài kiểm tra",
+      "enterHomeworkName": "Vui lòng nhập tên bài luyện tập",
+      "enterExerciseName": "Vui lòng nhập tên bài tập về nhà",
+      "success": "Thành công",
+      "error": "Lỗi",
+      "examCreatedSuccess": "Bài kiểm tra đã được tạo thành công",
+      "cannotCreateExam": "Không thể tạo bài kiểm tra. Vui lòng thử lại sau",
+      "exerciseCreatedSuccess": "Bài tập về nhà đã được tạo thành công",
+      "cannotCreateExercise": "Không thể tạo bài tập về nhà. Vui lòng thử lại sau"
+    },
+    "homeworkForm": {
+      "alreadyAssignedTitle": "Bài luyện tập đã được giao",
+      "alreadyAssignedDesc": "Bài luyện tập này đã được giao. Vì vậy không thể chỉnh sửa được.",
+      "updateSuccess": "Cập nhật bài luyện tập thành công",
+      "cannotUpdateHomework": "Không thể cập nhật bài luyện tập. Vui lòng thử lại sau."
+    },
     "common": {
       "cancel": "Hủy"
     },
@@ -2901,7 +2919,9 @@
       "uploadErrorTitle": "Lỗi tải lên",
       "uploadErrorDesc": "Không thể tải lên ảnh cover. Vui lòng thử lại sau.",
       "alreadyAssignedTitle": "Bài kiểm tra đã được giao",
-      "alreadyAssignedDesc": "Bài kiểm tra này đã được giao. Vì vậy không thể chỉnh sửa được."
+      "alreadyAssignedDesc": "Bài kiểm tra này đã được giao. Vì vậy không thể chỉnh sửa được.",
+      "updateSuccess": "Cập nhật bài kiểm tra thành công",
+      "cannotUpdateExam": "Không thể cập nhật bài kiểm tra. Vui lòng thử lại sau."
     },
     "exerciseForm": {
       "infoTitle": "Thông tin bài tập về nhà",
@@ -2983,7 +3003,9 @@
       "uploadErrorTitle": "Lỗi tải lên",
       "uploadErrorDesc": "Không thể tải lên ảnh cover. Vui lòng thử lại sau.",
       "alreadyAssignedTitle": "Bài tập về nhà đã được giao",
-      "alreadyAssignedDesc": "Bài tập về nhà này đã được giao. Vì vậy không thể chỉnh sửa được."
+      "alreadyAssignedDesc": "Bài tập về nhà này đã được giao. Vì vậy không thể chỉnh sửa được.",
+      "updateSuccess": "Cập nhật bài tập về nhà thành công",
+      "cannotUpdateExercise": "Không thể cập nhật bài tập về nhà. Vui lòng thử lại sau."
     },
     "assessmentForm": {
       "createTitle": "Tạo bài kiểm tra đánh giá",
@@ -4073,7 +4095,7 @@
       "skillRequired": "Vui lòng chọn kỹ năng (dropdown bên cạnh Môn học)",
       "levelRequired": "Vui lòng chọn mức độ",
       "cognitionRequired": "Vui lòng chọn mức độ nhận thức",
-      "subjectRequired": "Vui lòng chọn môn học",
+      "subjectRequired": "Chưa chọn môn học",
       "loginRequired": "Bạn cần đăng nhập để thực hiện thao tác này",
       "atLeastTwoOptions": "Cần ít nhất 2 tùy chọn trả lời",
       "atLeastOneCorrect": "Vui lòng chọn ít nhất một đáp án đúng",
@@ -4107,6 +4129,7 @@
       "addOption": "Thêm tùy chọn",
       "removeOption": "Xóa tùy chọn",
       "correctAnswer": "Đáp án đúng",
+      "correctAnswerHint": "Bấm biểu tượng ✓ ở góc phải mỗi đáp án để chọn đáp án đúng. Học sinh chỉ được chọn một đáp án.",
       "allowMultipleAnswers": "Cho phép nhiều đáp án",
       "option": "Tùy chọn",
       "addImage": "Thêm hình ảnh",

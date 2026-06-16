@@ -1006,10 +1006,6 @@ export function ExamCreateForm({ onSuccess, onCancel, hideSidebar }: ExamCreateF
                 <SelectItem value="fill_in_blanks">Fill in Blanks</SelectItem>
                 <SelectItem value="matching">Matching</SelectItem>
                 <SelectItem value="ordering">Ordering</SelectItem>
-                <SelectItem value="writing">Writing</SelectItem>
-                <SelectItem value="speaking">Speaking</SelectItem>
-                <SelectItem value="category">Category</SelectItem>
-                <SelectItem value="labeling">Labeling</SelectItem>
                 <SelectItem value="drag_drop">Drag & Drop</SelectItem>
               </SelectContent>
             </Select>

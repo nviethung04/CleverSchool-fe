@@ -118,18 +118,6 @@ export const QuestionBankDialog: React.FC<QuestionBankDialogProps> = ({
               <SelectItem value="ordering" className="rounded-xl">
                 Ordering
               </SelectItem>
-              <SelectItem value="writing" className="rounded-xl">
-                Writing
-              </SelectItem>
-              <SelectItem value="speaking" className="rounded-xl">
-                Speaking
-              </SelectItem>
-              <SelectItem value="category" className="rounded-xl">
-                Category
-              </SelectItem>
-              <SelectItem value="labeling" className="rounded-xl">
-                Labeling
-              </SelectItem>
               <SelectItem value="drag_drop" className="rounded-xl">
                 Drag & Drop
               </SelectItem>
