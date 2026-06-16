@@ -15,13 +15,12 @@ import {
   GetSemesterDetail,
   UpdateSemester,
   CreateSemesterRequest,
+  Holiday,
+  CreateSemesterHoliday,
 } from "@/lib/api/semesters";
 import { useToast } from "@/hooks/use-toast";
 import Loading from "@/app/loading";
-import SemesterForm, {
-  SemesterFormData,
-  HolidayFormData,
-} from "../../components/semester-form";
+import SemesterForm, { SemesterFormData } from "../../components/semester-form";
 import { useTranslations } from "next-intl";
 
 export default function EditSemesterPage() {
@@ -37,6 +36,7 @@ export default function EditSemesterPage() {
   const [initialData, setInitialData] = useState<
     SemesterFormData | undefined
   >();
+  const [existingHolidays, setExistingHolidays] = useState<Holiday[]>([]);
 
   useEffect(() => {
     const fetchSemester = async () => {
@@ -58,24 +58,6 @@ export default function EditSemesterPage() {
             }
           };
 
-          // Convert holidays to HolidayFormData format
-          const holidays: HolidayFormData[] = (semester.holidays || []).map(
-            (holiday) => ({
-              id: holiday.id ? String(holiday.id) : "",
-              name: holiday.name || "",
-              description: holiday.description || "",
-              start_date: formatDateForInput(holiday.start_date || ""),
-              end_date: formatDateForInput(holiday.end_date || ""),
-              week_id: holiday.week_id
-                ? typeof holiday.week_id === "string"
-                  ? parseInt(holiday.week_id)
-                  : holiday.week_id
-                : 0,
-              sort_order: holiday.sort_order || 0,
-              status: holiday.status !== undefined ? holiday.status : true,
-            })
-          );
-
           // Parse week_id values, ensuring they are numbers
           const parseWeekId = (value: string | number | undefined): number => {
             if (!value && value !== 0) return 0;
@@ -83,6 +65,8 @@ export default function EditSemesterPage() {
             const parsed = parseInt(String(value), 10);
             return isNaN(parsed) ? 0 : parsed;
           };
+
+          setExistingHolidays(semester.holidays || []);
 
           setInitialData({
             name: semester.name || "",
@@ -93,7 +77,6 @@ export default function EditSemesterPage() {
             end_week_id: parseWeekId(semester.end_week_id),
             previous_semester_id: parseWeekId(semester.previous_semester_id),
             status: semester.status !== undefined ? semester.status : true,
-            holidays: holidays,
           });
         } else {
           toast({
@@ -137,38 +120,33 @@ export default function EditSemesterPage() {
     try {
       setLoading(true);
 
-      // Format dates to ISO string
-      const formatDateToISO = (dateString: string) => {
-        if (!dateString) return new Date().toISOString();
-        return new Date(dateString).toISOString();
-      };
-
-      // Prepare semester data với holidays đầy đủ thông tin
       const semesterData: CreateSemesterRequest = {
         name: data.name.trim(),
         description: data.description.trim(),
-        start_date: formatDateToISO(data.start_date),
-        end_date: formatDateToISO(data.end_date),
+        start_date: data.start_date,
+        end_date: data.end_date,
         start_week_id: data.start_week_id,
         end_week_id: data.end_week_id,
         previous_semester_id: data.previous_semester_id,
         sort_order: 0,
         status: data.status,
-        holidays: data.holidays.map((holiday: HolidayFormData) => ({
-          ...(holiday.id && { id: holiday.id }), // Thêm id nếu holiday đã có id (holiday cũ)
-          name: holiday.name.trim(),
-          description: holiday.description.trim(),
-          start_date: formatDateToISO(holiday.start_date),
-          end_date: formatDateToISO(holiday.end_date),
-          week_id: holiday.week_id,
-          sort_order: holiday.sort_order,
-          status: holiday.status,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })),
+        holidays: existingHolidays.map(
+          (holiday): CreateSemesterHoliday & { id?: number } => ({
+            ...(holiday.id ? { id: Number(holiday.id) } : {}),
+            name: holiday.name || "",
+            description: holiday.description || "",
+            start_date: holiday.start_date || "",
+            end_date: holiday.end_date || "",
+            week_id:
+              typeof holiday.week_id === "string"
+                ? parseInt(holiday.week_id, 10) || 0
+                : holiday.week_id || 0,
+            sort_order: holiday.sort_order || 0,
+            status: holiday.status ?? true,
+          })
+        ),
       };
 
-      // Update semester (holidays sẽ được cập nhật cùng với semester)
       const semesterResponse = await UpdateSemester(id, semesterData);
 
       if (semesterResponse?.code === 200) {

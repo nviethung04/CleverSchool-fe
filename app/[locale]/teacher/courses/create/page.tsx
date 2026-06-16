@@ -28,7 +28,6 @@ interface CreateCourseFormState {
   target: string;
   description: string;
   cover: string;
-  coverType: "upload" | "link";
   duration: number;
   startDate: string;
   endDate: string;
@@ -384,7 +383,6 @@ function CreateCourseForm({
                                   target: detailData.target || "",
                                   description: detailData.description || "",
                                   cover: detailData.image || "",
-                                  coverType: "link", // Chuyển sang tab Link
                                   // ✅ SAO CHÉP SEMESTERS TỪ KHÓA HỌC MẪU
                                   semesters: matchedSemesters,
                                 }));
@@ -412,7 +410,6 @@ function CreateCourseForm({
                               target: "",
                               description: "",
                               cover: "",
-                              coverType: "upload",
                               semesters: [],
                             }));
                           }
@@ -779,69 +776,19 @@ function CreateCourseForm({
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
                   {t("coverImage")}
                 </label>
-                <div className="flex gap-3 mb-4">
-                  <Button
-                    variant={
-                      form.coverType === "upload" ? "default" : "outline"
-                    }
-                    onClick={() =>
+                <Input
+                  type="file"
+                  className="rounded-xl border-gray-200 focus:border-emerald-300 focus:ring-emerald-200 px-4 pt-3 pb-6 text-gray-900 file:mr-4 file:py-2 file:px-6 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 flex items-start min-h-[60px]"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
                       setForm((f: CreateCourseFormState) => ({
                         ...f,
-                        coverType: "upload",
-                      }))
+                        cover: URL.createObjectURL(file),
+                      }));
                     }
-                    className={`rounded-xl px-6 py-2 font-medium ${
-                      form.coverType === "upload"
-                        ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                        : "border-gray-200 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600"
-                    }`}
-                  >
-                    {t("uploadCover")}
-                  </Button>
-                  <Button
-                    variant={form.coverType === "link" ? "default" : "outline"}
-                    onClick={() =>
-                      setForm((f: CreateCourseFormState) => ({
-                        ...f,
-                        coverType: "link",
-                      }))
-                    }
-                    className={`rounded-xl px-6 py-2 font-medium ${
-                      form.coverType === "link"
-                        ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                        : "border-gray-200 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600"
-                    }`}
-                  >
-                    {t("linkCover")}
-                  </Button>
-                </div>
-                {form.coverType === "upload" ? (
-                  <Input
-                    type="file"
-                    className="rounded-xl border-gray-200 focus:border-emerald-300 focus:ring-emerald-200 px-4 pt-3 pb-6 text-gray-900 file:mr-4 file:py-2 file:px-6 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 flex items-start min-h-[60px]"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setForm((f: CreateCourseFormState) => ({
-                          ...f,
-                          cover: URL.createObjectURL(file),
-                        }));
-                      }
-                    }}
-                  />
-                ) : (
-                  <Input
-                    value={form.cover}
-                    onChange={(e) =>
-                      setForm((f: CreateCourseFormState) => ({
-                        ...f,
-                        cover: e.target.value,
-                      }))
-                    }
-                    placeholder={t("pasteImageLink")}
-                    className="rounded-xl border-gray-200 focus:border-emerald-300 focus:ring-emerald-200 px-4 py-3 text-gray-900 placeholder:text-gray-400"
-                  />
-                )}
+                  }}
+                />
                 {form.cover && (
                   <div className="mt-6 flex justify-center">
                     <div className="relative bg-gray-50 rounded-2xl p-4 border border-gray-200">
@@ -937,7 +884,6 @@ export default function CreateCoursePage() {
     target: "",
     description: "",
     cover: "",
-    coverType: "upload",
     duration: 1,
     startDate: "",
     endDate: "",
@@ -1092,7 +1038,7 @@ export default function CreateCoursePage() {
     }
 
     if (!form.cover.trim()) {
-      alert("Vui lòng nhập hoặc upload ảnh cover cho khóa học.");
+      alert("Vui lòng upload ảnh cover cho khóa học.");
       return;
     }
 
@@ -1101,11 +1047,7 @@ export default function CreateCoursePage() {
     let coverUrl = form.cover;
 
     // Nếu user upload file từ máy, cover là objectURL => cần upload lên server
-    if (
-      form.coverType === "upload" &&
-      form.cover &&
-      form.cover.startsWith("blob:")
-    ) {
+    if (form.cover && form.cover.startsWith("blob:")) {
       const fileInput = document.querySelector(
         'input[type="file"]'
       ) as HTMLInputElement;
@@ -1138,18 +1080,6 @@ export default function CreateCoursePage() {
         setLoadingCreateCourse(false)
         return;
       }
-    } else if (form.coverType === "link") {
-      // Validate url ảnh
-      const isImageUrl = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|svg)$/i.test(
-        form.cover.trim()
-      );
-      if (!isImageUrl) {
-        alert(
-          "Vui lòng nhập đúng url ảnh cover (jpg, jpeg, png, gif, webp, svg)"
-        );
-        setLoadingCreateCourse(false)
-        return;
-      }
     }
 
 
@@ -1166,19 +1096,10 @@ export default function CreateCoursePage() {
         end_date: form.endDate,
         image: coverUrl,
         status: true,
-        subject_id: 0,
         student_count: 0,
         target: form.target,
         program_id: Number(selectedProgramId), // <-- QUAN TRỌNG
         parent_course_id: form.parent_course_id || 0,
-        subject: {
-          id: 0,
-          name: "",
-          description: "",
-          status: true,
-          created_at: now,
-          updated_at: now,
-        },
         school: selectedSchoolId
           ? { id: Number(selectedSchoolId), name: selectedSchoolName }
           : { id: 0, name: "" },

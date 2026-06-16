@@ -14,10 +14,7 @@ import { ArrowLeft } from "lucide-react";
 import { CreateSemester, CreateSemesterRequest } from "@/lib/api/semesters";
 import { useToast } from "@/hooks/use-toast";
 import Loading from "@/app/loading";
-import SemesterForm, {
-  SemesterFormData,
-  HolidayFormData,
-} from "../components/semester-form";
+import SemesterForm, { SemesterFormData } from "../components/semester-form";
 import { useTranslations } from "next-intl";
 
 export default function CreateSemesterPage() {
@@ -42,37 +39,19 @@ export default function CreateSemesterPage() {
     try {
       setLoading(true);
 
-      // Format dates to ISO string
-      const formatDateToISO = (dateString: string) => {
-        if (!dateString) return new Date().toISOString();
-        return new Date(dateString).toISOString();
-      };
-
-      // Prepare semester data với holidays đầy đủ thông tin
       const semesterData: CreateSemesterRequest = {
         name: data.name.trim(),
         description: data.description.trim(),
-        start_date: formatDateToISO(data.start_date),
-        end_date: formatDateToISO(data.end_date),
+        start_date: data.start_date,
+        end_date: data.end_date,
         start_week_id: data.start_week_id,
         end_week_id: data.end_week_id,
         previous_semester_id: data.previous_semester_id,
         sort_order: 0,
         status: data.status,
-        holidays: data.holidays.map((holiday: HolidayFormData) => ({
-          name: holiday.name.trim(),
-          description: holiday.description.trim(),
-          start_date: formatDateToISO(holiday.start_date),
-          end_date: formatDateToISO(holiday.end_date),
-          week_id: holiday.week_id,
-          sort_order: holiday.sort_order,
-          status: holiday.status,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })),
+        holidays: [],
       };
 
-      // Tạo semester (holidays sẽ được tạo cùng với semester)
       const semesterResponse = await CreateSemester(semesterData);
 
       if (semesterResponse?.code === 200) {

@@ -13,23 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Save, Plus, Trash2 } from "lucide-react";
+import { Save } from "lucide-react";
 import { adminPrimaryButtonClass } from "@/components/admin/admin-list-header";
-import { useTranslations } from "next-intl";
 import { getWeeks, Week } from "@/lib/api/students";
 import { GetSemestersList, Semester } from "@/lib/api/semesters";
-import { CreateHoliday, Holiday } from "@/lib/api/holidays";
-
-export interface HolidayFormData {
-  id: string;
-  name: string;
-  description: string;
-  start_date: string;
-  end_date: string;
-  week_id: number;
-  sort_order: number;
-  status: boolean;
-}
 
 export interface SemesterFormData {
   name: string;
@@ -40,7 +27,6 @@ export interface SemesterFormData {
   end_week_id: number;
   previous_semester_id: number;
   status: boolean;
-  holidays: HolidayFormData[];
 }
 
 interface SemesterFormProps {
@@ -58,8 +44,6 @@ export default function SemesterForm({
   isSubmitting = false,
   submitButtonText = "Lưu",
 }: SemesterFormProps) {
-  const t = useTranslations("manageSemester");
-  const tCommon = useTranslations("common");
   const [formData, setFormData] = useState<SemesterFormData>({
     name: "",
     description: "",
@@ -69,7 +53,6 @@ export default function SemesterForm({
     end_week_id: 0,
     previous_semester_id: 0,
     status: true,
-    holidays: [],
   });
 
   const [weeks, setWeeks] = useState<Week[]>([]);
@@ -77,7 +60,6 @@ export default function SemesterForm({
   const [loadingWeeks, setLoadingWeeks] = useState(false);
   const [loadingSemesters, setLoadingSemesters] = useState(false);
 
-  // Load weeks
   useEffect(() => {
     const fetchWeeks = async () => {
       try {
@@ -95,7 +77,6 @@ export default function SemesterForm({
     fetchWeeks();
   }, []);
 
-  // Load semesters for previous_semester_id
   useEffect(() => {
     const fetchSemesters = async () => {
       try {
@@ -124,20 +105,9 @@ export default function SemesterForm({
         end_week_id: initialData.end_week_id ?? 0,
         previous_semester_id: initialData.previous_semester_id ?? 0,
         status: initialData.status !== undefined ? initialData.status : true,
-        holidays: initialData.holidays || [],
       });
     }
   }, [initialData]);
-
-  const formatDateForInput = (dateString: string) => {
-    if (!dateString || dateString === "0001-01-01") return "";
-    try {
-      const date = new Date(dateString);
-      return date.toISOString().split("T")[0];
-    } catch {
-      return "";
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,48 +117,6 @@ export default function SemesterForm({
     }
 
     await onSubmit(formData);
-  };
-
-  const addHoliday = () => {
-    setFormData({
-      ...formData,
-      holidays: [
-        ...formData.holidays,
-        {
-          id: "",
-          name: "",
-          description: "",
-          start_date: "",
-          end_date: "",
-          week_id: 0,
-          sort_order: formData.holidays.length,
-          status: true,
-        },
-      ],
-    });
-  };
-
-  const removeHoliday = (index: number) => {
-    setFormData({
-      ...formData,
-      holidays: formData.holidays.filter((_, i) => i !== index),
-    });
-  };
-
-  const updateHoliday = (
-    index: number,
-    field: keyof HolidayFormData,
-    value: any
-  ) => {
-    const updatedHolidays = [...formData.holidays];
-    updatedHolidays[index] = {
-      ...updatedHolidays[index],
-      [field]: value,
-    };
-    setFormData({
-      ...formData,
-      holidays: updatedHolidays,
-    });
   };
 
   return (
@@ -357,145 +285,6 @@ export default function SemesterForm({
           }
           disabled={isSubmitting}
         />
-      </div>
-
-      {/* Holidays Section */}
-      <div className="space-y-4 border-t pt-4">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <Label className="text-lg font-semibold">Ngày nghỉ</Label>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={addHoliday}
-            disabled={isSubmitting}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Thêm ngày nghỉ
-          </Button>
-        </div>
-
-        {formData.holidays.map((holiday, index) => (
-          <div
-            key={index}
-            className="p-4 border rounded-lg space-y-4 bg-gray-50"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <Label className="text-base">Ngày nghỉ #{index + 1}</Label>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => removeHoliday(index)}
-                disabled={isSubmitting}
-                className="text-red-500 hover:text-red-700"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>
-                  Tên ngày nghỉ <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  value={holiday.name}
-                  onChange={(e) => updateHoliday(index, "name", e.target.value)}
-                  placeholder="Nhập tên ngày nghỉ"
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Mô tả</Label>
-                <Input
-                  value={holiday.description}
-                  onChange={(e) =>
-                    updateHoliday(index, "description", e.target.value)
-                  }
-                  placeholder="Nhập mô tả"
-                  disabled={isSubmitting}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>
-                  Ngày bắt đầu <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  type="date"
-                  value={holiday.start_date}
-                  onChange={(e) =>
-                    updateHoliday(index, "start_date", e.target.value)
-                  }
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>
-                  Ngày kết thúc <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  type="date"
-                  value={holiday.end_date}
-                  onChange={(e) =>
-                    updateHoliday(index, "end_date", e.target.value)
-                  }
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Tuần</Label>
-              <Select
-                value={holiday.week_id ? String(holiday.week_id) : "0"}
-                onValueChange={(value) =>
-                  updateHoliday(index, "week_id", parseInt(value) || 0)
-                }
-                disabled={isSubmitting || loadingWeeks}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Chọn tuần" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">Không chọn</SelectItem>
-                  {weeks.map((week) => (
-                    <SelectItem key={week.id} value={String(week.id)}>
-                  Tuần {week.week_number} ({week.year}) -{" "}
-                  {new Date(week.start_date).toLocaleDateString("vi-VN")} đến{" "}
-                  {new Date(week.end_date).toLocaleDateString("vi-VN")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center justify-between p-2 border rounded">
-              <Label>Trạng thái</Label>
-              <Switch
-                checked={holiday.status}
-                onCheckedChange={(checked) =>
-                  updateHoliday(index, "status", checked)
-                }
-                disabled={isSubmitting}
-              />
-            </div>
-          </div>
-        ))}
-
-        {formData.holidays.length === 0 && (
-          <p className="text-sm text-gray-500 text-center py-4">
-            Chưa có ngày nghỉ nào. Nhấn "Thêm ngày nghỉ" để thêm.
-          </p>
-        )}
       </div>
 
       <div className="flex justify-end gap-4 pt-4">

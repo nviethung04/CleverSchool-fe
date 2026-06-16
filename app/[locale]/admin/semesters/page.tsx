@@ -146,9 +146,6 @@ export default function SemestersPage() {
                       {t("table.endDate")}
                     </TableHead>
                     <TableHead className="text-center">
-                      {t("table.holidaysCount")}
-                    </TableHead>
-                    <TableHead className="text-center">
                       {t("table.status")}
                     </TableHead>
                     <TableHead className="text-center w-32">
@@ -171,9 +168,6 @@ export default function SemestersPage() {
                         </TableCell>
                         <TableCell className="text-center">
                           {formatDate(semester.end_date)}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {semester.holidays?.length || 0}
                         </TableCell>
                         <TableCell className="text-center">
                           <Badge
@@ -212,7 +206,7 @@ export default function SemestersPage() {
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={7}
+                        colSpan={6}
                         className="text-center py-8 text-gray-500"
                       >
                         {t("noData")}
