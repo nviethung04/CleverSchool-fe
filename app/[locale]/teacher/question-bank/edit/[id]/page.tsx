@@ -80,6 +80,7 @@ import {
 } from "@/lib/api/questions";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter, useParams } from "next/navigation";
+import { QUESTION_BANK_LIST_REFRESH_KEY, markListForRefresh } from "@/lib/utils/list-refresh";
 import {
   Dialog,
   DialogContent,
@@ -1604,10 +1605,8 @@ function QuestionEditor() {
         description: "Đã cập nhật câu hỏi thành công",
       });
 
-      // Navigate back to question bank after successful update
-      setTimeout(() => {
-        router.push(`/${params.locale}/manage/question-bank`);
-      }, 500);
+      markListForRefresh(QUESTION_BANK_LIST_REFRESH_KEY);
+      router.push(`/${params.locale}/manage/question-bank`);
     } catch (error: any) {
       console.error("Error updating question:", error);
 

@@ -38,6 +38,7 @@ import {
 } from "@/lib/api/questions";
 import { useToast } from "@/components/ui/use-toast";
 import { useParams, useRouter } from "next/navigation";
+import { QUESTION_BANK_LIST_REFRESH_KEY, markListForRefresh } from "@/lib/utils/list-refresh";
 import { EditableMathField } from "react-mathquill";
 import { RoleBasedHeaderSidebar } from "@/components/layout/role-based-header-sidebar";
 import { useTranslations } from "next-intl";
@@ -474,10 +475,8 @@ function QuestionEditor() {
       // Reset state sau khi lưu thành công
       dispatch(resetState());
 
-      // Chuyển về trang danh sách câu hỏi sau khi lưu thành công
-      setTimeout(() => {
-        router.push(`/${params.locale}/manage/question-bank`);
-      }, 1500);
+      markListForRefresh(QUESTION_BANK_LIST_REFRESH_KEY);
+      router.push(`/${params.locale}/manage/question-bank`);
     } catch (error: any) {
       console.error("Error saving question:", error);
 

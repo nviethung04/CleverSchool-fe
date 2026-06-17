@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -96,8 +97,13 @@ import {
   adminPrimaryButtonClass,
   adminSecondaryButtonClass,
 } from "@/components/admin/admin-list-header";
+import {
+  QUESTION_BANK_LIST_REFRESH_KEY,
+  consumeListForRefresh,
+} from "@/lib/utils/list-refresh";
 
 export default function QuestionBankPage() {
+  const pathname = usePathname();
   const { searchParamsUrl, getValueFromQueryString, setQueryParams } = useQueryString()
   const { toast } = useToast();
   const t = useTypedTranslations("questionBank");
@@ -630,14 +636,34 @@ export default function QuestionBankPage() {
 
   // Lấy attributes và load dữ liệu lần đầu khi mount
   useEffect(() => {
+    const shouldRefresh = consumeListForRefresh(QUESTION_BANK_LIST_REFRESH_KEY);
+
     getQuestionAttributes("1").then((attrs) => {
       setAttributeNodes(attrs || []);
     });
-    // Load dữ liệu lần đầu
-    fetchQuestions({ ...questionFilters, page: 1 });
+    // Load dữ liệu lần đầu (luôn về trang 1 sau khi tạo/sửa)
+    fetchQuestions({
+      ...questionFilters,
+      page: shouldRefresh ? 1 : questionFilters.page,
+    });
+    if (shouldRefresh) {
+      setQuestionFilters((prev) => ({ ...prev, page: 1 }));
+    }
     setIsInitialized(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!isInitialized) return;
+    if (!pathname?.includes("/question-bank")) return;
+    if (pathname.includes("create-question") || pathname.includes("/edit/")) return;
+
+    if (consumeListForRefresh(QUESTION_BANK_LIST_REFRESH_KEY)) {
+      setQuestionFilters((prev) => ({ ...prev, page: 1 }));
+      fetchQuestions({ ...questionFilters, page: 1 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, isInitialized]);
 
   // Gọi lại fetchQuestions mỗi khi debouncedSearchQuery, type hoặc attributeFilters thay đổi
   useEffect(() => {
@@ -681,7 +707,6 @@ export default function QuestionBankPage() {
         description: "Đã xóa câu hỏi thành công",
       });
       // Thêm timeout 500ms trước khi fetch lại danh sách
-      await new Promise((resolve) => setTimeout(resolve, 500));
       await fetchQuestions(questionFilters);
     } catch {
       toast({

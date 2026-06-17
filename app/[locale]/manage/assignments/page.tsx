@@ -42,7 +42,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useTypedTranslations } from "@/lib/i18n/client";
 import {
   GetHomeworkList,
@@ -74,6 +74,10 @@ import {
   doExerciseWithLessonIdRoute,
 } from "@/lib/utils/route-utils";
 import { useDebounce } from "@/hooks/use-debounce";
+import {
+  ASSIGNMENTS_EXERCISES_REFRESH_KEY,
+  consumeListForRefresh,
+} from "@/lib/utils/list-refresh";
 import { BRAND_COLORS } from "@/lib/constants/colors";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -159,6 +163,7 @@ const formatDeadline = (
 export default function ExamsPage() {
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const params = useParams();
   const locale = (params as any)?.locale || "vi";
   const t = useTypedTranslations("manageAssignments");
@@ -213,7 +218,13 @@ export default function ExamsPage() {
   >([{ value: "all-course", label: t("allCourses") }]);
   const [schoolsLoading, setSchoolsLoading] = useState(false);
   const [coursesLoading, setCoursesLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("homework");
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "exercise" || tab === "homework" || tab === "all" || tab === "assessment") {
+      return tab;
+    }
+    return "homework";
+  });
   const [filters, setFilters] = useState<ExamFilters>({
     status: undefined,
     lesson_id: undefined,
@@ -316,6 +327,8 @@ export default function ExamsPage() {
         limit: exercisePageSize,
       }),
     enabled: activeTab === "exercise",
+    staleTime: 0,
+    refetchOnMount: "always",
   });
   const exercisesData = exercisesResponse as any;
   const exerciseList = exercisesData?.exercises ?? [];
@@ -351,6 +364,24 @@ export default function ExamsPage() {
 
     fetchInitialData();
   }, []);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (
+      tab === "exercise" ||
+      tab === "homework" ||
+      tab === "all" ||
+      tab === "assessment"
+    ) {
+      setActiveTab(tab);
+    }
+
+    if (consumeListForRefresh(ASSIGNMENTS_EXERCISES_REFRESH_KEY)) {
+      setActiveTab("exercise");
+      setExerciseFilters((prev) => ({ ...prev, page: 1 }));
+      void queryClient.invalidateQueries({ queryKey: ["exercises"] });
+    }
+  }, [searchParams, queryClient]);
 
   // Reset page về 1 khi search hoặc đổi tab
   useEffect(() => {

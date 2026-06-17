@@ -33,6 +33,7 @@ import {
 } from "@/lib/api/questions"
 import { useToast } from "@/components/ui/use-toast"
 import { useRouter } from "next/navigation"
+import { QUESTION_BANK_LIST_REFRESH_KEY, markListForRefresh } from "@/lib/utils/list-refresh"
 
 function QuestionEditor() {
   const dispatch = useAppDispatch()
@@ -349,10 +350,8 @@ function QuestionEditor() {
       // Reset state sau khi lưu thành công
       dispatch(resetState())
 
-      // Chuyển về trang danh sách câu hỏi sau khi lưu thành công
-      setTimeout(() => {
-        router.push("/admin/question-bank")
-      }, 1500)
+      markListForRefresh(QUESTION_BANK_LIST_REFRESH_KEY)
+      router.push("/admin/question-bank")
     } catch (error: any) {
       console.error("Error saving question:", error)
 
