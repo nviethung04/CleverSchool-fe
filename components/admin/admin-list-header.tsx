@@ -9,6 +9,10 @@ import { cn } from "@/lib/utils";
 export const adminPrimaryButtonClass =
   "bg-cs-green text-white hover:bg-cs-green/90 shrink-0";
 
+/** Nút phụ (Chi tiết, xem) — màu brand xanh dương */
+export const adminSecondaryButtonClass =
+  "bg-cs-blue text-white hover:bg-cs-blue/90 shrink-0";
+
 export function AdminPageHeading({
   title,
   description,

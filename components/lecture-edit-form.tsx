@@ -977,63 +977,56 @@ export default function LectureEditForm({ lectureId, onSuccess, onCancel }: Lect
                         onDrop={(e) => handleDrop(e, section.id)}
                         onDragEnd={handleDragEnd}
                       >
-                        <AccordionTrigger className="px-6 py-4 hover:bg-gray-50/50 data-[state=open]:bg-gray-50/80 transition-colors">
-                          <div className="flex items-center justify-between w-full">
-                            <div className="flex items-center gap-4">
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center cursor-grab active:cursor-grabbing hover:bg-gray-200 transition-colors">
-                                  <LucideGripVertical className="h-4 w-4 text-gray-500" />
-                                </div>
-                                <div className="w-10 h-10 bg-emerald-100 rounded-2xl flex items-center justify-center">
-                                  <span className="text-emerald-700 font-semibold text-sm">{index + 1}</span>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                {getSectionIcon(section.type)}
-                                <div className="text-left">
-                                  <span className="font-semibold text-gray-900">{section.title}</span>
-                                  <div className="flex items-center gap-2 mt-1">
-                                    <Badge className="bg-gray-100 text-gray-600 border-0 px-2 py-1 text-xs rounded-full">
-                                      {section.time} phút
-                                    </Badge>
-                                    <Badge className="bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-1 text-xs rounded-full">
-                                      {section.tags.length} tags
-                                    </Badge>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-2 ml-4">
-                              <div className="flex items-center gap-1">
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleDuplicateSection(section.id)
-                                  }}
-                                  className="h-9 w-9 p-0 rounded-2xl border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-                                  title="Nhân đôi phần"
-                                >
-                                  <LucideCopy className="h-4 w-4" />
-                                </Button>
-                              </div>
+                        <AccordionTrigger
+                          className="px-6 py-4 hover:bg-gray-50/50 data-[state=open]:bg-gray-50/80 transition-colors hover:no-underline"
+                          actions={
+                            <div className="flex items-center gap-2 ml-2 pr-6 flex-shrink-0">
                               <Button
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleRemoveSection(section.id)
-                                }}
+                                onClick={() => handleDuplicateSection(section.id)}
+                                className="h-9 w-9 p-0 rounded-2xl border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                                title="Nhân đôi phần"
+                              >
+                                <LucideCopy className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleRemoveSection(section.id)}
                                 className="h-9 w-9 p-0 rounded-2xl border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50"
                                 disabled={lessonSections.length <= 1}
                                 title="Xóa phần"
                               >
                                 <LucideTrash2 className="h-4 w-4" />
                               </Button>
+                            </div>
+                          }
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center cursor-grab active:cursor-grabbing hover:bg-gray-200 transition-colors">
+                                <LucideGripVertical className="h-4 w-4 text-gray-500" />
+                              </div>
+                              <div className="w-10 h-10 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                                <span className="text-emerald-700 font-semibold text-sm">{index + 1}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              {getSectionIcon(section.type)}
+                              <div className="text-left">
+                                <span className="font-semibold text-gray-900">{section.title}</span>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <Badge className="bg-gray-100 text-gray-600 border-0 px-2 py-1 text-xs rounded-full">
+                                    {section.time} phút
+                                  </Badge>
+                                  <Badge className="bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-1 text-xs rounded-full">
+                                    {section.tags.length} tags
+                                  </Badge>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </AccordionTrigger>

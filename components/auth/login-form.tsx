@@ -127,7 +127,7 @@ export function LoginForm() {
 
   if (isAuthenticated) {
     return (
-      <Card className="w-full max-w-md border-Clever School-purple">
+      <Card className="w-full max-w-md border-cs-purple">
         <CardContent className="p-6 text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
           <p>Đang chuyển hướng...</p>
@@ -153,7 +153,7 @@ export function LoginForm() {
         </Alert>
       )}
 
-      <Card className="w-full max-w-md border-Clever School-purple">
+      <Card className="w-full max-w-md border-cs-purple">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Đăng nhập</CardTitle>
           <CardDescription className="text-center">
@@ -215,7 +215,7 @@ export function LoginForm() {
                 )}
                 {/* <Link
                   href="/forgot-password"
-                  className="text-sm text-Clever School-purple hover:underline text-right"
+                  className="text-sm text-cs-purple hover:underline text-right"
                 >
                   Quên mật khẩu?
                 </Link> */}
@@ -254,7 +254,7 @@ export function LoginForm() {
                 Chưa có tài khoản?{" "}
                 <Link
                   href="/register"
-                  className="text-Clever School-purple hover:underline"
+                  className="text-cs-purple hover:underline"
                 >
                   Đăng ký ngay
                 </Link>

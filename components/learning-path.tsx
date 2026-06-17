@@ -108,7 +108,7 @@ export function LearningPath() {
             >
               {getStatusIcon(module.status)}
             </div>
-            <div className={`bg-white rounded-2xl border-2 border-Clever School-${module.color} p-4 flex-grow card-kid`}>
+            <div className={`bg-white rounded-2xl border-2 border-cs-${module.color} p-4 flex-grow card-kid`}>
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <h3 className="font-bold">{module.title}</h3>

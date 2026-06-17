@@ -359,7 +359,7 @@ export default function AnalyticsPage() {
                           <div className="mt-2 md:mt-0 flex flex-wrap gap-2">
                             <Badge
                               variant="outline"
-                              className={`text-xs bg-Clever School-${activity.color} bg-opacity-10 text-Clever School-${activity.color} border-Clever School-${activity.color}`}
+                              className={`text-xs bg-cs-${activity.color} bg-opacity-10 text-cs-${activity.color} border-cs-${activity.color}`}
                             >
                               {activity.category}
                             </Badge>
@@ -389,7 +389,7 @@ export default function AnalyticsPage() {
                             </div>
                             <Progress value={activity.completionRate} className="h-2 bg-gray-100">
                               <div
-                                className={`h-full bg-Clever School-${activity.color} rounded-full`}
+                                className={`h-full bg-cs-${activity.color} rounded-full`}
                                 style={{ width: `${activity.completionRate}%` }}
                               ></div>
                             </Progress>
@@ -465,7 +465,7 @@ export default function AnalyticsPage() {
                           <div className="mt-2 md:mt-0 flex flex-wrap gap-2">
                             <Badge
                               variant="outline"
-                              className={`text-xs bg-Clever School-${tool.color} bg-opacity-10 text-Clever School-${tool.color} border-Clever School-${tool.color}`}
+                              className={`text-xs bg-cs-${tool.color} bg-opacity-10 text-cs-${tool.color} border-cs-${tool.color}`}
                             >
                               {tool.category}
                             </Badge>
@@ -495,7 +495,7 @@ export default function AnalyticsPage() {
                             </div>
                             <Progress value={tool.engagementRate} className="h-2 bg-gray-100">
                               <div
-                                className={`h-full bg-Clever School-${tool.color} rounded-full`}
+                                className={`h-full bg-cs-${tool.color} rounded-full`}
                                 style={{ width: `${tool.engagementRate}%` }}
                               ></div>
                             </Progress>
@@ -579,7 +579,7 @@ export default function AnalyticsPage() {
                   <div key={index} className="border rounded-lg p-4">
                     <div className="flex items-start gap-3">
                       <div
-                        className={`p-2 rounded-full bg-Clever School-${recommendation.color} bg-opacity-20 flex-shrink-0`}
+                        className={`p-2 rounded-full bg-cs-${recommendation.color} bg-opacity-20 flex-shrink-0`}
                       >
                         {recommendation.icon}
                       </div>
@@ -591,7 +591,7 @@ export default function AnalyticsPage() {
                             <Badge
                               key={i}
                               variant="outline"
-                              className={`text-xs bg-Clever School-${recommendation.color} bg-opacity-10 text-Clever School-${recommendation.color} border-Clever School-${recommendation.color}`}
+                              className={`text-xs bg-cs-${recommendation.color} bg-opacity-10 text-cs-${recommendation.color} border-cs-${recommendation.color}`}
                             >
                               {tag}
                             </Badge>
@@ -628,7 +628,7 @@ function AnalyticsCard({
   icon: React.ReactNode
 }) {
   return (
-    <Card className={`card-kid border-Clever School-${color}`}>
+    <Card className={`card-kid border-cs-${color}`}>
       <CardContent className="pt-6">
         <div className="flex flex-col">
           <div className="flex justify-between items-center mb-2">

@@ -149,7 +149,7 @@ export function LearningPathAnalytics() {
             >
               {getStatusIcon(module.status)}
             </div>
-            <div className={`bg-white rounded-2xl border-2 border-Clever School-${module.color} p-4 flex-grow card-kid`}>
+            <div className={`bg-white rounded-2xl border-2 border-cs-${module.color} p-4 flex-grow card-kid`}>
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <h3 className="font-bold">{module.title}</h3>
@@ -207,7 +207,7 @@ export function LearningPathAnalytics() {
                   </div>
                   <Progress value={module.progress} className="h-2 bg-gray-100">
                     <div
-                      className={`h-full bg-Clever School-${module.color} rounded-full`}
+                      className={`h-full bg-cs-${module.color} rounded-full`}
                       style={{ width: `${module.progress}%` }}
                     ></div>
                   </Progress>

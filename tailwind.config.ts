@@ -77,6 +77,7 @@ const config = {
           green: "#7ed957",
           yellow: "#ffd900",
           orange: "#ff9f00",
+          purple: "#8881B6",
         },
       },
       borderRadius: {

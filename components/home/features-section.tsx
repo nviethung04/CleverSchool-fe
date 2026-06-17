@@ -46,11 +46,11 @@ function FeatureCard({ icon, title, description, color }: Omit<Feature, "id">) {
 
   return (
     <Card
-      className={`card-kid border-Clever School-${color} hover:border-Clever School-${color} hover:border-2 transition-all duration-300`}
+      className={`card-kid border-cs-${color} hover:border-cs-${color} hover:border-2 transition-all duration-300`}
     >
       <CardContent className="p-6 text-center">
         <div className="mb-4 flex justify-center">
-          {IconComponent && <IconComponent className={`h-10 w-10 text-Clever School-${color}`} />}
+          {IconComponent && <IconComponent className={`h-10 w-10 text-cs-${color}`} />}
         </div>
         <h3 className="text-xl font-bold mb-2">{title}</h3>
         <p className="text-gray-600">{description}</p>

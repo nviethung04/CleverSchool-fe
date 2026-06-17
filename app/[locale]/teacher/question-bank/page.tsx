@@ -92,6 +92,10 @@ import ImportData from "@/components/ui/import-data";
 import { exportQuestion, importQuestion } from "@/lib/api/export-import";
 import { useCurrentLocale, useTypedTranslations } from "@/lib/i18n/client";
 import { useQueryString } from "@/hooks/use-query-string";
+import {
+  adminPrimaryButtonClass,
+  adminSecondaryButtonClass,
+} from "@/components/admin/admin-list-header";
 
 export default function QuestionBankPage() {
   const { searchParamsUrl, getValueFromQueryString, setQueryParams } = useQueryString()
@@ -1134,7 +1138,7 @@ export default function QuestionBankPage() {
                     {t("emptyTitle")}
                   </h3>
                   <p className="text-gray-500 mt-1">{t("emptySubtitle")}</p>
-                  <Button className="mt-4 bg-Clever School-green" asChild>
+                  <Button className={`mt-4 ${adminPrimaryButtonClass}`} asChild>
                     <Link
                       href={`${localePrefix}/manage/question-bank/create-question`}
                     >
@@ -1961,7 +1965,7 @@ function QuestionCard({
             <div className="flex md:flex-col gap-1 md:mt-auto">
               <Button
                 size="sm"
-                className="text-white text-xs px-3 h-8 bg-Clever School-blue"
+                className="text-white text-xs px-3 h-8 bg-cs-blue"
                 asChild
               >
                 <Link

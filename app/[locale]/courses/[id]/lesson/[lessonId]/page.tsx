@@ -577,7 +577,7 @@ export default function LessonDetailPage({
             <Button
               asChild
               variant="ghost"
-              className="flex items-center gap-2 px-0 text-Clever School-blue"
+              className="flex items-center gap-2 px-0 text-cs-blue"
             >
               <Link href={`/courses/${courseId}`}>
                 <ArrowLeft className="w-4 h-4" />
@@ -597,7 +597,7 @@ export default function LessonDetailPage({
                     <>
                       <span>{mainTitle}</span>
                       {badge && !(user?.type === "student") && (
-                        <span className="inline-block bg-white text-Clever School-blue border border-Clever School-blue rounded-full px-2 py-0.5 text-xs font-semibold whitespace-nowrap ml-2">
+                        <span className="inline-block bg-white text-cs-blue border border-cs-blue rounded-full px-2 py-0.5 text-xs font-semibold whitespace-nowrap ml-2">
                           {badge}
                         </span>
                       )}
@@ -638,7 +638,7 @@ export default function LessonDetailPage({
                   lesson.description.length > 120 ? (
                     !descExpanded ? (
                       <button
-                        className="mt-1 text-xs underline text-Clever School-blue font-semibold"
+                        className="mt-1 text-xs underline text-cs-blue font-semibold"
                         onClick={toggleDescExpand}
                         type="button"
                       >
@@ -646,7 +646,7 @@ export default function LessonDetailPage({
                       </button>
                     ) : (
                       <button
-                        className="mt-1 text-xs underline text-Clever School-blue font-semibold"
+                        className="mt-1 text-xs underline text-cs-blue font-semibold"
                         onClick={toggleDescExpand}
                         type="button"
                       >
@@ -661,7 +661,7 @@ export default function LessonDetailPage({
             <div className="flex items-center gap-3">
               {lesson?.is_complete ? (
                 <Button
-                  className="rounded-full bg-Clever School-blue text-white"
+                  className="rounded-full bg-cs-blue text-white"
                   disabled
                 >
                   <LucideCheck className="w-4 h-4 mr-2" />
@@ -671,7 +671,7 @@ export default function LessonDetailPage({
                 <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
                   <AlertDialogTrigger asChild>
                     <Button
-                      className="rounded-full bg-Clever School-blue text-white"
+                      className="rounded-full bg-cs-blue text-white"
                       onClick={() => setShowConfirm(true)}
                       disabled={marking}
                     >
@@ -769,7 +769,7 @@ export default function LessonDetailPage({
           <TabsContent value="lecture">
             <div className="bg-white rounded-3xl shadow-lg p-6">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <LucideBookOpen className="h-5 w-5 text-Clever School-blue" />
+                <LucideBookOpen className="h-5 w-5 text-cs-blue" />
                 {t("lecture.title")}
               </h2>
               {Array.isArray(lesson?.lesson_plans) &&
@@ -778,7 +778,7 @@ export default function LessonDetailPage({
                   {lesson.lesson_plans.map((plan: any, idx: number) => (
                     <Card
                       key={plan.id || idx}
-                      className="border-Clever School-blue h-full flex flex-col"
+                      className="border-cs-blue h-full flex flex-col"
                     >
                       <CardHeader className="p-4 flex flex-col items-start gap-3">
                         {plan.cover_image && (
@@ -845,7 +845,7 @@ export default function LessonDetailPage({
           <TabsContent value="homework">
             <div className="bg-white rounded-3xl shadow-lg p-6">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <LucideClipboard className="h-5 w-5 text-Clever School-green" />
+                <LucideClipboard className="h-5 w-5 text-cs-green" />
                 {t("homework.title")}
               </h2>
               {assignedHomeworks.length > 0 ? (
@@ -862,7 +862,7 @@ export default function LessonDetailPage({
                     .map((hw: any, idx: number) => (
                       <Card
                         key={hw.id || idx}
-                        className="border-Clever School-green h-full flex flex-col"
+                        className="border-cs-green h-full flex flex-col"
                       >
                         <CardHeader className="p-4 flex flex-col items-start gap-3">
                           <div className="w-full aspect-[16/9] relative mb-2">
@@ -905,7 +905,7 @@ export default function LessonDetailPage({
                                     );
                                   })()}
                                 </span>
-                                <span className="text-xl font-medium text-Clever School-blue mt-1 text-center px-2">
+                                <span className="text-xl font-medium text-cs-blue mt-1 text-center px-2">
                                   {hw.description || ""}
                                 </span>
                               </div>
@@ -999,7 +999,7 @@ export default function LessonDetailPage({
           <TabsContent value="exercise">
             <div className="bg-white rounded-3xl shadow-lg p-6">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <LucideFileCheck className="h-5 w-5 text-Clever School-orange" />
+                <LucideFileCheck className="h-5 w-5 text-cs-orange" />
                 {t("exercise.title")}
               </h2>
               {assignedExercises.length > 0 ? (
@@ -1007,7 +1007,7 @@ export default function LessonDetailPage({
                   {assignedExercises.map((exercise: any, idx: number) => (
                     <Card
                       key={exercise.id || idx}
-                      className="border-Clever School-orange h-full flex flex-col"
+                      className="border-cs-orange h-full flex flex-col"
                     >
                       <CardHeader className="p-4 flex flex-col items-start gap-3">
                         <div className="w-full aspect-[16/9] relative mb-2">
@@ -1051,7 +1051,7 @@ export default function LessonDetailPage({
                                   );
                                 })()}
                               </span>
-                              <span className="text-xl font-medium text-Clever School-blue mt-1 text-center px-2">
+                              <span className="text-xl font-medium text-cs-blue mt-1 text-center px-2">
                                 {exercise.description || ""}
                               </span>
                             </div>
@@ -1128,7 +1128,7 @@ export default function LessonDetailPage({
           <TabsContent value="test">
             <div className="bg-white rounded-3xl shadow-lg p-6">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <LucideFileCheck className="h-5 w-5 text-Clever School-orange" />
+                <LucideFileCheck className="h-5 w-5 text-cs-orange" />
                 {t("test.title")}
               </h2>
               {assignedExams.length > 0 ? (
@@ -1136,7 +1136,7 @@ export default function LessonDetailPage({
                   {assignedExams.map((exam: any, idx: number) => (
                     <Card
                       key={exam.id || idx}
-                      className="border-Clever School-orange h-full flex flex-col"
+                      className="border-cs-orange h-full flex flex-col"
                     >
                       <CardHeader className="p-4 flex flex-col items-start gap-3">
                         <div className="w-full aspect-[16/9] relative mb-2">
@@ -1179,7 +1179,7 @@ export default function LessonDetailPage({
                                   );
                                 })()}
                               </span>
-                              <span className="text-xl font-medium text-Clever School-blue mt-1 text-center px-2">
+                              <span className="text-xl font-medium text-cs-blue mt-1 text-center px-2">
                                 {exam.description || ""}
                               </span>
                             </div>

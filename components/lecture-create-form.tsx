@@ -811,8 +811,35 @@ export default function LectureCreateForm({
                         onDrop={(e) => handleDrop(e, section.id)}
                         onDragEnd={handleDragEnd}
                       >
-                        <AccordionTrigger className="px-6 py-4 hover:bg-gray-50/50 data-[state=open]:bg-gray-50/80 transition-colors">
-                          <div className="flex flex-wrap gap-2 items-center justify-between w-full">
+                        <AccordionTrigger
+                          className="px-6 py-4 hover:bg-gray-50/50 data-[state=open]:bg-gray-50/80 transition-colors hover:no-underline"
+                          actions={
+                            <div className="flex items-center gap-2 ml-2 pr-6 flex-shrink-0">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDuplicateSection(section.id)}
+                                className="h-9 w-9 p-0 rounded-2xl border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                                title="Nhân đôi phần"
+                              >
+                                <LucideCopy className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleRemoveSection(section.id)}
+                                className="h-9 w-9 p-0 rounded-2xl border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50"
+                                disabled={lessonSections.length <= 1}
+                                title="Xóa phần"
+                              >
+                                <LucideTrash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          }
+                        >
+                          <div className="flex flex-wrap gap-2 items-center">
                             <div className="flex items-center gap-4 flex-wrap">
                               <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center cursor-grab active:cursor-grabbing hover:bg-gray-200 transition-colors">
@@ -840,38 +867,6 @@ export default function LectureCreateForm({
                                   </div>
                                 </div>
                               </div>
-                            </div>
-
-                            <div className="flex items-center gap-2 ml-4 flex-wrap">
-                              <div className="flex items-center gap-1">
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleDuplicateSection(section.id)
-                                  }}
-                                  className="h-9 w-9 p-0 rounded-2xl border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-                                  title="Nhân đôi phần"
-                                >
-                                  <LucideCopy className="h-4 w-4" />
-                                </Button>
-                              </div>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleRemoveSection(section.id)
-                                }}
-                                className="h-9 w-9 p-0 rounded-2xl border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50"
-                                disabled={lessonSections.length <= 1}
-                                title="Xóa phần"
-                              >
-                                <LucideTrash2 className="h-4 w-4" />
-                              </Button>
                             </div>
                           </div>
                         </AccordionTrigger>
