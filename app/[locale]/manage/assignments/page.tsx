@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -76,7 +76,8 @@ import {
 import { useDebounce } from "@/hooks/use-debounce";
 import {
   ASSIGNMENTS_EXERCISES_REFRESH_KEY,
-  consumeListForRefresh,
+  clearListForRefresh,
+  peekListForRefresh,
 } from "@/lib/utils/list-refresh";
 import { BRAND_COLORS } from "@/lib/constants/colors";
 import { Input } from "@/components/ui/input";
@@ -218,13 +219,7 @@ export default function ExamsPage() {
   >([{ value: "all-course", label: t("allCourses") }]);
   const [schoolsLoading, setSchoolsLoading] = useState(false);
   const [coursesLoading, setCoursesLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState(() => {
-    const tab = searchParams.get("tab");
-    if (tab === "exercise" || tab === "homework" || tab === "all" || tab === "assessment") {
-      return tab;
-    }
-    return "homework";
-  });
+  const [activeTab, setActiveTab] = useState("homework");
   const [filters, setFilters] = useState<ExamFilters>({
     status: undefined,
     lesson_id: undefined,
@@ -365,7 +360,7 @@ export default function ExamsPage() {
     fetchInitialData();
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const tab = searchParams.get("tab");
     if (
       tab === "exercise" ||
@@ -374,14 +369,46 @@ export default function ExamsPage() {
       tab === "assessment"
     ) {
       setActiveTab(tab);
+    } else if (peekListForRefresh(ASSIGNMENTS_EXERCISES_REFRESH_KEY)) {
+      setActiveTab("exercise");
     }
+  }, [searchParams]);
 
-    if (consumeListForRefresh(ASSIGNMENTS_EXERCISES_REFRESH_KEY)) {
+  useEffect(() => {
+    const shouldRefresh = peekListForRefresh(ASSIGNMENTS_EXERCISES_REFRESH_KEY);
+    const tab = searchParams.get("tab");
+
+    if (!shouldRefresh && tab !== "exercise") return;
+
+    let cancelled = false;
+
+    const refreshExercises = async () => {
       setActiveTab("exercise");
       setExerciseFilters((prev) => ({ ...prev, page: 1 }));
-      void queryClient.invalidateQueries({ queryKey: ["exercises"] });
-    }
-  }, [searchParams, queryClient]);
+
+      try {
+        await queryClient.fetchQuery({
+          queryKey: ["exercises", 1, exercisePageSize],
+          queryFn: () =>
+            getExercisesList({
+              page: 1,
+              limit: exercisePageSize,
+            }),
+        });
+        if (!cancelled) {
+          clearListForRefresh(ASSIGNMENTS_EXERCISES_REFRESH_KEY);
+        }
+      } catch (error) {
+        console.error("Failed to refresh exercises list:", error);
+      }
+    };
+
+    void refreshExercises();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams, queryClient, exercisePageSize]);
 
   // Reset page về 1 khi search hoặc đổi tab
   useEffect(() => {

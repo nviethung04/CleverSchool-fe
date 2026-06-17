@@ -8,6 +8,18 @@ export function markListForRefresh(key: string) {
   }
 }
 
+/** Read refresh flag without removing it (safe for React Strict Mode double-mount). */
+export function peekListForRefresh(key: string): boolean {
+  if (typeof window === "undefined") return false;
+  return !!sessionStorage.getItem(key);
+}
+
+export function clearListForRefresh(key: string) {
+  if (typeof window === "undefined") return;
+  sessionStorage.removeItem(key);
+}
+
+/** @deprecated Prefer peekListForRefresh + clearListForRefresh after successful fetch */
 export function consumeListForRefresh(key: string): boolean {
   if (typeof window === "undefined") return false;
   const value = sessionStorage.getItem(key);

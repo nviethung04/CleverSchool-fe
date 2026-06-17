@@ -4,7 +4,6 @@ import type React from "react";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/context/auth-context";
 import { ExerciseForm } from "../components/exercise-form";
 import { useToast } from "@/components/ui/use-toast";
@@ -23,7 +22,6 @@ import { useTypedTranslations } from "@/lib/i18n/client";
 
 export default function CreateExercisePage() {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user } = useAuth();
   const t = useTypedTranslations("manageAssignments");
@@ -361,9 +359,8 @@ export default function CreateExercisePage() {
       });
 
       markListForRefresh(ASSIGNMENTS_EXERCISES_REFRESH_KEY);
-      await queryClient.invalidateQueries({ queryKey: ["exercises"] });
       setIsNavigating(true);
-      router.push(`${getAssignmentsRoute(user)}?tab=exercise`);
+      router.replace(`${getAssignmentsRoute(user)}?tab=exercise`);
     } catch (error: any) {
       console.error("Error creating exercise:", error);
       toast({
