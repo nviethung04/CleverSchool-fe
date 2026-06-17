@@ -186,16 +186,6 @@ export function UserForm({
               >
                 {t("admin")}
               </Button>
-              <Button
-                type="button"
-                variant={selectedRole === "4" ? "default" : "outline"}
-                onClick={() => {
-                  setSelectedRole("4");
-                  setValue("role_id", 4);
-                }}
-              >
-                {t("school")}
-              </Button>
             </div>
           </CardHeader>
         )}
@@ -209,27 +199,11 @@ export function UserForm({
                 {selectedRole === "1" && t("admin")}
                 {selectedRole === "2" && t("teacher")}
                 {selectedRole === "3" && t("student")}
-                {selectedRole === "4" && t("school")}
               </div>
             </div>
           )}
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <input type="hidden" {...register("avatar")} />
-
-            {/* Hidden inputs for validation when role_id = 4 */}
-            {selectedRole === "4" && (
-              <>
-                <input
-                  type="hidden"
-                  {...register("school", {
-                    required:
-                      selectedRole === "4"
-                        ? t("schoolRequired") || "Trường học là bắt buộc"
-                        : false,
-                  })}
-                />
-              </>
-            )}
 
             <div className="flex gap-4">
               <div className="flex-1 flex flex-col space-y-1">
@@ -318,7 +292,7 @@ export function UserForm({
               </div>
             )}
 
-            {selectedRole !== "1" && selectedRole !== "4" && (
+            {selectedRole !== "1" && (
               <div className="flex gap-4">
                 {selectedRole === "3" && (
                   <div className="flex-1 flex flex-col space-y-1">
@@ -364,8 +338,7 @@ export function UserForm({
               </div>
             </div>
 
-            {selectedRole !== "4" && (
-              <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1 flex flex-col space-y-1">
                   <label>{t("detailAddress")}</label>
                   <Input
@@ -392,7 +365,6 @@ export function UserForm({
                   )}
                 </div>
               </div>
-            )}
 
             <div className="flex flex-col space-y-1">
               <label>{t("status")}</label>
@@ -585,15 +557,10 @@ export function UserForm({
             {selectedRole === "3" && (
               <input type="hidden" {...register("course")} />
             )}
-            {(selectedRole === "3" || selectedRole === "4") && (
+            {selectedRole === "3" && (
               <>
                 <div className="flex flex-col space-y-1">
-                  <label>
-                    {t("schoolField")}{" "}
-                    {selectedRole === "4" && (
-                      <span className="text-red-500">*</span>
-                    )}
-                  </label>
+                  <label>{t("schoolField")}</label>
                   <Popover
                     open={isSchoolPopoverOpen}
                     onOpenChange={setIsSchoolPopoverOpen}
@@ -638,13 +605,8 @@ export function UserForm({
                       </Command>
                     </PopoverContent>
                   </Popover>
-                  {selectedRole === "4" && errors.school && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.school.message}
-                    </p>
-                  )}
                 </div>
-                {school && selectedRole === "3" && (
+                {school && (
                   <div className="flex-1 flex flex-col space-y-1">
                     <label>{t("class")}</label>
                     <Select
@@ -667,7 +629,6 @@ export function UserForm({
 
                 {/* Section chọn khóa học cho học sinh khi đã chọn trường */}
                 {school &&
-                  selectedRole === "3" &&
                   coursesBySchool &&
                   coursesBySchool.length > 0 && (
                     <div className="flex flex-col space-y-3">
@@ -746,7 +707,7 @@ export function UserForm({
                 <Button
                   type="submit"
                   className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-auto order-1 sm:order-2" // Mobile: Nằm trên cùng (ưu tiên)
-                  disabled={isUploading || (selectedRole === "4" && !school)}
+                  disabled={isUploading}
                 >
                   {isUploading ? t("saving") : submitButtonText}
                 </Button>

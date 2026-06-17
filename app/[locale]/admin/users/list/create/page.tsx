@@ -28,7 +28,6 @@ export default function CreateUserPage() {
     if (roleId === "1") return "1"; // admin
     if (roleId === "2") return "2"; // teacher
     if (roleId === "3") return "3"; // student
-    if (roleId === "4") return "4"; // school
     return "3"; // default to student
   };
 
@@ -275,7 +274,7 @@ export default function CreateUserPage() {
       role: {
         id: Number(data.role_id),
         name:
-          data.role_id === 1 ? "admin" : data.role_id === 2 ? "teacher" : data.role_id === 3 ? "student" : "school",
+          data.role_id === 1 ? "admin" : data.role_id === 2 ? "teacher" : "student",
       },
       certificates: [],
       degrees: [],
@@ -371,8 +370,6 @@ export default function CreateUserPage() {
         return t("addTeacherTitle");
       case "3":
         return t("addStudentTitle");
-      case "4":
-        return t("addSchoolTitle");
       default:
         return t("addUserTitle");
     }
@@ -386,8 +383,6 @@ export default function CreateUserPage() {
         return t("addTeacherSubtitle");
       case "3":
         return t("addStudentSubtitle");
-      case "4":
-        return t("addSchoolSubtitle");
       default:
         return t("addUserSubtitle");
     }
@@ -401,8 +396,6 @@ export default function CreateUserPage() {
         return t("addTeacherButton");
       case "3":
         return t("addStudentButton");
-      case "4":
-        return t("addSchoolButton");
       default:
         return t("addUserButton");
     }

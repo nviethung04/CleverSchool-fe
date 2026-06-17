@@ -155,6 +155,20 @@ export async function UpdateCourse(courseId: string, data: any) {
 }
 
 // Hàm lấy chi tiết khóa học
+export function unwrapApiPayload<T = any>(response: any): T | null {
+  if (!response) return null;
+  if (response.data !== undefined && response.data !== null) {
+    return response.data as T;
+  }
+  return response as T;
+}
+
+export function parseCourseApiDate(value?: string | null): Date | null {
+  if (!value || value.startsWith("0001")) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 export async function GetCourseDetail(courseId: string) {
   try {
 

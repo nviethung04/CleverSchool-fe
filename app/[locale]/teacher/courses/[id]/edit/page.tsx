@@ -22,6 +22,9 @@ import {
   UpdateCourse,
   GetCourseFamily,
   SyncAllFamilyCourses,
+  GetUsersInCourse,
+  unwrapApiPayload,
+  parseCourseApiDate,
 } from "@/lib/api/courses";
 import { UpdateLesson } from "@/lib/api/lessons";
 import { useParams, useRouter } from "next/navigation";
@@ -174,6 +177,8 @@ function EditCourseContent({
     children: any[];
   } | null>(null);
   const [loadingFamilyData, setLoadingFamilyData] = useState(false);
+  const [isLoadingCourse, setIsLoadingCourse] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState<{
     completed_courses: number;
@@ -217,9 +222,71 @@ function EditCourseContent({
     })();
   }, []);
   // Fetch course detail khi component mount hoặc courseId thay đổi
-
   useEffect(() => {
     let cancelled = false;
+
+    const mapStudents = (users: any[]) =>
+      (Array.isArray(users) ? users : []).map((u) => ({
+        id: String(u.id),
+        name: u.name || u.username || "",
+        email: u.email || "",
+        school:
+          typeof u.user_info?.school === "object"
+            ? u.user_info?.school?.name || ""
+            : u.user_info?.school || "",
+        class:
+          typeof u.user_info?.class === "object"
+            ? u.user_info?.class?.name || ""
+            : u.user_info?.class || "",
+      }));
+
+    const mapTeachers = (users: any[]) =>
+      (Array.isArray(users) ? users : []).map((u) => ({
+        id: String(u.id),
+        name: u.name || u.username || "",
+        email: u.email || "",
+        school:
+          typeof u.user_info?.school === "object"
+            ? u.user_info?.school?.name || ""
+            : u.user_info?.school || "",
+      }));
+
+    const applyCourseToForm = (
+      course: any,
+      students: typeof form.students,
+      teachers: typeof form.teachers
+    ) => {
+      const semesters = (course.semesters || []).map((s: any) => ({
+        id: Number(s.id),
+        name: s.name || "",
+        description: s.description || "",
+        start_date: s.start_date || "",
+        end_date: s.end_date || "",
+      }));
+
+      setForm((f) => ({
+        ...f,
+        name: course.name || "",
+        object_title: course.object_title || "",
+        description: course.description || "",
+        target: course.target || course.goal || course.objective || "",
+        cover: course.image || "",
+        coverType: course.cover ? "upload" : course.image ? "link" : f.coverType,
+        duration: course.duration ?? 1,
+        start_date: parseCourseApiDate(course.start_date),
+        end_date: parseCourseApiDate(course.end_date),
+        chapters: course.chapters || [],
+        students,
+        teachers,
+        semesters,
+        skills: course.skills || f.skills,
+      }));
+
+      if (semesters.length > 0) {
+        setSelectedSemesterIds(semesters.map((s) => String(s.id)));
+      }
+    };
+
     (async () => {
       if (typeof window !== "undefined") {
         const cached = sessionStorage.getItem("courseEdit");
@@ -245,107 +312,81 @@ function EditCourseContent({
                 chapters: parsed.chapters || [],
                 students: parsed.students || [],
                 start_date: parsed.start_date
-                  ? new Date(parsed.start_date)
+                  ? parseCourseApiDate(parsed.start_date)
                   : null,
               }));
             }
-          } catch {}
+          } catch {
+            // ignore invalid cache
+          }
         }
       }
-      console.log("GetCourseDetail called", courseId);
-      if (!courseId) return;
+
+      if (!courseId) {
+        setIsLoadingCourse(false);
+        return;
+      }
+
+      setIsLoadingCourse(true);
+      setLoadError(null);
+
       try {
-        const detail = await GetCourseDetail(courseId);
-        setCourseData(detail.data); // Lưu lại toàn bộ object course
-        let chapters = detail?.data?.chapters || [];
-        let target =
-          detail?.data?.target ||
-          detail?.data?.goal ||
-          detail?.data?.objective ||
-          "";
-        let start_date = detail?.data?.start_date
-          ? new Date(detail?.data?.start_date)
-          : null;
-        let end_date = detail?.data?.end_date
-          ? new Date(detail?.data?.end_date)
-          : null;
-        // Fetch students and teachers in course
-        const [studentsRes, teachersRes] = await Promise.all([
-          import("@/lib/api/courses").then((m) =>
-            m.GetUsersInCourse(3, Number(courseId))
-          ),
-          import("@/lib/api/courses").then((m) =>
-            m.GetUsersInCourse(2, Number(courseId))
-          ),
-        ]);
-        const studentsRaw = studentsRes?.data.users || [];
-        const teachersRaw = teachersRes?.data.users || [];
-        const students = (Array.isArray(studentsRaw) ? studentsRaw : []).map(
-          (u) => ({
-            id: String(u.id),
-            name: u.name || u.username || "",
-            email: u.email || "",
-            school:
-              typeof u.user_info?.school === "object"
-                ? u.user_info?.school?.name || ""
-                : u.user_info?.school || "",
-            class:
-              typeof u.user_info?.class === "object"
-                ? u.user_info?.class?.name || ""
-                : u.user_info?.class || "",
-          })
-        );
-        const teachers = (Array.isArray(teachersRaw) ? teachersRaw : []).map(
-          (u) => ({
-            id: String(u.id),
-            name: u.name || u.username || "",
-            email: u.email || "",
-            school:
-              typeof u.user_info?.school === "object"
-                ? u.user_info?.school?.name || ""
-                : u.user_info?.school || "",
-          })
-        );
-        if (!cancelled) {
-          initialStudentsRef.current = students;
-          initialTeachersRef.current = teachers;
-          const semesters = detail.data.semesters || [];
-          setForm((f) => {
-            const newForm = {
-              ...f,
-              ...detail.data,
-              cover: detail.data.image || "",
-              coverType: detail.data.cover
-                ? "upload"
-                : detail.data.image
-                ? "link"
-                : f.coverType,
-              target,
-              start_date,
-              end_date,
-              chapters,
-              students,
-              teachers,
-              semesters: semesters.map((s: any) => ({
-                id: Number(s.id),
-                name: s.name || "",
-                description: s.description || "",
-                start_date: s.start_date || "",
-                end_date: s.end_date || "",
-              })),
-            };
-            return newForm;
-          });
-          // Cập nhật selectedSemesterIds từ semesters đã load
-          if (semesters.length > 0) {
-            setSelectedSemesterIds(semesters.map((s: any) => String(s.id)));
-          }
-          setCourseData(detail.data); // Lưu lại toàn bộ object course
+        const response = await GetCourseDetail(courseId);
+        if (response?.code && Number(response.code) !== 200) {
+          throw new Error(response.message || "Không thể tải khóa học");
         }
+
+        const course = unwrapApiPayload(response);
+        if (!course) {
+          throw new Error("Không có dữ liệu khóa học");
+        }
+
+        if (cancelled) return;
+
+        setCourseData(course);
+        applyCourseToForm(course, [], []);
+
+        let students: typeof form.students = [];
+        let teachers: typeof form.teachers = [];
+
+        try {
+          const [studentsRes, teachersRes] = await Promise.all([
+            GetUsersInCourse(3, Number(courseId)),
+            GetUsersInCourse(2, Number(courseId)),
+          ]);
+          const studentsPayload = unwrapApiPayload<{ users?: any[] }>(
+            studentsRes
+          );
+          const teachersPayload = unwrapApiPayload<{ users?: any[] }>(
+            teachersRes
+          );
+          students = mapStudents(studentsPayload?.users || []);
+          teachers = mapTeachers(teachersPayload?.users || []);
+        } catch (userErr) {
+          console.error("Error fetching users in course:", userErr);
+        }
+
+        if (cancelled) return;
+
+        initialStudentsRef.current = students;
+        initialTeachersRef.current = teachers;
+        applyCourseToForm(course, students, teachers);
       } catch (err) {
-        console.error("Error fetching course detail or users in course:", err);
+        console.error("Error fetching course detail:", err);
+        if (!cancelled) {
+          setLoadError(
+            err instanceof Error
+              ? err.message
+              : "Không thể tải dữ liệu khóa học"
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoadingCourse(false);
+        }
       }
     })();
+
     return () => {
       cancelled = true;
     };
@@ -362,11 +403,12 @@ function EditCourseContent({
           );
           if (!courseId) return;
           const detail = await GetCourseDetail(courseId);
-          console.log("Updated course detail:", detail.data);
+          const course = unwrapApiPayload(detail);
+          if (!course) return;
           setForm((f) => ({
             ...f,
-            ...detail.data,
-            chapters: detail.data.chapters || [],
+            ...course,
+            chapters: course.chapters || [],
           }));
           console.log("Form refreshed successfully");
         } catch (err) {
@@ -527,10 +569,12 @@ function EditCourseContent({
       // Lấy lại chi tiết khóa học mới nhất
       if (!courseId) return;
       const detail = await GetCourseDetail(courseId);
+      const course = unwrapApiPayload(detail);
+      if (!course) return;
       setForm((f) => ({
         ...f,
-        ...detail.data,
-        chapters: detail.data.chapters || [],
+        ...course,
+        chapters: course.chapters || [],
       }));
     } catch (err) {
       console.error("Xóa lesson khỏi chương thất bại", err);
@@ -837,6 +881,17 @@ function EditCourseContent({
       <div className="container mx-auto px-6">
         {!courseId ? (
           <div className="text-center">Loading...</div>
+        ) : isLoadingCourse ? (
+          <div className="text-center py-16 text-gray-500">
+            Đang tải dữ liệu khóa học...
+          </div>
+        ) : loadError ? (
+          <div className="text-center py-16">
+            <p className="text-red-600 mb-4">{loadError}</p>
+            <Button variant="outline" onClick={() => router.back()}>
+              Quay lại
+            </Button>
+          </div>
         ) : (
           <>
             <div className="mb-8">
