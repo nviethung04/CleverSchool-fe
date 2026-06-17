@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/select";
 import { Save } from "lucide-react";
 import { adminPrimaryButtonClass } from "@/components/admin/admin-list-header";
-import { getWeeks, Week } from "@/lib/api/students";
 import { GetSemestersList, Semester } from "@/lib/api/semesters";
 
 export interface SemesterFormData {
@@ -55,27 +54,8 @@ export default function SemesterForm({
     status: true,
   });
 
-  const [weeks, setWeeks] = useState<Week[]>([]);
   const [semesters, setSemesters] = useState<Semester[]>([]);
-  const [loadingWeeks, setLoadingWeeks] = useState(false);
   const [loadingSemesters, setLoadingSemesters] = useState(false);
-
-  useEffect(() => {
-    const fetchWeeks = async () => {
-      try {
-        setLoadingWeeks(true);
-        const response = await getWeeks();
-        if (response?.data?.weeks) {
-          setWeeks(response.data.weeks);
-        }
-      } catch (error) {
-        console.error("Error fetching weeks:", error);
-      } finally {
-        setLoadingWeeks(false);
-      }
-    };
-    fetchWeeks();
-  }, []);
 
   useEffect(() => {
     const fetchSemesters = async () => {
@@ -180,64 +160,6 @@ export default function SemesterForm({
             required
             disabled={isSubmitting}
           />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="start_week_id">
-            Tuần bắt đầu <span className="text-red-500">*</span>
-          </Label>
-          <Select
-            key={`start_week_${weeks.length}_${formData.start_week_id}`}
-            value={formData.start_week_id ? String(formData.start_week_id) : "0"}
-            onValueChange={(value) =>
-              setFormData({ ...formData, start_week_id: parseInt(value) || 0 })
-            }
-            disabled={isSubmitting || loadingWeeks}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Chọn tuần bắt đầu" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="0">Không chọn</SelectItem>
-              {weeks.map((week) => (
-                <SelectItem key={week.id} value={String(week.id)}>
-                  Tuần {week.week_number} ({week.year}) -{" "}
-                  {new Date(week.start_date).toLocaleDateString("vi-VN")} đến{" "}
-                  {new Date(week.end_date).toLocaleDateString("vi-VN")}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="end_week_id">
-            Tuần kết thúc <span className="text-red-500">*</span>
-          </Label>
-          <Select
-            key={`end_week_${weeks.length}_${formData.end_week_id}`}
-            value={formData.end_week_id ? String(formData.end_week_id) : "0"}
-            onValueChange={(value) =>
-              setFormData({ ...formData, end_week_id: parseInt(value) || 0 })
-            }
-            disabled={isSubmitting || loadingWeeks}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Chọn tuần kết thúc" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="0">Không chọn</SelectItem>
-              {weeks.map((week) => (
-                <SelectItem key={week.id} value={String(week.id)}>
-                  Tuần {week.week_number} ({week.year}) -{" "}
-                  {new Date(week.start_date).toLocaleDateString("vi-VN")} đến{" "}
-                  {new Date(week.end_date).toLocaleDateString("vi-VN")}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
       </div>
 

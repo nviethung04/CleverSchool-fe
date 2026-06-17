@@ -267,9 +267,9 @@ export default function QuestionDetailPage() {
                     )}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">
+                    <div className="text-sm font-medium">
                       {renderInline(answer.text, "text-sm font-medium")}
-                    </p>
+                    </div>
                     {answer.media?.url && answer.media.type === "image" && (
                       <div className="mt-2 w-24 h-24 relative rounded overflow-hidden">
                         <Image
@@ -302,7 +302,7 @@ export default function QuestionDetailPage() {
         return (
           <div className="mt-4">
             <h3 className="text-lg font-medium mb-3">{t("blanksHeader")}</h3>
-            <p className="text-base mb-4 flex flex-col gap-0.5">
+            <div className="text-base mb-4 flex flex-col gap-0.5">
               {(question.content?.text || "")
                 .replace(/<p>|<\/p>/g, "\n")
                 .split(/\n+/)
@@ -335,7 +335,7 @@ export default function QuestionDetailPage() {
                       })}
                   </span>
                 ))}
-            </p>
+            </div>
             <div className="space-y-3">
               {question.options?.answers?.map((answer: any, index: number) => (
                 <div
@@ -425,9 +425,9 @@ export default function QuestionDetailPage() {
                 return (
                   <div key={index} className="grid grid-cols-2 gap-3">
                     <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                      <p className="font-medium">
+                      <div className="font-medium">
                         {renderInline(source.content?.text, "font-medium")}
-                      </p>
+                      </div>
                       {source.content?.media?.url &&
                         source.content.media.type === "image" && (
                           <div className="mt-2 w-20 h-20 relative rounded overflow-hidden">
@@ -453,9 +453,9 @@ export default function QuestionDetailPage() {
                         )}
                     </div>
                     <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                      <p className="font-medium">
+                      <div className="font-medium">
                         {renderInline(target.content?.text, "font-medium")}
-                      </p>
+                      </div>
                       {target.content?.media?.url &&
                         target.content.media.type === "image" && (
                           <div className="mt-2 w-20 h-20 relative rounded overflow-hidden">
@@ -491,7 +491,7 @@ export default function QuestionDetailPage() {
         return (
           <div className="mt-4">
             <h3 className="text-lg font-medium mb-3">{t("dragDropHeader")}</h3>
-            <p className="text-base mb-4 flex flex-col gap-0.5">
+            <div className="text-base mb-4 flex flex-col gap-0.5">
               {(question.content?.text || "")
                 .replace(/<p>|<\/p>/g, "\n")
                 .split(/\n+/)
@@ -524,7 +524,7 @@ export default function QuestionDetailPage() {
                       })}
                   </span>
                 ))}
-            </p>
+            </div>
             <div className="mt-4">
               <h4 className="text-base font-medium mb-2">
                 {t("optionsHeader")}
