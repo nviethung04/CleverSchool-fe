@@ -73,6 +73,8 @@ export interface UserFormProps {
   usersExits: boolean
   selectedRole: string
   setSelectedRole: (role: string) => void
+  /** Sync role tab to URL (create page only) */
+  onRoleChange?: (role: string) => void
 
   provinces?: Province[]
   wards?: Ward[]

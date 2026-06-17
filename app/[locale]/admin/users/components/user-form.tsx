@@ -43,6 +43,7 @@ export function UserForm({
   usersExits,
   selectedRole,
   setSelectedRole,
+  onRoleChange,
 
   provinces,
   wards,
@@ -79,6 +80,14 @@ export function UserForm({
   const teacherSchoolClassIds = watch("teacher_school_class_ids") || {};
   const [isSchoolPopoverOpen, setIsSchoolPopoverOpen] = useState(false);
   const [isTeacherSchoolsPopoverOpen, setIsTeacherSchoolsPopoverOpen] = useState(false);
+
+  const switchRole = (role: string, roleId: number, afterSwitch?: () => void) => {
+    if (selectedRole === role) return;
+    setSelectedRole(role);
+    setValue("role_id", roleId);
+    afterSwitch?.();
+    onRoleChange?.(role);
+  };
 
   // Xử lý chọn/bỏ chọn khóa học
   const handleCourseToggle = (courseId: string) => {
@@ -152,37 +161,37 @@ export function UserForm({
               <Button
                 type="button"
                 variant={selectedRole === "3" ? "default" : "outline"}
-                onClick={() => {
-                  setSelectedRole("3");
-                  setValue("role_id", 3);
-                  setValue("type_teacher", 0);
-                  setValue("teacher_school_ids", []);
-                  setValue("teacher_school_class_ids", {});
-                }}
+                onClick={() =>
+                  switchRole("3", 3, () => {
+                    setValue("type_teacher", 0);
+                    setValue("teacher_school_ids", []);
+                    setValue("teacher_school_class_ids", {});
+                  })
+                }
               >
                 {t("student")}
               </Button>
               <Button
                 type="button"
                 variant={selectedRole === "2" ? "default" : "outline"}
-                onClick={() => {
-                  setSelectedRole("2");
-                  setValue("role_id", 2);
-                  setValue("type_teacher", 1); // Mặc định là giáo viên Việt Nam
-                  setValue("teacher_school_ids", []);
-                  setValue("teacher_school_class_ids", {});
-                }}
+                onClick={() =>
+                  switchRole("2", 2, () => {
+                    setValue("type_teacher", 1);
+                    setValue("teacher_school_ids", []);
+                    setValue("teacher_school_class_ids", {});
+                  })
+                }
               >
                 {t("teacher")}
               </Button>
               <Button
                 type="button"
                 variant={selectedRole === "1" ? "default" : "outline"}
-                onClick={() => {
-                  setSelectedRole("1");
-                  setValue("role_id", 1);
-                  setValue("type_teacher", 0);
-                }}
+                onClick={() =>
+                  switchRole("1", 1, () => {
+                    setValue("type_teacher", 0);
+                  })
+                }
               >
                 {t("admin")}
               </Button>

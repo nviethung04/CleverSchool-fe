@@ -12,11 +12,13 @@ import { GetClassList } from "@/lib/api/classes";
 import { debounce } from "lodash";
 import { UserForm } from "../../components/user-form";
 import { FormData, Province, Ward, Subject } from "../../types";
+import { useQueryString } from "@/hooks/use-query-string";
 
 export default function CreateUserPage() {
   const router = useRouter();
   const t = useTranslations("users");
   const searchParams = useSearchParams();
+  const { setQueryParams } = useQueryString();
   const roleParam = searchParams.get("role");
   const returnTab = searchParams.get("returnTab");
 
@@ -93,13 +95,18 @@ export default function CreateUserPage() {
     fetchSubjects();
   }, []);
 
+  const handleRoleChange = (role: string) => {
+    setQueryParams({ role });
+  };
+
   useEffect(() => {
-    if (roleParam) {
-      const roleString = getSelectedRoleFromParam(roleParam);
+    if (!roleParam) return;
+    const roleString = getSelectedRoleFromParam(roleParam);
+    if (roleString !== selectedRole) {
       setSelectedRole(roleString);
       setValue("role_id", Number(roleParam));
     }
-  }, [roleParam, setValue]);
+  }, [roleParam, selectedRole, setValue]);
 
   useEffect(() => {
     if (school) {
@@ -415,6 +422,7 @@ export default function CreateUserPage() {
       usersExits={usersExits}
       selectedRole={selectedRole}
       setSelectedRole={setSelectedRole}
+      onRoleChange={handleRoleChange}
       schools={schools}
       courses={courses}
       coursesBySchool={coursesBySchool}
