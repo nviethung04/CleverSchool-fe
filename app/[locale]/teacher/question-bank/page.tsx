@@ -1965,7 +1965,7 @@ function QuestionCard({
             <div className="flex md:flex-col gap-1 md:mt-auto">
               <Button
                 size="sm"
-                className="text-white text-xs px-3 h-8 bg-cs-blue"
+                className={`text-xs px-3 h-8 ${adminSecondaryButtonClass}`}
                 asChild
               >
                 <Link
