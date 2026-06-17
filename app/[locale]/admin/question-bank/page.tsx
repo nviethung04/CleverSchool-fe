@@ -50,6 +50,10 @@ import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { getQuestions } from "@/lib/api/questions"
 import { useToast } from "@/components/ui/use-toast"
+import {
+  adminPrimaryButtonClass,
+  adminSecondaryButtonClass,
+} from "@/components/admin/admin-list-header"
 
 // Định nghĩa các loại câu hỏi
 const QUESTION_TYPES = {
@@ -508,7 +512,7 @@ export default function TeacherQuestionBankPage() {
               />
             </div>
             <Button
-              className="rounded-full bg-cs-green text-white hover:bg-opacity-90 flex items-center gap-2"
+              className={`rounded-full flex items-center gap-2 ${adminPrimaryButtonClass}`}
               asChild
             >
               <Link href="/admin/question-bank/create-question">
@@ -638,7 +642,7 @@ export default function TeacherQuestionBankPage() {
                 <HelpCircle className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                 <h3 className="text-lg font-medium text-gray-600">Không tìm thấy câu hỏi nào</h3>
                 <p className="text-gray-500 mt-1">Thử thay đổi bộ lọc hoặc tạo câu hỏi mới</p>
-                <Button className="mt-4 bg-cs-green" asChild>
+                <Button className={`mt-4 ${adminPrimaryButtonClass}`} asChild>
                   <Link href="/admin/question-bank/create-question">
                     <Plus className="h-4 w-4 mr-2" />
                     Tạo câu hỏi mới
@@ -1215,7 +1219,7 @@ function QuestionCard({ question }: { question: any }) {
             </div>
 
             <div className="flex md:flex-col gap-1 md:mt-auto">
-              <Button size="sm" className="text-white text-xs px-3 h-8 bg-cs-blue" asChild>
+              <Button size="sm" className={`text-xs px-3 h-8 ${adminSecondaryButtonClass}`} asChild>
                 <Link href={`/admin/question-bank/${question.id}`}>
                   <Eye className="h-3.5 w-3.5 mr-1.5" />
                   Chi tiết
