@@ -34,23 +34,31 @@ export default async function middleware(request: NextRequest) {
   const shouldCheckAPI = !sessionChecked || forceRecheck || isHardReload;
 
   if (shouldCheckAPI) {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/manage/settings/by-key/${process.env.MAINTENANCE_KEY}`,
-        {
-          cache: 'no-store',
-          signal: AbortSignal.timeout(5000),
+    const maintenanceKey =
+      process.env.MAINTENANCE_KEY ||
+      process.env.NEXT_PUBLIC_MAINTENANCE_KEY ||
+      "";
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
+    if (maintenanceKey && apiBaseUrl) {
+      try {
+        const res = await fetch(
+          `${apiBaseUrl}/manage/settings/by-key/${maintenanceKey}`,
+          {
+            cache: 'no-store',
+            signal: AbortSignal.timeout(5000),
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error('API request failed');
         }
-      );
 
-      if (!res.ok) {
-        throw new Error('API request failed');
+        const data = await res.json();
+        isMaintenance = Boolean(data?.data?.is_active);
+      } catch {
+        isMaintenance = false;
       }
-
-      const data = await res.json();
-      isMaintenance = Boolean(data?.data?.is_active);
-    } catch {
-      isMaintenance = false;
     }
   } else {
     // Logic để biết maintenance status từ session hiện tại
