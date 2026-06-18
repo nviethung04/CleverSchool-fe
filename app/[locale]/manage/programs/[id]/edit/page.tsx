@@ -218,7 +218,6 @@ function EditProgramContent({
     target: "",
     description: "",
     cover: "",
-    coverType: "upload",
     duration: 1 as number | "",
     chapters: [] as Chapter[],
     subject_id: "",
@@ -341,11 +340,10 @@ function EditProgramContent({
             ...f,
             name,
             description,
-            cover,
-            coverType: cover && !cover.startsWith("blob:") ? "link" : "upload",
+            cover: cover ?? "",
             duration: duration || 1,
-            book_url,
-            target,
+            book_url: book_url ?? "",
+            target: target ?? "",
             chapters: chapters || [],
             subject_id: subject_id ? String(subject_id) : "",
           }));
@@ -368,7 +366,6 @@ function EditProgramContent({
         target: form.target,
         description: form.description,
         cover: form.cover,
-        coverType: form.coverType,
         duration: form.duration,
         schoolId: selectedSchoolId,
         subject_id: form.subject_id,
@@ -382,7 +379,6 @@ function EditProgramContent({
         form.target !== initialFormRef.current.target ||
         form.description !== initialFormRef.current.description ||
         form.cover !== initialFormRef.current.cover ||
-        form.coverType !== initialFormRef.current.coverType ||
         form.duration !== initialFormRef.current.duration ||
         selectedSchoolId !== initialFormRef.current.schoolId ||
         form.subject_id !== initialFormRef.current.subject_id ||
@@ -394,7 +390,6 @@ function EditProgramContent({
     form.target,
     form.description,
     form.cover,
-    form.coverType,
     form.duration,
     selectedSchoolId,
     form.subject_id,
@@ -416,17 +411,9 @@ function EditProgramContent({
     setIsSavingProgram(true);
 
     try {
-      let imageUrl = form.cover;
+      let imageUrl = form.cover || "";
 
-      if (form.cover.startsWith("blob:")) {
-        if (!selectedImageFile) {
-          toast({
-            title: "Lỗi",
-            description: "Vui lòng chọn file ảnh bìa để tải lên.",
-            variant: "destructive",
-          });
-          return;
-        }
+      if (selectedImageFile) {
         const uploadResponse = await UploadFile(
           selectedImageFile,
           "programs/covers"
@@ -439,18 +426,6 @@ function EditProgramContent({
           throw new Error("Không nhận được URL file từ server");
         }
         imageUrl = fileUrl;
-      } else if (selectedImageFile) {
-        const uploadResponse = await UploadFile(
-          selectedImageFile,
-          "programs/covers"
-        );
-        const fileUrl =
-          uploadResponse?.data?.url ||
-          uploadResponse?.url ||
-          uploadResponse?.data?.data?.url;
-        if (fileUrl) {
-          imageUrl = fileUrl;
-        }
       }
 
       const selectedSubject = subjects.find(
@@ -489,7 +464,6 @@ function EditProgramContent({
         target: form.target,
         description: form.description,
         cover: imageUrl,
-        coverType: form.coverType,
         duration: form.duration,
         schoolId: selectedSchoolId,
         subject_id: form.subject_id,
@@ -1025,58 +999,21 @@ function EditProgramContent({
                   <label className="block text-sm font-semibold text-gray-900 mb-2">
                     Ảnh bìa
                   </label>
-                  <div className="flex gap-2 mb-3">
-                    <Button
-                      variant={
-                        form.coverType === "upload" ? "default" : "outline"
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    className="border-gray-200 rounded-xl"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setSelectedImageFile(file);
+                        setForm((f) => ({
+                          ...f,
+                          cover: URL.createObjectURL(file),
+                        }));
                       }
-                      onClick={() => {
-                        setForm((f) => ({ ...f, coverType: "upload" }));
-                        setSelectedImageFile(null);
-                      }}
-                      className="rounded-xl"
-                    >
-                      Upload
-                    </Button>
-                    <Button
-                      variant={
-                        form.coverType === "link" ? "default" : "outline"
-                      }
-                      onClick={() => {
-                        setForm((f) => ({ ...f, coverType: "link" }));
-                        setSelectedImageFile(null);
-                      }}
-                      className="rounded-xl"
-                    >
-                      Link
-                    </Button>
-                  </div>
-                  {form.coverType === "upload" ? (
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      className="border-gray-200 rounded-xl"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          setSelectedImageFile(file);
-                          setForm((f) => ({
-                            ...f,
-                            cover: URL.createObjectURL(file),
-                          }));
-                        }
-                      }}
-                    />
-                  ) : (
-                    <Input
-                      value={form.cover}
-                      onChange={(e) =>
-                        setForm((f) => ({ ...f, cover: e.target.value }))
-                      }
-                      placeholder="Dán link ảnh..."
-                      className="border-gray-200 rounded-xl focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  )}
+                    }}
+                  />
                   {form.cover && (
                     <div className="mt-3">
                       <Image

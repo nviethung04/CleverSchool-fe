@@ -1,8 +1,10 @@
 # Thiết kế giao diện — CleverSchool Frontend
 
-Tài liệu đồng bộ UI admin/teacher với brand Clever School. Tham chiếu: `be/AGENTS.md` (quy trình, MVP), `fe/config/hiddenModules.ts` (menu ẩn).
+Tài liệu đồng bộ UI admin/teacher với brand Clever School. Tham chiếu: `fe/AGENTS.md`, `be/AGENTS.md`, `be/docs/features.md`, `fe/config/hiddenModules.ts` (menu ẩn).
 
-Cập nhật: **2026-06-14**
+**Quy tắc:** mọi thay đổi UI/form phải cập nhật file này (xem `fe/AGENTS.md` §1).
+
+Cập nhật: **2026-06-16**
 
 ---
 
@@ -118,3 +120,25 @@ MVP core hiển thị: Tổng quan, Người dùng, Trường, **Môn học**, C
 | File | Export |
 |------|--------|
 | `fe/components/admin/admin-list-header.tsx` | `AdminPageHeading`, `AdminListToolbar`, `AdminCreateButton`, `adminPrimaryButtonClass` |
+
+---
+
+## 11. Form ảnh bìa (upload-only)
+
+Áp dụng cho **chương trình** (admin create/edit) và khuyến nghị cho course admin.
+
+| Quy tắc | Chi tiết |
+|---------|----------|
+| Chỉ upload file | `<Input type="file" accept="image/*" />` — **không** toggle Upload/Link |
+| Không input URL | Tránh `<Input value={form.cover}>` — gây lỗi React controlled/uncontrolled khi `cover` là `undefined` |
+| Load từ API | `cover: image ?? ""` — luôn string |
+| Preview | `form.cover` = URL server hoặc `blob:` sau chọn file |
+| Lưu | Có `selectedImageFile` → `uploadFile(file, "programs/covers")`; không đổi file → giữ URL cũ |
+| State | `selectedImageFile: File \| null` tách khỏi URL preview |
+
+Trang đã chuẩn hóa:
+
+- `fe/app/[locale]/manage/programs/create/page.tsx`
+- `fe/app/[locale]/manage/programs/[id]/edit/page.tsx` (2026-06-16: bỏ Link, sửa warning console)
+
+Chưa chuẩn hóa: `fe/app/[locale]/teacher/courses/[id]/edit/page.tsx` (vẫn có Upload/Link).

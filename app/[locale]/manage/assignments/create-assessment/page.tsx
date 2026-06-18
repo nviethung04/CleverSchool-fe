@@ -8,16 +8,7 @@ import { AssessmentForm } from "../components/assessment-form";
 import { useToast } from "@/components/ui/use-toast";
 import { CreateAssessment, type FileInfo } from "@/lib/api/assessment";
 import { getAssignmentsRoute } from "@/lib/utils/route-utils";
-import { useTypedTranslations } from "@/lib/i18n/client";
 import { GetSubjectsList } from "@/lib/api/subjects";
-import {
-  GetGroupList,
-  type AssessmentCriteriaGroup,
-} from "@/lib/api/group-criteria";
-import {
-  GetStudyReportCriterias,
-  type StudyReportCriteriaListParams,
-} from "@/lib/api/report-criteria";
 
 type BasicOption = {
   id: string;
@@ -37,33 +28,17 @@ export default function CreateAssessmentPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useAuth();
-  const t = useTypedTranslations("manageAssignments");
 
-  // Form state
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [assessmentType, setAssessmentType] = useState("mini_test");
   const [subjectId, setSubjectId] = useState("");
-  const [selectedGroupId, setSelectedGroupId] = useState("");
-  const [selectedStudyReportId, setSelectedStudyReportId] = useState("");
-  const [assessmentCriteriaIds, setAssessmentCriteriaIds] = useState<number[]>(
-    []
-  );
   const [fileInfos, setFileInfos] = useState<UploadedFileMeta[]>([]);
   const [files, setFiles] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Reference data state
   const [subjects, setSubjects] = useState<BasicOption[]>([]);
   const [subjectsLoading, setSubjectsLoading] = useState(true);
-  const [criteriaGroups, setCriteriaGroups] = useState<
-    AssessmentCriteriaGroup[]
-  >([]);
-  const [groupsLoading, setGroupsLoading] = useState(false);
-  const [studyReports, setStudyReports] = useState<BasicOption[]>([]);
-  const [studyReportsLoading, setStudyReportsLoading] = useState(false);
-
-  const [isNavigating, setIsNavigating] = useState(false);
 
   const normalizeFileInfos = useCallback((infos: UploadedFileMeta[]) => {
     return infos
@@ -127,85 +102,8 @@ export default function CreateAssessmentPage() {
     fetchSubjects();
   }, [toast]);
 
-  useEffect(() => {
-    if (!subjectId) {
-      setCriteriaGroups([]);
-      setSelectedGroupId("");
-      setStudyReports([]);
-      setSelectedStudyReportId("");
-      setAssessmentCriteriaIds([]);
-      return;
-    }
-
-    const loadGroups = async () => {
-      try {
-        setGroupsLoading(true);
-        const { groups } = await GetGroupList(Number(subjectId));
-        setCriteriaGroups(groups || []);
-      } catch (error: any) {
-        console.error("Error fetching criteria groups:", error);
-        toast({
-          title: "Lỗi",
-          description: "Không thể tải bảng tiêu chí đánh giá",
-          variant: "destructive",
-        });
-        setCriteriaGroups([]);
-      } finally {
-        setGroupsLoading(false);
-      }
-    };
-
-    const loadStudyReports = async () => {
-      try {
-        setStudyReportsLoading(true);
-        const params: StudyReportCriteriaListParams = {
-          subject_id: Number(subjectId),
-        };
-        const response = await GetStudyReportCriterias(params);
-        const list = response?.data?.study_report_criterias || [];
-        const mapped =
-          list?.map((item: any) => ({
-            id: String(item.id),
-            name: item.name,
-          })) || [];
-        setStudyReports(mapped);
-      } catch (error: any) {
-        console.error("Error fetching study report criterias:", error);
-        toast({
-          title: "Lỗi",
-          description: "Không thể tải form báo cáo đánh giá",
-          variant: "destructive",
-        });
-        setStudyReports([]);
-      } finally {
-        setStudyReportsLoading(false);
-      }
-    };
-
-    loadGroups();
-    loadStudyReports();
-  }, [subjectId, toast]);
-
-  useEffect(() => {
-    if (!selectedGroupId) {
-      setAssessmentCriteriaIds([]);
-      return;
-    }
-    const selectedGroup = criteriaGroups.find(
-      (group) => String(group.id) === selectedGroupId
-    );
-    if (selectedGroup?.criteria?.length) {
-      const ids = selectedGroup.criteria
-        .map((criteria) => Number(criteria.id))
-        .filter((id) => !Number.isNaN(id));
-      setAssessmentCriteriaIds(ids);
-    } else {
-      setAssessmentCriteriaIds([]);
-    }
-  }, [selectedGroupId, criteriaGroups]);
-
   const handleSave = async () => {
-    if (isSaving) return; // ✅ stop spam
+    if (isSaving) return;
 
     if (!name.trim()) {
       toast({
@@ -225,15 +123,6 @@ export default function CreateAssessmentPage() {
       return;
     }
 
-    if (!selectedStudyReportId) {
-      toast({
-        title: "Thiếu thông tin",
-        description: "Vui lòng chọn form báo cáo đánh giá",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsSaving(true);
     try {
       const normalizedFileInfos = normalizeFileInfos(fileInfos);
@@ -243,11 +132,6 @@ export default function CreateAssessmentPage() {
         type: assessmentType,
         program_id: 0,
         subject_id: Number(subjectId),
-        assessment_criteria_group_id: selectedGroupId
-          ? Number(selectedGroupId)
-          : undefined,
-        study_report_criteria_id: Number(selectedStudyReportId),
-        assessment_criteria_ids: assessmentCriteriaIds,
         file_infos: normalizedFileInfos.length
           ? normalizedFileInfos
           : undefined,
@@ -262,7 +146,6 @@ export default function CreateAssessmentPage() {
       });
 
       setTimeout(() => {
-        setIsNavigating(true);
         router.push(getAssignmentsRoute(user));
       }, 500);
     } catch (error: any) {
@@ -296,14 +179,6 @@ export default function CreateAssessmentPage() {
       subjectsLoading={subjectsLoading}
       subjectId={subjectId}
       setSubjectId={setSubjectId}
-      criteriaGroups={criteriaGroups}
-      groupsLoading={groupsLoading}
-      selectedGroupId={selectedGroupId}
-      setSelectedGroupId={setSelectedGroupId}
-      studyReports={studyReports}
-      studyReportsLoading={studyReportsLoading}
-      selectedStudyReportId={selectedStudyReportId}
-      setSelectedStudyReportId={setSelectedStudyReportId}
       onFilesChange={handleFilesChange}
     />
   );

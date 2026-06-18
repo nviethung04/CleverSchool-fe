@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/lib/context/auth-context";
 import { AssessmentForm } from "../../components/assessment-form";
@@ -11,15 +11,6 @@ import {
   type FileInfo,
 } from "@/lib/api/assessment";
 import { GetSubjectsList } from "@/lib/api/subjects";
-import {
-  GetGroupList,
-  type AssessmentCriteriaGroup,
-  GetGroupDetail,
-} from "@/lib/api/group-criteria";
-import {
-  GetStudyReportCriterias,
-  type StudyReportCriteriaListParams,
-} from "@/lib/api/report-criteria";
 import Loading from "@/app/loading";
 import { getAssignmentsRoute } from "@/lib/utils/route-utils";
 
@@ -144,11 +135,6 @@ export default function EditAssessmentPage() {
   const [description, setDescription] = useState("");
   const [assessmentType, setAssessmentType] = useState("mini_test");
   const [subjectId, setSubjectId] = useState("");
-  const [selectedGroupId, setSelectedGroupId] = useState("");
-  const [selectedStudyReportId, setSelectedStudyReportId] = useState("");
-  const [assessmentCriteriaIds, setAssessmentCriteriaIds] = useState<number[]>(
-    []
-  );
   const [fileInfos, setFileInfos] = useState<UploadedFileMeta[]>([]);
   const [files, setFiles] = useState<string[]>([]);
   const [initialUploadedFiles, setInitialUploadedFiles] = useState<
@@ -158,12 +144,6 @@ export default function EditAssessmentPage() {
 
   const [subjects, setSubjects] = useState<BasicOption[]>([]);
   const [subjectsLoading, setSubjectsLoading] = useState(true);
-  const [criteriaGroups, setCriteriaGroups] = useState<
-    AssessmentCriteriaGroup[]
-  >([]);
-  const [groupsLoading, setGroupsLoading] = useState(false);
-  const [studyReports, setStudyReports] = useState<BasicOption[]>([]);
-  const [studyReportsLoading, setStudyReportsLoading] = useState(false);
 
   const [isSaving, setIsSaving] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -212,83 +192,6 @@ export default function EditAssessmentPage() {
   }, [toast]);
 
   useEffect(() => {
-    if (!subjectId) {
-      setCriteriaGroups([]);
-      setSelectedGroupId("");
-      setStudyReports([]);
-      setSelectedStudyReportId("");
-      setAssessmentCriteriaIds([]);
-      return;
-    }
-
-    const loadGroups = async () => {
-      try {
-        setGroupsLoading(true);
-        const { groups } = await GetGroupList(Number(subjectId));
-        setCriteriaGroups(groups || []);
-      } catch (error: any) {
-        console.error("Error fetching criteria groups:", error);
-        toast({
-          title: "Lỗi",
-          description: "Không thể tải bảng tiêu chí đánh giá",
-          variant: "destructive",
-        });
-        setCriteriaGroups([]);
-      } finally {
-        setGroupsLoading(false);
-      }
-    };
-
-    const loadStudyReports = async () => {
-      try {
-        setStudyReportsLoading(true);
-        const params: StudyReportCriteriaListParams = {
-          subject_id: Number(subjectId),
-        };
-        const response = await GetStudyReportCriterias(params);
-        const list = response?.data?.study_report_criterias || [];
-        const mapped =
-          list?.map((item: any) => ({
-            id: String(item.id),
-            name: item.name,
-          })) || [];
-        setStudyReports(mapped);
-      } catch (error: any) {
-        console.error("Error fetching study report criterias:", error);
-        toast({
-          title: "Lỗi",
-          description: "Không thể tải form báo cáo đánh giá",
-          variant: "destructive",
-        });
-        setStudyReports([]);
-      } finally {
-        setStudyReportsLoading(false);
-      }
-    };
-
-    loadGroups();
-    loadStudyReports();
-  }, [subjectId, toast]);
-
-  useEffect(() => {
-    if (!selectedGroupId) {
-      setAssessmentCriteriaIds([]);
-      return;
-    }
-    const selectedGroup = criteriaGroups.find(
-      (group) => String(group.id) === selectedGroupId
-    );
-    if (selectedGroup?.criteria?.length) {
-      const ids = selectedGroup.criteria
-        .map((criteria) => Number(criteria.id))
-        .filter((id) => !Number.isNaN(id));
-      setAssessmentCriteriaIds(ids);
-    } else {
-      setAssessmentCriteriaIds([]);
-    }
-  }, [selectedGroupId, criteriaGroups]);
-
-  useEffect(() => {
     const fetchDetail = async () => {
       if (!assessmentId) return;
       setIsInitializing(true);
@@ -297,16 +200,7 @@ export default function EditAssessmentPage() {
         setName(detail.name || "");
         setDescription(detail.description || "");
         setAssessmentType(detail.type || "mini_test");
-        setSelectedGroupId(
-          detail.assessment_criteria_group_id
-            ? String(detail.assessment_criteria_group_id)
-            : ""
-        );
-        setSelectedStudyReportId(
-          detail.study_report_criteria_id
-            ? String(detail.study_report_criteria_id)
-            : ""
-        );
+
         if (
           detail.program_id !== undefined &&
           detail.program_id !== null &&
@@ -315,38 +209,16 @@ export default function EditAssessmentPage() {
           setProgramId(Number(detail.program_id));
         }
 
-        if (detail.assessment_criteria_ids?.length) {
-          setAssessmentCriteriaIds(detail.assessment_criteria_ids);
-        } else if (detail.criteria?.length) {
-          const ids = detail.criteria
-            .map((item: any) => Number(item.id))
-            .filter((id) => !Number.isNaN(id));
-          setAssessmentCriteriaIds(ids);
-        }
-
         const initialFiles = buildInitialUploadedFiles(
           detail.file_infos,
           detail.files
         );
         setInitialUploadedFiles(initialFiles);
 
-        let resolvedSubjectId =
+        const resolvedSubjectId =
           detail.subject_id !== undefined && detail.subject_id !== null
             ? String(detail.subject_id)
             : "";
-
-        if (!resolvedSubjectId && detail.assessment_criteria_group_id) {
-          try {
-            const groupDetail = await GetGroupDetail(
-              detail.assessment_criteria_group_id
-            );
-            if (groupDetail?.subject_id) {
-              resolvedSubjectId = String(groupDetail.subject_id);
-            }
-          } catch (groupError) {
-            console.error("Error fetching group detail:", groupError);
-          }
-        }
 
         setSubjectId(resolvedSubjectId);
       } catch (error: any) {
@@ -385,15 +257,6 @@ export default function EditAssessmentPage() {
       return;
     }
 
-    if (!selectedStudyReportId) {
-      toast({
-        title: "Thiếu thông tin",
-        description: "Vui lòng chọn form báo cáo đánh giá",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsSaving(true);
     try {
       const normalizedFileInfos = normalizeFileInfos(fileInfos);
@@ -403,11 +266,6 @@ export default function EditAssessmentPage() {
         type: assessmentType,
         program_id: programId ?? 0,
         subject_id: Number(subjectId),
-        assessment_criteria_group_id: selectedGroupId
-          ? Number(selectedGroupId)
-          : undefined,
-        study_report_criteria_id: Number(selectedStudyReportId),
-        assessment_criteria_ids: assessmentCriteriaIds,
         file_infos: normalizedFileInfos.length
           ? normalizedFileInfos
           : undefined,
@@ -461,14 +319,6 @@ export default function EditAssessmentPage() {
       subjectsLoading={subjectsLoading}
       subjectId={subjectId}
       setSubjectId={setSubjectId}
-      criteriaGroups={criteriaGroups}
-      groupsLoading={groupsLoading}
-      selectedGroupId={selectedGroupId}
-      setSelectedGroupId={setSelectedGroupId}
-      studyReports={studyReports}
-      studyReportsLoading={studyReportsLoading}
-      selectedStudyReportId={selectedStudyReportId}
-      setSelectedStudyReportId={setSelectedStudyReportId}
       onFilesChange={handleFilesChange}
       initialUploadedFiles={initialUploadedFiles}
     />

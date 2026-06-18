@@ -55,6 +55,7 @@ import {
   SlidersHorizontal,
   Calendar,
   Star,
+  BookMarked,
 } from "lucide-react";
 import { GetUserLogin } from "@/lib/api/users";
 import { BRAND_COLORS } from "@/lib/constants/colors";
@@ -142,6 +143,11 @@ export function AdminSidebar() {
           icon: <Presentation className="h-5 w-5" />,
           label: t("lectureManagement"),
           href: `/${locale}/admin/lecture-bank`,
+        },
+        {
+          icon: <BookMarked className="h-5 w-5" />,
+          label: t("flashcardManagement"),
+          href: `/${locale}/admin/flashcard`,
         },
         {
           icon: <FileText className="h-5 w-5" />,

@@ -29,7 +29,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { AssessmentCriteriaGroup } from "@/lib/api/group-criteria";
 
 interface AssessmentFormProps {
   // Basic assessment info
@@ -67,14 +66,6 @@ interface AssessmentFormProps {
   subjectsLoading?: boolean;
   subjectId: string;
   setSubjectId: (value: string) => void;
-  criteriaGroups: AssessmentCriteriaGroup[];
-  groupsLoading?: boolean;
-  selectedGroupId: string;
-  setSelectedGroupId: (value: string) => void;
-  studyReports: Array<{ id: string; name: string }>;
-  studyReportsLoading?: boolean;
-  selectedStudyReportId: string;
-  setSelectedStudyReportId: (value: string) => void;
   onFilesChange?: (payload: {
     fileInfos: Record<string, any>[];
     files: string[];
@@ -98,14 +89,6 @@ export function AssessmentForm({
   subjectsLoading = false,
   subjectId,
   setSubjectId,
-  criteriaGroups,
-  groupsLoading = false,
-  selectedGroupId,
-  setSelectedGroupId,
-  studyReports,
-  studyReportsLoading = false,
-  selectedStudyReportId,
-  setSelectedStudyReportId,
   onFilesChange,
 }: AssessmentFormProps) {
   const params = useParams();
@@ -297,9 +280,7 @@ export function AssessmentForm({
                         </SelectContent>
                       </Select>
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <Label className="text-sm font-medium text-gray-700">
                         Chọn môn học <span className="text-red-500">*</span>
@@ -335,87 +316,6 @@ export function AssessmentForm({
                         </SelectContent>
                       </Select>
                     </div>
-
-                    <div className="space-y-1">
-                      <Label className="text-sm font-medium text-gray-700">
-                        Chọn bảng tiêu chí đánh giá điểm
-                      </Label>
-                      <Select
-                        value={selectedGroupId || "__none__"}
-                        onValueChange={(value) => {
-                          setSelectedGroupId(value === "__none__" ? "" : value);
-                        }}
-                        disabled={groupsLoading || !subjectId}
-                      >
-                        <SelectTrigger className="rounded-2xl border-gray-200 focus:border-green-300 focus:ring-green-200 py-3">
-                          <SelectValue
-                            placeholder={
-                              !subjectId
-                                ? "Vui lòng chọn môn học trước"
-                                : groupsLoading
-                                ? "Đang tải bảng tiêu chí..."
-                                : "Chọn bảng tiêu chí"
-                            }
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="__none__">
-                            Không lựa chọn
-                          </SelectItem>
-                          {criteriaGroups.length === 0 ? (
-                            <SelectItem value="__no_group" disabled>
-                              Không có bảng tiêu chí phù hợp
-                            </SelectItem>
-                          ) : (
-                            criteriaGroups.map((group) => (
-                              <SelectItem
-                                key={group.id}
-                                value={String(group.id)}
-                              >
-                                {group.name}
-                              </SelectItem>
-                            ))
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <Label className="text-sm font-medium text-gray-700">
-                      Chọn form báo cáo đánh giá{" "}
-                      <span className="text-red-500">*</span>
-                    </Label>
-                    <Select
-                      value={selectedStudyReportId}
-                      onValueChange={setSelectedStudyReportId}
-                      disabled={studyReportsLoading || !subjectId}
-                    >
-                      <SelectTrigger className="rounded-2xl border-gray-200 focus:border-green-300 focus:ring-green-200 py-3">
-                        <SelectValue
-                          placeholder={
-                            !subjectId
-                              ? "Vui lòng chọn môn học trước"
-                              : studyReportsLoading
-                              ? "Đang tải form..."
-                              : "Chọn form báo cáo"
-                          }
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {studyReports.length === 0 ? (
-                          <SelectItem value="__no_report" disabled>
-                            Không có form báo cáo phù hợp
-                          </SelectItem>
-                        ) : (
-                          studyReports.map((report) => (
-                            <SelectItem key={report.id} value={report.id}>
-                              {report.name}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
                   </div>
                 </div>
               </div>

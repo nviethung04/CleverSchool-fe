@@ -835,7 +835,8 @@
     "criteriaReport": "Criteria Report",
     "criteriaAssessment": "Criteria Assessment",
     "semesterManagement": "Semester",
-    "criteriaValuate": "Criteria Valuation"
+    "criteriaValuate": "Criteria Valuation",
+    "flashcardManagement": "Vocabulary (Flashcard)"
   },
   "exportReport": {
     "title": "Export Report",
@@ -1184,6 +1185,8 @@
     "updatedAt": "Updated At",
     "noProvinceName": "No province name",
     "noDistrictName": "No district name",
+    "noWardName": "No ward name",
+    "noGrade": "No grade assigned",
     "loadingClass": "Loading class...",
     "classNotFound": "Class not found",
     "backToSchool": "Back to School",
@@ -4747,5 +4750,24 @@
       "warning": "Warning",
       "success": "Success"
     }
+  },
+  "flashcardAdmin": {
+    "title": "Vocabulary management",
+    "description": "Flashcard vocabulary library for lessons",
+    "addVocabulary": "Add vocabulary",
+    "searchPlaceholder": "Search word or meaning...",
+    "loadError": "Could not load vocabulary list",
+    "createSuccess": "Vocabulary added",
+    "createError": "Could not add vocabulary",
+    "requiredFields": "Word and translation are required",
+    "loading": "Loading...",
+    "empty": "No vocabulary yet",
+    "word": "Word",
+    "phonetic": "Phonetic",
+    "translation": "Meaning",
+    "definition": "Definition",
+    "wordPlaceholder": "e.g. hello",
+    "translationPlaceholder": "e.g. hello (greeting)",
+    "saving": "Saving..."
   }
 }

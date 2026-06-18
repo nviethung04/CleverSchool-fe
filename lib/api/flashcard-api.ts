@@ -15,6 +15,18 @@ const FLASHCARD_BASE_URL = '/manage/flashcard'
 export class FlashcardAPI {
     // 📚 VOCABULARY APIs
 
+    static async listVocabularies(params?: {
+        page?: number;
+        limit?: number;
+        search?: string;
+    }) {
+        const response = await axiosInstance.get(
+            `${FLASHCARD_BASE_URL}/vocabularies`,
+            { params }
+        );
+        return response.data;
+    }
+
     // Lấy chi tiết từ vựng cụ thể
     static async getVocabulary(vocabularyId: number) {
         const response = await axiosInstance.get<FlashcardResponse<Vocabulary>>(

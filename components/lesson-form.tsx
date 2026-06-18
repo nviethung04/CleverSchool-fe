@@ -21,14 +21,6 @@ import { getExercisesList } from "@/lib/api/exercises";
 import { GetAssessmentList } from "@/lib/api/assessment";
 import { getLessonPlans } from "@/lib/api/lectures";
 import { GetSubjectsList } from "@/lib/api/subjects";
-import {
-  GetGroupList,
-  type AssessmentCriteriaGroup,
-} from "@/lib/api/group-criteria";
-import {
-  GetStudyReportCriterias,
-  type StudyReportCriteriaListParams,
-} from "@/lib/api/report-criteria";
 import { FlashcardAPI } from "@/lib/api/flashcard-api";
 import axiosInstance from "@/lib/api/axios";
 import {
@@ -138,9 +130,6 @@ export function LessonForm({
     description: "",
     assessmentType: "mini_test",
     subject_id: "",
-    study_report_criteria_id: "",
-    assessment_criteria_group_id: "",
-    assessment_criteria_ids: [] as number[],
   });
 
   // Assessment reference data states
@@ -149,20 +138,8 @@ export function LessonForm({
   >([]);
   const [assessmentSubjectsLoading, setAssessmentSubjectsLoading] =
     useState(false);
-  const [assessmentCriteriaGroups, setAssessmentCriteriaGroups] = useState<
-    AssessmentCriteriaGroup[]
-  >([]);
-  const [assessmentGroupsLoading, setAssessmentGroupsLoading] = useState(false);
-  const [assessmentStudyReports, setAssessmentStudyReports] = useState<
-    Array<{ id: string; name: string }>
-  >([]);
-  const [assessmentStudyReportsLoading, setAssessmentStudyReportsLoading] =
-    useState(false);
   const [assessmentFileInfos, setAssessmentFileInfos] = useState<any[]>([]);
   const [assessmentFiles, setAssessmentFiles] = useState<string[]>([]);
-
-  // Track previous subject_id to avoid unnecessary resets
-  const prevSubjectIdRef = useRef<string>("");
 
   // Exam form states for ExamForm component
   const [examFormState, setExamFormState] = useState({
@@ -635,15 +612,6 @@ export function LessonForm({
         return { success: false, error: "Missing subject_id" };
       }
 
-      if (!assessmentFormState.study_report_criteria_id) {
-        toast({
-          title: t("missingInfo"),
-          description: "Vui lòng chọn form báo cáo đánh giá",
-          variant: "destructive",
-        });
-        return { success: false, error: "Missing study_report_criteria_id" };
-      }
-
       // Normalize file infos
       const normalizeFileInfos = (infos: any[]) => {
         return infos
@@ -674,13 +642,6 @@ export function LessonForm({
         type: assessmentFormState.assessmentType,
         program_id: 0,
         subject_id: Number(assessmentFormState.subject_id),
-        study_report_criteria_id: Number(
-          assessmentFormState.study_report_criteria_id
-        ),
-        assessment_criteria_group_id: Number(
-          assessmentFormState.assessment_criteria_group_id
-        ),
-        assessment_criteria_ids: assessmentFormState.assessment_criteria_ids,
         file_infos: normalizedFileInfos.length
           ? normalizedFileInfos
           : undefined,
@@ -711,9 +672,6 @@ export function LessonForm({
           name: createdAssessment.name,
           description: createdAssessment.description,
           subject_id: createdAssessment.subject_id,
-          study_report_criteria_id: createdAssessment.study_report_criteria_id,
-          assessment_criteria_group_id:
-            createdAssessment.assessment_criteria_group_id,
         },
       }));
 
@@ -724,9 +682,6 @@ export function LessonForm({
         description: "",
         assessmentType: "mini_test",
         subject_id: "",
-        study_report_criteria_id: "",
-        assessment_criteria_group_id: "",
-        assessment_criteria_ids: [],
       });
       setAssessmentFileInfos([]);
       setAssessmentFiles([]);
@@ -1738,182 +1693,6 @@ export function LessonForm({
 
     fetchSubjects();
   }, [showCreateAssessment, toast, t]);
-
-  // Load criteria groups and study reports when subject is selected
-  useEffect(() => {
-    const subjectId = assessmentFormState.subject_id;
-    const prevSubjectId = prevSubjectIdRef.current;
-
-    // Only reset if subject_id changed from a value to empty
-    if (!subjectId && prevSubjectId) {
-      // Reset form fields when subject is cleared
-      setAssessmentFormState((prev) => {
-        // Only update if there are values to clear
-        if (
-          prev.assessment_criteria_group_id ||
-          prev.study_report_criteria_id ||
-          prev.assessment_criteria_ids.length > 0
-        ) {
-          return {
-            ...prev,
-            assessment_criteria_group_id: "",
-            study_report_criteria_id: "",
-            assessment_criteria_ids: [],
-          };
-        }
-        return prev;
-      });
-      // Clear groups and reports
-      setAssessmentCriteriaGroups([]);
-      setAssessmentStudyReports([]);
-      prevSubjectIdRef.current = subjectId;
-      return;
-    }
-
-    // If subject_id is empty and was already empty, do nothing
-    if (!subjectId) {
-      prevSubjectIdRef.current = subjectId;
-      return;
-    }
-
-    // If subject_id hasn't changed, do nothing
-    if (subjectId === prevSubjectId) {
-      return;
-    }
-
-    // Update ref
-    prevSubjectIdRef.current = subjectId;
-
-    let isMounted = true;
-
-    const loadGroups = async () => {
-      try {
-        setAssessmentGroupsLoading(true);
-        const { groups } = await GetGroupList(Number(subjectId));
-        if (isMounted) {
-          setAssessmentCriteriaGroups(groups || []);
-        }
-      } catch (error: any) {
-        console.error("Error fetching criteria groups:", error);
-        if (isMounted) {
-          toast({
-            title: t("error"),
-            description: "Không thể tải bảng tiêu chí đánh giá",
-            variant: "destructive",
-          });
-          setAssessmentCriteriaGroups([]);
-        }
-      } finally {
-        if (isMounted) {
-          setAssessmentGroupsLoading(false);
-        }
-      }
-    };
-
-    const loadStudyReports = async () => {
-      try {
-        setAssessmentStudyReportsLoading(true);
-        const params: StudyReportCriteriaListParams = {
-          subject_id: Number(subjectId),
-        };
-        const response = await GetStudyReportCriterias(params);
-        const list = response?.data?.study_report_criterias || [];
-        const mapped =
-          list?.map((item: any) => ({
-            id: String(item.id),
-            name: item.name,
-          })) || [];
-        if (isMounted) {
-          setAssessmentStudyReports(mapped);
-        }
-      } catch (error: any) {
-        console.error("Error fetching study report criterias:", error);
-        if (isMounted) {
-          toast({
-            title: t("error"),
-            description: "Không thể tải form báo cáo đánh giá",
-            variant: "destructive",
-          });
-          setAssessmentStudyReports([]);
-        }
-      } finally {
-        if (isMounted) {
-          setAssessmentStudyReportsLoading(false);
-        }
-      }
-    };
-
-    loadGroups();
-    loadStudyReports();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [assessmentFormState.subject_id, toast, t]);
-
-  // Update assessment_criteria_ids when group is selected
-  useEffect(() => {
-    const groupId = assessmentFormState.assessment_criteria_group_id;
-
-    if (!groupId) {
-      // Only update if we have criteria_ids set
-      setAssessmentFormState((prev) => {
-        if (prev.assessment_criteria_ids.length > 0) {
-          return {
-            ...prev,
-            assessment_criteria_ids: [],
-          };
-        }
-        return prev;
-      });
-      return;
-    }
-
-    // Only proceed if we have groups loaded
-    if (assessmentCriteriaGroups.length === 0) {
-      return;
-    }
-
-    const selectedGroup = assessmentCriteriaGroups.find(
-      (group) => String(group.id) === groupId
-    );
-
-    if (selectedGroup?.criteria?.length) {
-      const ids = selectedGroup.criteria
-        .map((criteria) => Number(criteria.id))
-        .filter((id) => !Number.isNaN(id));
-
-      // Only update if ids are different
-      setAssessmentFormState((prev) => {
-        const currentIds = prev.assessment_criteria_ids;
-        const idsEqual =
-          currentIds.length === ids.length &&
-          currentIds.every((id, idx) => id === ids[idx]);
-
-        if (!idsEqual) {
-          return {
-            ...prev,
-            assessment_criteria_ids: ids,
-          };
-        }
-        return prev;
-      });
-    } else {
-      // Only update if we have criteria_ids set
-      setAssessmentFormState((prev) => {
-        if (prev.assessment_criteria_ids.length > 0) {
-          return {
-            ...prev,
-            assessment_criteria_ids: [],
-          };
-        }
-        return prev;
-      });
-    }
-  }, [
-    assessmentFormState.assessment_criteria_group_id,
-    assessmentCriteriaGroups,
-  ]);
 
   // Load data when search changes (debounced)
   useEffect(() => {
@@ -3388,26 +3167,6 @@ export function LessonForm({
                 setAssessmentFormState((prev) => ({
                   ...prev,
                   subject_id: value,
-                }))
-              }
-              criteriaGroups={assessmentCriteriaGroups}
-              groupsLoading={assessmentGroupsLoading}
-              selectedGroupId={assessmentFormState.assessment_criteria_group_id}
-              setSelectedGroupId={(value: string) =>
-                setAssessmentFormState((prev) => ({
-                  ...prev,
-                  assessment_criteria_group_id: value,
-                }))
-              }
-              studyReports={assessmentStudyReports}
-              studyReportsLoading={assessmentStudyReportsLoading}
-              selectedStudyReportId={
-                assessmentFormState.study_report_criteria_id
-              }
-              setSelectedStudyReportId={(value: string) =>
-                setAssessmentFormState((prev) => ({
-                  ...prev,
-                  study_report_criteria_id: value,
                 }))
               }
               onFilesChange={handleAssessmentFilesChange}

@@ -838,7 +838,8 @@
     "criteriaReport": "Quản lý tiêu chí báo cáo",
     "criteriaAssessment": "Quản lý tiêu chí điểm",
     "semesterManagement": "Quản lý học kỳ",
-    "criteriaValuate": "Tiêu chí đánh giá"
+    "criteriaValuate": "Tiêu chí đánh giá",
+    "flashcardManagement": "Quản lý từ vựng"
   },
   "exportReport": {
     "title": "Báo cáo xuất dữ liệu",
@@ -1091,6 +1092,8 @@
     "schoolIdNotFoundURL": "Không tìm thấy ID trường học trong URL",
     "invalidDate": "Ngày không hợp lệ",
     "noDistrictName": "Không có tên quận",
+    "noWardName": "Không có tên phường/xã",
+    "noGrade": "Chưa chọn khối",
     "deleteStudentConfirm": "Bạn có chắc chắn muốn xóa học sinh này?",
     "deleteTeacherConfirm": "Bạn có chắc chắn muốn xóa giáo viên này?",
     "deleteCourseConfirm": "Bạn có chắc chắn muốn xóa khóa học này?",
@@ -4751,5 +4754,24 @@
       "warning": "Cảnh báo",
       "success": "Thành công"
     }
+  },
+  "flashcardAdmin": {
+    "title": "Quản lý từ vựng",
+    "description": "Thư viện từ vựng flashcard — dùng khi gắn vào bài học",
+    "addVocabulary": "Thêm từ vựng",
+    "searchPlaceholder": "Tìm từ, nghĩa...",
+    "loadError": "Không thể tải danh sách từ vựng",
+    "createSuccess": "Đã thêm từ vựng",
+    "createError": "Không thể thêm từ vựng",
+    "requiredFields": "Vui lòng nhập từ và nghĩa",
+    "loading": "Đang tải...",
+    "empty": "Chưa có từ vựng nào",
+    "word": "Từ",
+    "phonetic": "Phiên âm",
+    "translation": "Nghĩa",
+    "definition": "Định nghĩa",
+    "wordPlaceholder": "Ví dụ: hello",
+    "translationPlaceholder": "Ví dụ: xin chào",
+    "saving": "Đang lưu..."
   }
 }

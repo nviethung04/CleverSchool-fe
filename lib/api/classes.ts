@@ -8,13 +8,22 @@ function prepareClassPayload(data: any) {
   if (
     gradeIdCandidate === undefined ||
     gradeIdCandidate === null ||
-    gradeIdCandidate === ""
+    gradeIdCandidate === "" ||
+    gradeIdCandidate === 0 ||
+    gradeIdCandidate === "0"
   ) {
     delete payload.grade_id;
+    delete payload.gradeId;
     return payload;
   }
 
   const numericGradeId = Number(gradeIdCandidate);
+  if (!Number.isNaN(numericGradeId) && numericGradeId === 0) {
+    delete payload.grade_id;
+    delete payload.gradeId;
+    return payload;
+  }
+
   payload.grade_id = Number.isNaN(numericGradeId)
     ? gradeIdCandidate
     : numericGradeId;

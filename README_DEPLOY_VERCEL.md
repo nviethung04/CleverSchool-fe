@@ -70,6 +70,8 @@ Nếu thành công, mở URL để test.
 
 ## 8. Cách update phiên bản sau này
 
+**Đồng bộ với backend:** mỗi lần đổi tính năng cần API mới, deploy BE trước (xem `be/docs/vps-release-checklist.md`), rồi push FE.
+
 Mỗi lần bạn `git push` lên branch đã kết nối (thường `main`), Vercel sẽ tự build/deploy.
 
 Gợi ý:
@@ -85,8 +87,10 @@ Gợi ý:
 
 ## 10. Checklist kiểm tra sau deploy
 
-1. Đăng nhập/đăng xuất hoạt động bình thường.
-2. Gọi API không bị `CORS`/`401` bất thường.
+1. `NEXT_PUBLIC_API_BASE_URL` trỏ đúng API (dev/staging) — khớp `ALLOW_ORIGINS` trên VPS.
+2. Đăng nhập/đăng xuất hoạt động bình thường.
+3. Gọi API không bị `CORS`/`401` bất thường.
+4. Flow vừa sửa trên FE hoạt động (BE đã deploy cùng version — xem `be/docs/vps-release-checklist.md`).
 3. Các trang quan trọng render đúng trên mobile + desktop.
 4. Không lỗi `NEXT_PUBLIC_API_BASE_URL is undefined`.
 5. Kiểm tra Console và Network trên trình duyệt.

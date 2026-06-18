@@ -1310,10 +1310,13 @@ export default function SchoolDetailPage() {
   };
 
   const normalizeGradeIdValue = (value: any) => {
-    if (value === undefined || value === null || value === "") {
+    if (value === undefined || value === null || value === "" || value === 0) {
       return undefined;
     }
     const numericValue = Number(value);
+    if (!Number.isNaN(numericValue) && numericValue === 0) {
+      return undefined;
+    }
     return Number.isNaN(numericValue) ? value : numericValue;
   };
 

@@ -22,10 +22,9 @@ export const HIDDEN_MODULES: string[] = [
   "criteria-assessment",
   "criteria-report",
 
-  // Learning extensions (H5P, SCORM, lecture bank, flashcard, contest)
+  // Learning extensions (H5P, SCORM, lecture bank, contest)
   "admin/h5p",
   "lecture-bank",
-  "flashcard",
   "contest",
   "scorm",
 

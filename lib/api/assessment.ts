@@ -61,9 +61,9 @@ export interface CreateAssessmentRequest {
   description: string;
   type: string;
   program_id: number;
-  assessment_criteria_group_id: number;
-  study_report_criteria_id: number;
-  assessment_criteria_ids: number[];
+  assessment_criteria_group_id?: number;
+  study_report_criteria_id?: number;
+  assessment_criteria_ids?: number[];
   subject_id?: number;
   file_infos?: FileInfo[];
   files?: string[];
