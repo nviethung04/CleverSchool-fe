@@ -4,7 +4,7 @@ Tài liệu đồng bộ UI admin/teacher với brand Clever School. Tham chiế
 
 **Quy tắc:** mọi thay đổi UI/form phải cập nhật file này (xem `fe/AGENTS.md` §1).
 
-Cập nhật: **2026-06-16**
+Cập nhật: **2026-06-18**
 
 ---
 
@@ -162,3 +162,19 @@ Muốn mở rộng sau MVP: đổi `DASHBOARD_VISIBLE_TABS` và các flag trong 
 
 Luồng sử dụng đầy đủ (Admin → GV → HS): [user-guide.md](./user-guide.md).
 
+---
+
+## 13. Form bài học (`lesson-form`)
+
+Component: `fe/components/lesson-form.tsx` — dùng cho `/manage/lessons/create`, `/manage/lessons/[id]/edit`.
+
+| Quy tắc | Chi tiết |
+|---------|----------|
+| Lưu nội dung | Một nút **Lưu** cuối form — gọi `UpdateLesson` / `CreateLesson` |
+| Exam / homework / exercise / bài giảng | Body `PUT /manage/lessons/:id` — lưu ở mức chương trình (`course_id=0` trong DB) |
+| Không gửi `course_id` khi PUT lesson | Query `course_id` chỉ dùng khi **đọc** chi tiết (giao bài theo khóa), không dùng khi cập nhật mẫu bài học |
+| Từ vựng | Sau lưu lesson → `syncLessonVocabularies` → `PUT /manage/flashcard/lessons/:id/vocabularies` |
+| Assessment trên form | UI có; **BE chưa** lưu quan hệ lesson ↔ assessment |
+| Thêm bài vào CT | Làm ở `/manage/programs/[id]/edit`, không ở sửa khóa học |
+
+API client: `fe/lib/api/lessons.ts`. Backend: `be/docs/features.md` §3.4.

@@ -155,7 +155,7 @@ export async function CreateLesson(lessonData: any) {
 export async function UpdateLesson(
   lessonId: string | number,
   lessonData: any,
-  courseId?: string | number
+  _courseId?: string | number
 ) {
   try {
     // Đảm bảo status là boolean nếu có
@@ -186,10 +186,7 @@ export async function UpdateLesson(
 
     const response = await axiosInstance.put(
       `/manage/lessons/${lessonId}`,
-      body,
-      {
-        params: courseId ? { course_id: courseId } : undefined,
-      }
+      body
     );
     console.log("Lesson updated:", response.data);
     return response.data;
@@ -198,6 +195,19 @@ export async function UpdateLesson(
     throw error;
   }
 }
+
+/** Replace all vocabulary links for a lesson (sync after save). */
+export async function syncLessonVocabularies(
+  lessonId: string | number,
+  vocabularyIds: number[]
+) {
+  const response = await axiosInstance.put(
+    `/manage/flashcard/lessons/${lessonId}/vocabularies`,
+    { vocabulary_ids: vocabularyIds }
+  );
+  return response.data;
+}
+
 export async function DeleteLesson(lessonId: string) {
   try {
     const response = await axiosInstance.delete(`/manage/lessons/${lessonId}`);

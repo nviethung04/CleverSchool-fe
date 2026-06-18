@@ -6,7 +6,8 @@ Chỉ dẫn cho agent khi sửa code trong thư mục `fe/`. Đọc kèm `be/AGE
 
 ## 1. Quy tắc bắt buộc
 
-1. **Mọi thay đổi code phải cập nhật tài liệu** trong cùng PR/commit (xem checklist bên dưới). Rule Cursor: `.cursor/rules/document-changes.mdc`.
+1. **Mọi thay đổi code phải cập nhật tài liệu** trong cùng PR/commit (xem checklist bên dưới). Rule Cursor: `.cursor/rules/document-changes.mdc` (**alwaysApply**).
+2. **Đầu mỗi task:** quét `.cursor/rules/*.mdc` → `fe/AGENTS.md` / `be/AGENTS.md` → docs liên quan (`features.md`, `user-guide.md`, `ui-design.md`, …) trước khi code hoặc trả lời kỹ thuật.
    - UX / form / component: `fe/docs/ui-design.md`
    - API client hoặc route mới: `be/docs/features.md` (mục FE tương ứng)
    - Menu ẩn/hiện: `fe/config/hiddenModules.ts` + ghi chú trong `features.md` §6
@@ -54,7 +55,16 @@ Ví dụ lớp học: `normalizeGradeIdValue` trước khi POST.
 
 ---
 
-## 6. Tài liệu tham chiếu
+## 7. Form bài học
+
+- Component: `fe/components/lesson-form.tsx`.
+- Sau khi chọn exam/homework/exercise/từ vựng phải bấm **Lưu** form chính.
+- `UpdateLesson` không truyền `course_id` — xem `fe/docs/ui-design.md` §13, `be/docs/features.md` §3.4.
+- Từ vựng: `syncLessonVocabularies` trong `fe/lib/api/lessons.ts`.
+
+---
+
+## 8. Tài liệu tham chiếu
 
 | File | Nội dung |
 |------|----------|
@@ -64,10 +74,11 @@ Ví dụ lớp học: `normalizeGradeIdValue` trước khi POST.
 | `fe/docs/user-guide.md` | Luồng sử dụng Admin / GV / HS |
 | `be/AGENTS.md` | Backend, migration, permission |
 | `fe/config/hiddenModules.ts` | Module ẩn menu |
+| `.cursor/rules/document-changes.mdc` | **Quy trình bắt buộc:** quét rules/docs đầu task + ghi docs khi đổi code |
 
 ---
 
-## 7. Checklist trước khi kết thúc
+## 9. Checklist trước khi kết thúc
 
 - [ ] Đã cập nhật docs tương ứng (không bỏ qua bước này).
 - [ ] Input controlled không nhận `undefined`.

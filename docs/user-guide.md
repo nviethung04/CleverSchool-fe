@@ -2,7 +2,7 @@
 
 Tài liệu mô tả quy trình thực tế trên giao diện web: **Admin** thiết lập → **Giáo viên** giao bài → **Học sinh** làm bài.
 
-Cập nhật: **2026-06-16**  
+Cập nhật: **2026-06-18**  
 Liên quan: [ui-design.md](./ui-design.md), [be/docs/features.md](../../be/docs/features.md), [be/docs/requirement.md](../../be/docs/requirement.md)
 
 ---
@@ -80,7 +80,9 @@ Học kỳ dùng khi tạo khóa học và xếp **lịch bài học theo tuần
 | Môn học | `/admin/subjects` | Tạo môn (VD: Tiếng Anh) |
 | Chương trình | `/manage/programs` | Khung chương trình + thời lượng |
 | Chi tiết CT | `/manage/programs/[id]` | Thêm **chương** và **bài học** mẫu |
-| Sửa CT | `/manage/programs/[id]/edit` | Ảnh bìa: **chỉ upload file** (không nhập link URL) |
+| Sửa CT | `/manage/programs/[id]/edit` | Ảnh bìa: **chỉ upload file** (không nhập link URL). **Thêm chương / thêm bài học** tại đây (nút trong tab *Chương & Bài học*) |
+
+> **Quan trọng:** Bài học gắn vào **chương trình**, không gắn trực tiếp vào khóa học. Màn **Sửa khóa học** (`/manage/courses/[id]/edit`) chỉ **xem** chương/bài + **Schedule** (lịch tuần), **không** có nút thêm bài học.
 
 ### 2.5 Tạo giáo viên & học sinh
 
@@ -147,10 +149,17 @@ Homework / Exercise: cấu hình trong form tạo/sửa tương ứng; bài gắ
 
 | Đường dẫn | Việc cần làm |
 |-----------|--------------|
-| `/manage/lessons/[id]` | Xem / thêm homework, exercise, exam vào bài học |
-| Từ chương trình | `/manage/programs/[id]/lessons/[lessonId]` | Tương tự |
+| Sửa bài học | `/manage/lessons/[id]/edit` | Chọn exam, homework, exercise, bài giảng, từ vựng → **Lưu** (nút lưu chính của form) |
+| Xem bài học | `/manage/lessons/[id]` hoặc `/manage/programs/[id]/lessons/[lessonId]` | Kiểm tra tab nội dung sau khi lưu |
+| Từ chương trình | `/manage/programs/[id]/edit` | Tab *Chương & Bài học* → **Thêm chương** / **Thêm bài học** |
 
-> Tạo xong bài **chưa đủ** — cần **giao bài** (mục 3) thì học sinh mới thấy.
+**Luồng lưu (2026-06-18)**
+
+1. Exam / homework / exercise / bài giảng: gửi qua `PUT /api/manage/lessons/:id` (mức **chương trình**, không phụ thuộc `?course_id=` trên URL).
+2. Từ vựng: sau khi lưu bài học, FE gọi `PUT /api/manage/flashcard/lessons/:id/vocabularies` với danh sách `vocabulary_ids`.
+3. **Bài đánh giá (assessment)** trên form bài học: **chưa** được backend lưu vào lesson — dùng module assessments riêng nếu cần.
+
+> Tạo xong bài **chưa đủ** — cần **giao bài** (mục 4) thì học sinh mới thấy.
 
 ---
 
@@ -249,6 +258,12 @@ URL thường có thêm `lesson_id`, `course_id` (query) — không xóa khi chi
 
 | Triệu chứng | Nguyên nhân | Cách xử lý |
 |-------------|-------------|------------|
+| Khóa học không có bài học | Chương trình chưa có chương/bài | Sửa CT tại `/manage/programs/[id]/edit` |
+| Tab *Chương & Bài học* trên sửa khóa trống | Khóa chưa gắn CT hoặc CT chưa có nội dung | Chọn chương trình khi sửa khóa; thêm bài ở sửa CT |
+| Không gửi `course_id` khi PUT lesson | Phiên bản cũ gửi `course_id` khi PUT | Cập nhật BE+FE 2026-06-18; restart BE |
+| PUT lesson 500 `*_course_id_fkey` | `course_id = 0` không hợp lệ với FK | BE dùng NULL (`Omit CourseId`); cập nhật 2026-06-18 |
+| PUT lesson 500 | Lỗi `dependency_id` / duplicate lesson_plan | Cập nhật BE 2026-06-18 |
+| Từ vựng không lưu | Chưa sync flashcard API | Cập nhật FE 2026-06-18; bấm **Lưu** form bài học |
 | `/courses` trống | Chưa gắn khóa | Admin sửa user → thêm khóa học |
 | Vào bài học không thấy bài tập | Chưa **giao bài** | GV bật Giao trên bài học |
 | Không nộp được kiểm tra | Quá deadline / hết time_limit | Kiểm tra cấu hình exam |

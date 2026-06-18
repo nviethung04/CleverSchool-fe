@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { CreateLesson, UpdateLesson, GetLessonDetail } from "@/lib/api/lessons";
+import { CreateLesson, UpdateLesson, GetLessonDetail, syncLessonVocabularies } from "@/lib/api/lessons";
 import { GetExamList } from "@/lib/api/exams";
 import { GetHomeworkList } from "@/lib/api/homeworks";
 import { getExercisesList } from "@/lib/api/exercises";
@@ -1829,8 +1829,20 @@ export function LessonForm({
       };
 
       let result;
+      const savedLessonId =
+        mode === "create" ? null : lessonId;
+      const vocabularyIds = (form.vocabularies || [])
+        .map((id) => Number(id))
+        .filter((id) => !Number.isNaN(id) && id > 0);
+
       if (mode === "create") {
         result = await CreateLesson(data);
+
+        const newLessonId =
+          result?.data?.id ?? result?.id ?? result?.data?.data?.id;
+        if (newLessonId && vocabularyIds.length > 0) {
+          await syncLessonVocabularies(newLessonId, vocabularyIds);
+        }
 
         // Alert thông báo thành công với đa ngôn ngữ
         alert(t("lessonCreatedSuccess"));
@@ -1861,7 +1873,11 @@ export function LessonForm({
         setSelectedVocabulariesInfo({});
         setSelectedExercisesInfo({});
       } else {
-        result = await UpdateLesson(lessonId!, data, courseId || undefined);
+        result = await UpdateLesson(lessonId!, data);
+
+        if (savedLessonId) {
+          await syncLessonVocabularies(savedLessonId, vocabularyIds);
+        }
 
         // Alert thông báo cập nhật thành công với đa ngôn ngữ
         alert(t("lessonUpdatedSuccess"));
