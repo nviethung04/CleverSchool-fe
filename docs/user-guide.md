@@ -120,7 +120,7 @@ Học kỳ dùng khi tạo khóa học và xếp **lịch bài học theo tuần
 - **Ngày bắt đầu / kết thúc** khóa
 - Gắn **học sinh**, **giáo viên** (hoặc gắn sau ở màn sửa)
 
-| Sửa khóa | `/manage/courses/[id]/edit` hoặc `/teacher/courses/[id]/edit` |
+| Sửa khóa | `/manage/courses/[id]/edit` hoặc `/teacher/courses/[id]/edit` | Tab *Chương & Bài học*: chỉ xem + Schedule. **Sửa chương** → `/manage/programs/[programId]/edit` (nút link trên tab) |
 
 ### 2.7 Ngân hàng câu hỏi & tạo bài
 

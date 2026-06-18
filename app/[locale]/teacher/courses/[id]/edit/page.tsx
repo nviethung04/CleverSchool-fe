@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
-import { Target, Calendar, Users, GraduationCap, BookOpen, ArrowLeft } from "lucide-react";
+import { Target, Calendar, Users, GraduationCap, BookOpen, ArrowLeft, ExternalLink, Info } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +28,7 @@ import {
 } from "@/lib/api/courses";
 import { UpdateLesson } from "@/lib/api/lessons";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { useTypedTranslations } from "@/lib/i18n/client";
 import type { Lesson } from "@/lib/api/lessons";
 import type { Chapter } from "@/lib/api/chapters";
@@ -1354,6 +1355,24 @@ function EditCourseContent({
                 {/* Tab: Chương và Bài học */}
                 <TabsContent value="chapters">
                   <div className="space-y-6">
+                    <div className="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+                      <Info className="h-5 w-5 shrink-0 mt-0.5" />
+                      <div className="space-y-2">
+                        <p>
+                          Chương và bài học thuộc <strong>chương trình</strong> gắn với khóa học này.
+                          Màn sửa khóa học chỉ <strong>xem</strong> nội dung và cài <strong>Schedule</strong> (lịch tuần).
+                        </p>
+                        {(selectedProgramId || courseData?.program_id) && (
+                          <Link
+                            href={`/${locale}/manage/programs/${selectedProgramId || courseData.program_id}/edit`}
+                            className="inline-flex items-center gap-1.5 font-semibold text-blue-700 hover:text-blue-900 hover:underline"
+                          >
+                            Sửa chương &amp; bài học tại Chương trình
+                            <ExternalLink className="h-4 w-4" />
+                          </Link>
+                        )}
+                      </div>
+                    </div>
                     <div className="flex items-center gap-3 mb-6 flex-wrap">
                       <Button
                         variant="outline"
