@@ -53,6 +53,13 @@ import {
 import { cn, sortAlphabetGeneric, sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/context/auth-context";
+import {
+  DASHBOARD_FILTERS,
+  DASHBOARD_OVERVIEW_CARDS,
+  DASHBOARD_VISIBLE_TABS,
+  dashboardTabToApiParam,
+  type DashboardTabId,
+} from "@/config/adminDashboard";
 
 export default function AdminDashboard() {
   const { user } = useAuth()
@@ -114,8 +121,9 @@ export default function AdminDashboard() {
   ]);
   const [teachersLoading, setTeachersLoading] = useState(false);
 
-  // Lấy số lượng user hoạt động trong 24h (1440 phút)
+  // Lấy số lượng user hoạt động (chỉ khi bật thẻ online trên MVP)
   useEffect(() => {
+    if (!DASHBOARD_OVERVIEW_CARDS.onlineUsers24h) return;
     async function fetchOnlineUsers24h() {
       try {
         const res = await getActiveUsersList({
@@ -141,8 +149,8 @@ export default function AdminDashboard() {
     fetchOnlineUsers24h();
   }, []);
 
-  // Lấy số lượng user hoạt động trong 7 ngày (10080 phút)
   useEffect(() => {
+    if (!DASHBOARD_OVERVIEW_CARDS.onlineUsers1w) return;
     async function fetchOnlineUsers1w() {
       try {
         const res = await getActiveUsersList({
@@ -168,8 +176,8 @@ export default function AdminDashboard() {
     fetchOnlineUsers1w();
   }, []);
 
-  // Lấy số lượng user hoạt động trong 30 ngày (43200 phút)
   useEffect(() => {
+    if (!DASHBOARD_OVERVIEW_CARDS.onlineUsers1m) return;
     async function fetchOnlineUsers1m() {
       try {
         const res = await getActiveUsersList({
@@ -256,6 +264,7 @@ export default function AdminDashboard() {
 
   // Fetch danh sách khóa học
   useEffect(() => {
+    if (!DASHBOARD_FILTERS.course) return;
     async function fetchCourses() {
       setCoursesLoading(true);
       try {
@@ -286,6 +295,7 @@ export default function AdminDashboard() {
 
   // Fetch danh sách chương trình
   useEffect(() => {
+    if (!DASHBOARD_FILTERS.program) return;
     async function fetchPrograms() {
       setProgramsLoading(true);
       try {
@@ -314,6 +324,7 @@ export default function AdminDashboard() {
 
   // Fetch danh sách giáo viên
   useEffect(() => {
+    if (!DASHBOARD_FILTERS.teacher) return;
     async function fetchTeachers() {
       setTeachersLoading(true);
       try {
@@ -831,6 +842,17 @@ export default function AdminDashboard() {
     }));
   }
 
+  const visibleTabCount = DASHBOARD_VISIBLE_TABS.length;
+  const tabGridClass =
+    visibleTabCount <= 2
+      ? "grid-cols-2"
+      : visibleTabCount <= 3
+        ? "grid-cols-2 sm:grid-cols-3"
+        : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-7";
+
+  const isTabVisible = (id: DashboardTabId) =>
+    DASHBOARD_VISIBLE_TABS.includes(id);
+
   return (
     <div className="min-h-screen">
       <div className="space-y-6 p-6">
@@ -840,7 +862,7 @@ export default function AdminDashboard() {
             <div className="space-y-2">
               {/* Filters Grid - Responsive */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {/* School Filter */}
+                {DASHBOARD_FILTERS.school && (
                 <div className="space-y-1">
                   <label className="text-sm font-medium text-gray-600">
                     {t("filters.school")}
@@ -856,8 +878,9 @@ export default function AdminDashboard() {
                     className="w-full"
                   />
                 </div>
+                )}
 
-                {/* Program Filter */}
+                {DASHBOARD_FILTERS.program && (
                 <div className="space-y-1">
                   <label className="text-sm font-medium text-gray-600">
                     {t("filters.program")}
@@ -873,8 +896,9 @@ export default function AdminDashboard() {
                     className="w-full"
                   />
                 </div>
+                )}
 
-                {/* Course Filter */}
+                {DASHBOARD_FILTERS.course && (
                 <div className="space-y-1">
                   <label className="text-sm font-medium text-gray-600">
                     {t("filters.course")}
@@ -890,8 +914,9 @@ export default function AdminDashboard() {
                     className="w-full"
                   />
                 </div>
+                )}
 
-                {/* Teacher Filter */}
+                {DASHBOARD_FILTERS.teacher && (
                 <div className="space-y-1">
                   <label className="text-sm font-medium text-gray-600">
                     {t("filters.teacher")}
@@ -907,8 +932,9 @@ export default function AdminDashboard() {
                     className="w-full"
                   />
                 </div>
+                )}
 
-                {/* Year Filter */}
+                {DASHBOARD_FILTERS.year && (
                 <div className="space-y-1">
                   <label className="text-sm font-medium text-gray-600">
                     {t("filters.year")}
@@ -935,8 +961,9 @@ export default function AdminDashboard() {
                     </SelectContent>
                   </Select>
                 </div>
+                )}
 
-                {/* Month Filter */}
+                {DASHBOARD_FILTERS.month && (
                 <div className="space-y-1">
                   <label className="text-sm font-medium text-gray-600">
                     {t("filters.month")}
@@ -975,9 +1002,9 @@ export default function AdminDashboard() {
                     </SelectContent>
                   </Select>
                 </div>
+                )}
 
-                {/* Role Filter */}
-                {filters.activeTab === 'behavior' &&
+                {DASHBOARD_FILTERS.role && filters.activeTab === 'behavior' &&
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-600">
                       {t("filters.role")}
@@ -1003,7 +1030,7 @@ export default function AdminDashboard() {
                 }
               </div>
 
-              {/* Export Button */}
+              {DASHBOARD_FILTERS.export && (
               <div className="flex justify-end pt-2">
                 <ExportData
                   onExport={async () => {
@@ -1051,32 +1078,28 @@ export default function AdminDashboard() {
                   label={t("filters.exportReport")}
                 />
               </div>
+              )}
             </div>
           </CardContent>
         </Card>
 
         {/* Enhanced Tabs */}
         <Tabs
-          defaultValue="overview"
+          defaultValue={DASHBOARD_VISIBLE_TABS[0] ?? "overview"}
           className="space-y-6"
           onValueChange={(value) => {
-            let tab = value
-            if (value === "learning") {
-              tab = "quality"
-            }
-            if (value === "alerts") {
-              tab = "warning"
-            }
-            if (value === "questions") {
-              tab = "question"
-            }
-            if (value === "report") {
-              tab = ""
-            }
-            setFilters((prev) => ({ ...prev, role_id: 'all-role', activeTab: tab }))
+            const tab = dashboardTabToApiParam(value as DashboardTabId);
+            setFilters((prev) => ({
+              ...prev,
+              role_id: "all-role",
+              activeTab: tab || "overview",
+            }));
           }}
         >
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 bg-white shadow-lg border border-gray-200 rounded-lg p-1 h-auto">
+          <TabsList
+            className={`grid w-full ${tabGridClass} bg-white shadow-lg border border-gray-200 rounded-lg p-1 h-auto`}
+          >
+            {isTabVisible("overview") && (
             <TabsTrigger
               value="overview"
               className="flex flex-col sm:flex-row gap-1 h-12 sm:h-12 rounded-md transition-all data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-blue-50"
@@ -1084,6 +1107,8 @@ export default function AdminDashboard() {
               <Users className="h-4 w-4" />
               <span className="text-xs font-medium">{t("tabs.overview")}</span>
             </TabsTrigger>
+            )}
+            {isTabVisible("learning") && (
             <TabsTrigger
               value="learning"
               className="flex flex-col sm:flex-row gap-1 h-12 sm:h-12 rounded-md transition-all data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-green-50"
@@ -1091,6 +1116,8 @@ export default function AdminDashboard() {
               <Star className="h-4 w-4" />
               <span className="text-xs font-medium">{t("tabs.learning")}</span>
             </TabsTrigger>
+            )}
+            {isTabVisible("behavior") && (
             <TabsTrigger
               value="behavior"
               className="flex flex-col sm:flex-row gap-1 h-12 sm:h-12 rounded-md transition-all data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-purple-50"
@@ -1098,6 +1125,8 @@ export default function AdminDashboard() {
               <Activity className="h-4 w-4" />
               <span className="text-xs font-medium">{t("tabs.behavior")}</span>
             </TabsTrigger>
+            )}
+            {isTabVisible("grading") && (
             <TabsTrigger
               value="grading"
               className="flex flex-col sm:flex-row gap-1 h-12 sm:h-12 rounded-md transition-all data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-orange-50"
@@ -1105,6 +1134,8 @@ export default function AdminDashboard() {
               <CheckCircle className="h-4 w-4" />
               <span className="text-xs font-medium">{t("tabs.grading")}</span>
             </TabsTrigger>
+            )}
+            {isTabVisible("questions") && (
             <TabsTrigger
               value="questions"
               className="flex flex-col sm:flex-row gap-1 h-12 sm:h-12 rounded-md transition-all data-[state=active]:bg-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-cyan-50"
@@ -1112,6 +1143,8 @@ export default function AdminDashboard() {
               <Brain className="h-4 w-4" />
               <span className="text-xs font-medium">{t("tabs.questions")}</span>
             </TabsTrigger>
+            )}
+            {isTabVisible("alerts") && (
             <TabsTrigger
               value="alerts"
               className="flex flex-col sm:flex-row gap-1 h-12 sm:h-12 rounded-md transition-all data-[state=active]:bg-red-500 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-red-50"
@@ -1119,6 +1152,8 @@ export default function AdminDashboard() {
               <Shield className="h-4 w-4" />
               <span className="text-xs font-medium">{t("tabs.alerts")}</span>
             </TabsTrigger>
+            )}
+            {isTabVisible("report") && (
             <TabsTrigger
               value="report"
               className="flex flex-col sm:flex-row gap-1 h-12 sm:h-12 rounded-md transition-all data-[state=active]:bg-indigo-500 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-indigo-50"
@@ -1126,8 +1161,10 @@ export default function AdminDashboard() {
               <CheckCircle className="h-4 w-4" />
               <span className="text-xs font-medium">Báo cáo</span>
             </TabsTrigger>
+            )}
           </TabsList>
 
+          {isTabVisible("overview") && (
           <TabsContent value="overview" className="space-y-6">
             {loading ? (
               <div>{t("filters.loading")}</div>
@@ -1140,7 +1177,9 @@ export default function AdminDashboard() {
               />
             )}
           </TabsContent>
+          )}
 
+          {isTabVisible("learning") && (
           <TabsContent value="learning" className="space-y-6">
             {loading ? (
               <div>{t("filters.loading")}</div>
@@ -1164,7 +1203,9 @@ export default function AdminDashboard() {
               />
             )}
           </TabsContent>
+          )}
 
+          {isTabVisible("behavior") && (
           <TabsContent value="behavior" className="space-y-6">
             {loading ? (
               <div>{t("filters.loading")}</div>
@@ -1178,7 +1219,9 @@ export default function AdminDashboard() {
               />
             )}
           </TabsContent>
+          )}
 
+          {isTabVisible("grading") && (
           <TabsContent value="grading" className="space-y-6">
             {loading ? (
               <div>{t("filters.loading")}</div>
@@ -1202,7 +1245,9 @@ export default function AdminDashboard() {
               />
             )}
           </TabsContent>
+          )}
 
+          {isTabVisible("questions") && (
           <TabsContent value="questions" className="space-y-6">
             {loading ? (
               <div>{t("filters.loading")}</div>
@@ -1217,7 +1262,9 @@ export default function AdminDashboard() {
               />
             )}
           </TabsContent>
+          )}
 
+          {isTabVisible("alerts") && (
           <TabsContent value="alerts" className="space-y-6">
             {loading ? (
               <div>{t("filters.loading")}</div>
@@ -1239,7 +1286,9 @@ export default function AdminDashboard() {
               />
             )}
           </TabsContent>
+          )}
 
+          {isTabVisible("report") && (
           <TabsContent value="report" className="space-y-6">
             {loading ? (
               <div>{t("filters.loading")}</div>
@@ -1249,6 +1298,7 @@ export default function AdminDashboard() {
               <WeeklyReportSection />
             )}
           </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>

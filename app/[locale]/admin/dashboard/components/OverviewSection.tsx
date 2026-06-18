@@ -30,6 +30,10 @@ import OnlineUsersDialog from "./OnlineUsersDialog";
 import Online24hUsersDialog from "./Online24hUsersDialog";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import {
+  DASHBOARD_OVERVIEW_CARDS,
+  DASHBOARD_OVERVIEW_CHARTS,
+} from "@/config/adminDashboard";
 
 const COLORS = {
   primary: "#2563EB",
@@ -79,6 +83,7 @@ export default function OverviewSection({
       <div className="space-y-6">
         {/* Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+          {DASHBOARD_OVERVIEW_CARDS.totalUsers && (
           <MetricCard
             title={metrics.totalUsers?.label || t("overview.totalUsers")}
             value={metrics.totalUsers?.value ?? 0}
@@ -87,6 +92,8 @@ export default function OverviewSection({
             color="blue"
             message={metrics.totalUsers?.message}
           />
+          )}
+          {DASHBOARD_OVERVIEW_CARDS.onlineUsers && (
           <MetricCard
             title={metrics.onlineUsers?.label || t("overview.onlineUsers")}
             value={metrics.onlineUsers?.value ?? 0}
@@ -97,6 +104,8 @@ export default function OverviewSection({
             clickable={metrics.onlineUsers?.value > 0}
             onClick={() => setIsOnlineUsersDialogOpen(true)}
           />
+          )}
+          {DASHBOARD_OVERVIEW_CARDS.onlineUsers24h && (
           <MetricCard
             title={t("overview.onlineUsers24h")}
             value={metrics.onlineUsers24h?.value ?? 0}
@@ -105,6 +114,8 @@ export default function OverviewSection({
             clickable={metrics.onlineUsers24h?.value > 0}
             onClick={() => setIsOnline24hUsersDialogOpen(true)}
           />
+          )}
+          {DASHBOARD_OVERVIEW_CARDS.onlineUsers1w && (
           <MetricCard
             title={t("overview.onlineUsers1w")}
             value={metrics.onlineUsers1w?.value ?? 0}
@@ -113,6 +124,8 @@ export default function OverviewSection({
             clickable={metrics.onlineUsers1w?.value > 0}
             onClick={() => setIsOnline1wUsersDialogOpen(true)}
           />
+          )}
+          {DASHBOARD_OVERVIEW_CARDS.onlineUsers1m && (
           <MetricCard
             title={t("overview.onlineUsers1m")}
             value={metrics.onlineUsers1m?.value ?? 0}
@@ -121,6 +134,8 @@ export default function OverviewSection({
             clickable={metrics.onlineUsers1m?.value > 0}
             onClick={() => setIsOnline1mUsersDialogOpen(true)}
           />
+          )}
+          {DASHBOARD_OVERVIEW_CARDS.totalSchools && (
           <MetricCard
             title={metrics.totalSchools?.label || t("overview.totalSchools")}
             value={metrics.totalSchools?.value ?? 0}
@@ -131,6 +146,8 @@ export default function OverviewSection({
             clickable={true}
             href={`/${locale}/admin/schools`}
           />
+          )}
+          {DASHBOARD_OVERVIEW_CARDS.totalTeachers && (
           <MetricCard
             title={metrics.totalTeachers?.label || t("overview.totalTeachers")}
             value={metrics.totalTeachers?.value}
@@ -141,6 +158,8 @@ export default function OverviewSection({
             clickable={true}
             href={`/${locale}/admin/users/list?tab=teachers`}
           />
+          )}
+          {DASHBOARD_OVERVIEW_CARDS.totalStudents && (
           <MetricCard
             title={metrics.totalStudents?.label || t("overview.totalStudents")}
             value={metrics.totalStudents?.value}
@@ -151,6 +170,8 @@ export default function OverviewSection({
             clickable={true}
             href={`/${locale}/admin/users/list?tab=students`}
           />
+          )}
+          {DASHBOARD_OVERVIEW_CARDS.activeToday && (
           <MetricCard
             title={metrics.activeToday?.label || t("overview.activeToday")}
             value={metrics.activeToday?.value}
@@ -159,8 +180,10 @@ export default function OverviewSection({
             color="red"
             message={metrics.activeToday?.message}
           />
+          )}
         </div>
 
+        {DASHBOARD_OVERVIEW_CHARTS.courseOverview && (
         <div className="grid md:grid-cols-1 gap-6">
           {/* Tổng quan về khóa học */}
           <Card className="shadow-lg border-0">
@@ -207,8 +230,9 @@ export default function OverviewSection({
             </CardContent>
           </Card>
         </div>
+        )}
 
-        {/* Tỉ lệ hoàn thành theo loại */}
+        {DASHBOARD_OVERVIEW_CHARTS.completionRate && (
         <Card className="shadow-lg border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -261,17 +285,24 @@ export default function OverviewSection({
             </ResponsiveContainer>
           </CardContent>
         </Card>
+        )}
       </div>
 
+      {DASHBOARD_OVERVIEW_CARDS.onlineUsers && (
       <OnlineUsersDialog
         isOpen={isOnlineUsersDialogOpen}
         onClose={() => setIsOnlineUsersDialogOpen(false)}
       />
+      )}
 
+      {(DASHBOARD_OVERVIEW_CARDS.onlineUsers24h ||
+        DASHBOARD_OVERVIEW_CARDS.onlineUsers1w ||
+        DASHBOARD_OVERVIEW_CARDS.onlineUsers1m) && (
       <Online24hUsersDialog
         isOpen={isOnline24hUsersDialogOpen}
         onClose={() => setIsOnline24hUsersDialogOpen(false)}
       />
+      )}
     </>
   );
 }

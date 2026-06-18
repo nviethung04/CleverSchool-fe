@@ -61,6 +61,7 @@ Ví dụ lớp học: `normalizeGradeIdValue` trước khi POST.
 | `fe/docs/ui-design.md` | Màu, nút, layout admin, form ảnh |
 | `be/docs/features.md` | API, migration, module MVP |
 | `be/docs/vps-release-checklist.md` | **Đồng bộ local ↔ VPS ↔ Vercel** sau release |
+| `fe/docs/user-guide.md` | Luồng sử dụng Admin / GV / HS |
 | `be/AGENTS.md` | Backend, migration, permission |
 | `fe/config/hiddenModules.ts` | Module ẩn menu |
 

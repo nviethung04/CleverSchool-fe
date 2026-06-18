@@ -24,6 +24,7 @@ import FailedLoginsDialog from "./FailedLoginsDialog";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { getFailedLoginsCount } from "@/lib/api/dashboard";
+import { DASHBOARD_ALERTS } from "@/config/adminDashboard";
 
 const COLORS = {
   primary: "#2563EB",
@@ -177,6 +178,7 @@ export default function AlertsSection({
 
   // Fetch failed logins count
   useEffect(() => {
+    if (!DASHBOARD_ALERTS.failedLogins) return;
     async function fetchFailedLoginsCount() {
       setFailedLoginsLoading(true);
       try {
@@ -205,6 +207,7 @@ export default function AlertsSection({
     <div className="space-y-6">
       {/* Alert Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {DASHBOARD_ALERTS.inactiveStudents && (
         <AlertMetricCard
           title={t("alerts.inactiveStudents")}
           value={inactiveStudents?.length ?? 0}
@@ -212,6 +215,8 @@ export default function AlertsSection({
           icon={<UserX className="h-6 w-6" />}
           onDetail={handleShowInactive}
         />
+        )}
+        {DASHBOARD_ALERTS.decliningStudents && (
         <AlertMetricCard
           title={t("alerts.decliningStudents")}
           value={decliningStudents?.length ?? 0}
@@ -219,6 +224,8 @@ export default function AlertsSection({
           icon={<TrendingUp className="h-6 w-6" />}
           onDetail={handleShowDeclining}
         />
+        )}
+        {DASHBOARD_ALERTS.slowGradingTeachers && (
         <AlertMetricCard
           title={t("alerts.slowGradingTeachers")}
           value={slowGradingTeachers?.length ?? 0}
@@ -226,6 +233,8 @@ export default function AlertsSection({
           icon={<ClipboardCheck className="h-6 w-6" />}
           onDetail={handleShowSlowGrading}
         />
+        )}
+        {DASHBOARD_ALERTS.failedLogins && (
         <AlertMetricCard
           title={t("alerts.failedLogins")}
           value={failedLoginsLoading ? "..." : failedLoginsCount ?? 0}
@@ -233,6 +242,7 @@ export default function AlertsSection({
           icon={<Shield className="h-6 w-6" />}
           onDetail={handleShowFailedLogins}
         />
+        )}
       </div>
 
       {/* Xu hướng rủi ro */}

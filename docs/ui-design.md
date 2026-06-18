@@ -141,4 +141,22 @@ Trang đã chuẩn hóa:
 - `fe/app/[locale]/manage/programs/create/page.tsx`
 - `fe/app/[locale]/manage/programs/[id]/edit/page.tsx` (2026-06-16: bỏ Link, sửa warning console)
 
-Chưa chuẩn hóa: `fe/app/[locale]/teacher/courses/[id]/edit/page.tsx` (vẫn có Upload/Link).
+## 12. Dashboard admin MVP
+
+Cấu hình tập trung: `fe/config/adminDashboard.ts` — bật/tắt tab, lọc, thẻ số mà không sửa từng component.
+
+**MVP hiện tại:**
+
+| Nhóm | Hiển thị |
+|------|----------|
+| Tab | Tổng quan, Cảnh báo |
+| Lọc | Trường, Năm, Tháng + Xuất Excel |
+| Tổng quan | Trường, GV, HS, Hoạt động hôm nay + biểu đồ khóa học |
+| Cảnh báo | HS không hoạt động, GV chấm chậm |
+| Ẩn | Speaking/Writing trong tab Giao & chấm bài (`DASHBOARD_HIDE_SPEAKING_WRITING`) |
+| Ẩn tab | Chất lượng học tập, Hành vi, Giao & chấm bài, Ngân hàng câu hỏi, Báo cáo tuần |
+
+Muốn mở rộng sau MVP: đổi `DASHBOARD_VISIBLE_TABS` và các flag trong cùng file config.
+
+Luồng sử dụng đầy đủ (Admin → GV → HS): [user-guide.md](./user-guide.md).
+

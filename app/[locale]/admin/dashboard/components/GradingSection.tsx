@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import MetricCard from "./MetricCard";
 import { useTranslations } from "next-intl";
+import { DASHBOARD_HIDE_SPEAKING_WRITING } from "@/config/adminDashboard";
 
 const COLORS = {
   primary: "#2563EB",
@@ -77,6 +78,8 @@ export default function GradingSection({
           color="orange"
           titleClassName="text-left"
         />
+        {!DASHBOARD_HIDE_SPEAKING_WRITING && (
+        <>
         <MetricCard
           title={metrics.totalSubmissionsSaW.label}
           value={metrics.totalSubmissionsSaW.value}
@@ -98,6 +101,8 @@ export default function GradingSection({
           color="red"
           titleClassName="text-left"
         />
+        </>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
