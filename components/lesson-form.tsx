@@ -1531,8 +1531,8 @@ export function LessonForm({
               lesson.exercises?.map((exercise: any) => String(exercise.id)) ||
               [],
             assessment:
-              lesson.assessment?.map((assessment: any) =>
-                String(assessment.id)
+              (lesson.assessments || lesson.assessment)?.map(
+                (assessment: any) => String(assessment.id)
               ) || [],
           });
 
@@ -1548,7 +1548,8 @@ export function LessonForm({
           setSelectedHomeworksInfo(hwInfo);
 
           const assessmentInfo: { [key: string]: any } = {};
-          lesson.assessment?.forEach((assessment: any) => {
+          (lesson.assessments || lesson.assessment)?.forEach(
+            (assessment: any) => {
             assessmentInfo[String(assessment.id)] = assessment;
           });
           setSelectedAssessmentInfo(assessmentInfo);
@@ -1804,7 +1805,7 @@ export function LessonForm({
             name: selectedHomeworksInfo[id]?.name || `Bài tập về nhà #${id}`,
           }))
           : [],
-        assessment: Array.isArray(form.assessment)
+        assessments: Array.isArray(form.assessment)
           ? form.assessment.map((id) => ({
             id: Number(id),
             name:
@@ -1840,7 +1841,7 @@ export function LessonForm({
 
         const newLessonId =
           result?.data?.id ?? result?.id ?? result?.data?.data?.id;
-        if (newLessonId && vocabularyIds.length > 0) {
+        if (newLessonId) {
           await syncLessonVocabularies(newLessonId, vocabularyIds);
         }
 
@@ -2384,6 +2385,9 @@ export function LessonForm({
                                   {(() => {
                                     const isProgram = Boolean(
                                       assessmentInfo?.is_program ??
+                                      originalLessonData?.assessments?.find(
+                                        (a: any) => String(a.id) === id
+                                      ) ??
                                       originalLessonData?.assessment?.find(
                                         (e: any) => String(e.id) === id
                                       )?.is_program

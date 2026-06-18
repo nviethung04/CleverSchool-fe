@@ -155,9 +155,8 @@ Homework / Exercise: cấu hình trong form tạo/sửa tương ứng; bài gắ
 
 **Luồng lưu (2026-06-18)**
 
-1. Exam / homework / exercise / bài giảng: gửi qua `PUT /api/manage/lessons/:id` (mức **chương trình**, không phụ thuộc `?course_id=` trên URL).
-2. Từ vựng: sau khi lưu bài học, FE gọi `PUT /api/manage/flashcard/lessons/:id/vocabularies` với danh sách `vocabulary_ids`.
-3. **Bài đánh giá (assessment)** trên form bài học: **chưa** được backend lưu vào lesson — dùng module assessments riêng nếu cần.
+1. Exam / homework / exercise / **bài đánh giá (assessment)** / bài giảng: gửi qua `PUT /api/manage/lessons/:id` (mức **chương trình**, không phụ thuộc `?course_id=` trên URL). Field API: `assessments` (mảng `{ id, name }`).
+2. Từ vựng: sau khi lưu bài học, FE gọi `PUT /api/manage/flashcard/lessons/:id/vocabularies` với danh sách `vocabulary_ids` (mảng rỗng = xóa hết từ vựng khỏi bài).
 
 > Tạo xong bài **chưa đủ** — cần **giao bài** (mục 4) thì học sinh mới thấy.
 

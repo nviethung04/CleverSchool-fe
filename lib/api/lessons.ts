@@ -38,6 +38,10 @@ export interface Lesson {
     id: string | number;
     name: string;
   }>;
+  assessments?: Array<{
+    id: string | number;
+    name: string;
+  }>;
   author: {
     id: string | number;
     name: string;
@@ -136,7 +140,7 @@ export async function CreateLesson(lessonData: any) {
       exams: lessonData.exams || [],
       lesson_plans: lessonData.lesson_plans || [],
       homeworks: lessonData.homeworks || [],
-      assessment: lessonData.assessment || [],
+      assessments: lessonData.assessments || lessonData.assessment || [],
       exercises: lessonData.exercises || [],
       created_at: lessonData.created_at || undefined,
       updated_at: lessonData.updated_at || undefined,
@@ -179,8 +183,9 @@ export async function UpdateLesson(
       body.lesson_plans = lessonData.lesson_plans || [];
     if ("homeworks" in lessonData) body.homeworks = lessonData.homeworks || [];
     if ("exercises" in lessonData) body.exercises = lessonData.exercises || [];
-    if ("assessment" in lessonData)
-      body.assessment = lessonData.assessment || [];
+    if ("assessments" in lessonData || "assessment" in lessonData)
+      body.assessments =
+        lessonData.assessments || lessonData.assessment || [];
     if ("created_at" in lessonData) body.created_at = lessonData.created_at;
     if ("updated_at" in lessonData) body.updated_at = lessonData.updated_at;
 
