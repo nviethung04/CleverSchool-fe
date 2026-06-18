@@ -50,6 +50,7 @@ import {
 } from "lucide-react";
 import { GetCourseDetail, GetCourseScores } from "@/lib/api/courses";
 import { useAuth } from "@/lib/context/auth-context";
+import { COURSE_DISCUSSION_UI_ENABLED } from "@/config/hiddenModules";
 import { useSetting } from "@/hooks/use-setting";
 
 // Hàm ép giá trị về string an toàn
@@ -81,6 +82,8 @@ export default function CourseDetailPage({
   };
   const { user } = useAuth();
   const { isEnabled: isChatCourseEnabled } = useSetting("chat_course");
+  const showCourseDiscussion =
+    COURSE_DISCUSSION_UI_ENABLED && isChatCourseEnabled;
   useEffect(() => {
     const loadCourseData = async () => {
       try {
@@ -520,7 +523,7 @@ export default function CourseDetailPage({
                 {t("tab.course")}
               </TabsTrigger>
 
-              {isChatCourseEnabled && (
+              {showCourseDiscussion && (
                 <TabsTrigger
                   value="discussion"
                   className="px-6 py-2.5 transition-all font-medium border-b-2 border-transparent
@@ -776,7 +779,7 @@ export default function CourseDetailPage({
               </div>
             </TabsContent>
 
-            {isChatCourseEnabled && (
+            {showCourseDiscussion && (
               <TabsContent value="discussion">
                 <div className="bg-white rounded-3xl shadow-lg p-6">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 justify-between mb-6">

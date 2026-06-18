@@ -89,6 +89,8 @@ Các module **ẩn khỏi menu** (vẫn vào được bằng URL): departments, 
 
 MVP core hiển thị: Tổng quan, Người dùng, Trường, **Môn học**, Chương trình, Khóa học, Học liệu, Học kỳ.
 
+**Ẩn trên trang khóa học:** tab/nút **Thảo luận** — `COURSE_DISCUSSION_UI_ENABLED = false` trong `fe/config/hiddenModules.ts` (bật lại khi triển khai chat).
+
 ---
 
 ## 7. Checklist khi thêm trang admin mới

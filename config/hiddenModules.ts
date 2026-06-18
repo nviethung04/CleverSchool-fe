@@ -35,3 +35,9 @@ export const HIDDEN_MODULES: string[] = [
 
 /** Tabs hidden on /admin/users/list (MVP — hide school accounts tab) */
 export const HIDDEN_USER_LIST_TABS: string[] = ["schools"];
+
+/**
+ * Tab / nút "Thảo luận" trên trang khóa học (HS + GV).
+ * Đặt `true` khi bật chat khóa học trên production.
+ */
+export const COURSE_DISCUSSION_UI_ENABLED = false;

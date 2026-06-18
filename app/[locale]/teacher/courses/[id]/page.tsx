@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { GetCourseDetail, GetUsersInCourse } from "@/lib/api/courses";
 import { useAuth } from "@/lib/context/auth-context";
+import { COURSE_DISCUSSION_UI_ENABLED } from "@/config/hiddenModules";
 import { useSetting } from "@/hooks/use-setting";
 import { RoleBasedHeaderSidebar } from "@/components/layout/role-based-header-sidebar";
 import { useRouter, useParams } from "next/navigation";
@@ -223,6 +224,8 @@ function CourseDetailContent({
   const t = useTypedTranslations("teacherCourses");
   const { user } = useAuth();
   const { isEnabled: isChatCourseEnabled } = useSetting("chat_course");
+  const showCourseDiscussion =
+    COURSE_DISCUSSION_UI_ENABLED && isChatCourseEnabled;
   const router = useRouter();
   const urlParams = useParams() as { locale?: string };
   const locale = urlParams?.locale || "vi";
@@ -336,8 +339,7 @@ function CourseDetailContent({
                     </div>
                   </div>
                 </div>
-                {(user?.type === "admin" ||
-                  (user?.type === "teacher" && isChatCourseEnabled)) && (
+                {showCourseDiscussion && (
                     <div className="pt-4 border-t border-gray-100">
                       <Button
                         variant="outline"
