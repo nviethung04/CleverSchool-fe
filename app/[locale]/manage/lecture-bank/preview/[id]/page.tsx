@@ -63,7 +63,7 @@ export default function PreviewLessonPage() {
     if (lessonPlanId) {
       fetchLessonPlan();
     }
-  }, [lessonPlanId]);
+  }, [lessonPlanId, courseId]);
 
   const handleCompleteLesson = async () => {
     setIsCompleting(true);

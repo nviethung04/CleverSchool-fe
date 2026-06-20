@@ -1,6 +1,8 @@
 export const QUESTION_BANK_LIST_REFRESH_KEY = "cleverschool:refresh:question-bank";
 export const ASSIGNMENTS_EXERCISES_REFRESH_KEY =
   "cleverschool:refresh:assignments-exercises";
+export const ASSIGNMENTS_HOMEWORKS_REFRESH_KEY =
+  "cleverschool:refresh:assignments-homeworks";
 
 export function markListForRefresh(key: string) {
   if (typeof window !== "undefined") {

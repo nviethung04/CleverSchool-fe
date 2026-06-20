@@ -17,12 +17,18 @@ import {
 import { getAssignmentsRoute } from "@/lib/utils/route-utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useTypedTranslations } from "@/lib/i18n/client";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  ASSIGNMENTS_HOMEWORKS_REFRESH_KEY,
+  markListForRefresh,
+} from "@/lib/utils/list-refresh";
 
 export default function CreateHomeworkPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useAuth();
   const t = useTypedTranslations("manageAssignments");
+  const queryClient = useQueryClient();
 
   // Form state
   const [name, setName] = useState("");
@@ -399,10 +405,10 @@ export default function CreateHomeworkPage() {
         description: "Bài tập về nhà đã được tạo thành công.",
       });
 
-      setTimeout(() => {
-        setIsNavigating(true);
-        router.push(getAssignmentsRoute(user));
-      }, 500);
+      await queryClient.invalidateQueries({ queryKey: ["homeworks"] });
+      markListForRefresh(ASSIGNMENTS_HOMEWORKS_REFRESH_KEY);
+      setIsNavigating(true);
+      router.replace(`${getAssignmentsRoute(user)}?tab=homework`);
     } catch (error: any) {
       console.error("Error creating homework:", error);
       toast({

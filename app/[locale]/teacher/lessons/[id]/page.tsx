@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   RotateCcw,
@@ -101,35 +101,64 @@ export default function LessonDetailPage() {
   const [loadingVocabularies, setLoadingVocabularies] = useState(false);
   const [vocabulariesLoaded, setVocabulariesLoaded] = useState(false);
 
-  useEffect(() => {
-    if (!id) return;
-    setLoading(true);
+  const fetchLesson = useCallback(
+    async (options?: { showLoading?: boolean }) => {
+      if (!id) return;
+      const showLoading = options?.showLoading ?? true;
+      if (showLoading) setLoading(true);
 
-    // Lấy course_id từ URL search params
-    const urlParams = new URLSearchParams(window.location.search);
-    const courseId = urlParams.get("course_id");
+      const urlParams = new URLSearchParams(window.location.search);
+      const courseIdParam = urlParams.get("course_id");
 
-    GetLessonDetail(id, courseId || undefined)
-      .then((res) => {
+      try {
+        const res = await GetLessonDetail(id, courseIdParam || undefined);
         const lessonData = res?.data || res;
         setLesson(lessonData);
-        // Nếu có bài giảng (lesson_plans)
+
         if (lessonData.lesson_plans && lessonData.lesson_plans.length > 0) {
           const lectureId = lessonData.lesson_plans[0].id;
-          getLessonPlanById(lectureId, courseId ? Number(courseId) : undefined)
+          getLessonPlanById(
+            lectureId,
+            courseIdParam ? Number(courseIdParam) : undefined
+          )
             .then(setLecture)
             .catch(() => setLecture(null));
-          getLessonPlanParts(lectureId, courseId ? Number(courseId) : undefined)
+          getLessonPlanParts(
+            lectureId,
+            courseIdParam ? Number(courseIdParam) : undefined
+          )
             .then(setLectureParts)
             .catch(() => setLectureParts([]));
         } else {
           setLecture(null);
           setLectureParts([]);
         }
-        // Không cần gọi chi tiết homework/exam nữa
-      })
-      .finally(() => setLoading(false));
-  }, [id]);
+      } finally {
+        if (showLoading) setLoading(false);
+      }
+    },
+    [id]
+  );
+
+  useEffect(() => {
+    fetchLesson();
+  }, [fetchLesson, courseId]);
+
+  // Refetch when tab regains focus (admin may have changed assignment in another tab)
+  useEffect(() => {
+    const refreshLesson = () => {
+      if (document.visibilityState === "visible") {
+        fetchLesson({ showLoading: false });
+      }
+    };
+
+    window.addEventListener("focus", refreshLesson);
+    document.addEventListener("visibilitychange", refreshLesson);
+    return () => {
+      window.removeEventListener("focus", refreshLesson);
+      document.removeEventListener("visibilitychange", refreshLesson);
+    };
+  }, [fetchLesson]);
 
   // Gọi API lấy danh sách câu hỏi khi click tab (chỉ gọi 1 lần)
   const handleTabChange = (tab: string) => {
@@ -199,34 +228,33 @@ export default function LessonDetailPage() {
         throw new Error("Lesson ID is not available");
       }
 
-      // Call the AssignHomework API with the dynamic lessonId and isAssigned value
       const urlParams = new URLSearchParams(window.location.search);
-      const courseId = urlParams.get("course_id");
+      const courseIdParam = urlParams.get("course_id");
+      if (!courseIdParam) {
+        throw new Error("course_id is required");
+      }
+
       await import("@/lib/api/homeworks").then(({ AssignHomework }) =>
         AssignHomework(homeworkId, Number(lessonId), {
           is_assigned: isAssigned,
-          course_id: courseId ? Number(courseId) : undefined,
+          course_id: Number(courseIdParam),
         })
       );
 
-      setLesson((prevLesson: any) => ({
-        ...prevLesson,
-        homeworks: prevLesson.homeworks.map((hw: any) =>
-          hw.id.toString() === homeworkId.toString()
-            ? { ...hw, is_assigned: isAssigned }
-            : hw
-        ),
-      }));
+      await fetchLesson({ showLoading: false });
       toast({
         title: "Thành công",
-        description: "Thao tác thành công",
+        description: isAssigned ? "Đã giao bài" : "Đã hoàn tác giao bài",
         variant: "default",
       });
     } catch (error) {
       console.error("Error updating homework assignment status:", error);
       toast({
         title: "Thất bại",
-        description: "Thao tác thất bại",
+        description:
+          error instanceof Error && error.message === "course_id is required"
+            ? "Thiếu course_id trong URL. Mở bài học từ khóa học để giao bài."
+            : "Thao tác thất bại",
         variant: "destructive",
       });
     } finally {
@@ -251,26 +279,35 @@ export default function LessonDetailPage() {
         throw new Error("Lesson ID is not available");
       }
 
-      // Call the AssignExercise API with the dynamic lessonId and isAssigned value
       const urlParams = new URLSearchParams(window.location.search);
-      const courseId = urlParams.get("course_id");
+      const courseIdParam = urlParams.get("course_id");
+      if (!courseIdParam) {
+        throw new Error("course_id is required");
+      }
+
       await import("@/lib/api/exercises").then(({ AssignExercise }) =>
         AssignExercise(exerciseId, Number(lessonId), {
           is_assigned: isAssigned,
-          course_id: courseId ? Number(courseId) : undefined,
+          course_id: Number(courseIdParam),
         })
       );
 
-      setLesson((prevLesson: any) => ({
-        ...prevLesson,
-        exercises: prevLesson.exercises.map((ex: any) =>
-          ex.id.toString() === exerciseId.toString()
-            ? { ...ex, is_assigned: isAssigned }
-            : ex
-        ),
-      }));
+      await fetchLesson({ showLoading: false });
+      toast({
+        title: "Thành công",
+        description: isAssigned ? "Đã giao bài" : "Đã hoàn tác giao bài",
+        variant: "default",
+      });
     } catch (error) {
       console.error("Error updating exercise assignment status:", error);
+      toast({
+        title: "Thất bại",
+        description:
+          error instanceof Error && error.message === "course_id is required"
+            ? "Thiếu course_id trong URL. Mở bài học từ khóa học để giao bài."
+            : "Thao tác thất bại",
+        variant: "destructive",
+      });
     } finally {
       setAssigningExercises((prev) => {
         const newSet = new Set(prev);
@@ -290,34 +327,33 @@ export default function LessonDetailPage() {
         throw new Error("Lesson ID is not available");
       }
 
-      // Call the AssignExam API with the dynamic lessonId and isAssigned value
       const urlParams = new URLSearchParams(window.location.search);
-      const courseId = urlParams.get("course_id");
+      const courseIdParam = urlParams.get("course_id");
+      if (!courseIdParam) {
+        throw new Error("course_id is required");
+      }
+
       await import("@/lib/api/exams").then(({ AssignExam }) =>
         AssignExam(examId, Number(lessonId), {
           is_assigned: isAssigned,
-          course_id: courseId ? Number(courseId) : undefined,
+          course_id: Number(courseIdParam),
         })
       );
 
-      setLesson((prevLesson: any) => ({
-        ...prevLesson,
-        exams: prevLesson.exams.map((ex: any) =>
-          ex.id.toString() === examId.toString()
-            ? { ...ex, is_assigned: isAssigned }
-            : ex
-        ),
-      }));
+      await fetchLesson({ showLoading: false });
       toast({
         title: "Thành công",
-        description: "Thao tác thành công",
+        description: isAssigned ? "Đã giao bài" : "Đã hoàn tác giao bài",
         variant: "default",
       });
     } catch (error) {
       console.error("Error updating exam assignment status:", error);
       toast({
         title: "Thất bại",
-        description: "Thao tác thất bại",
+        description:
+          error instanceof Error && error.message === "course_id is required"
+            ? "Thiếu course_id trong URL. Mở bài học từ khóa học để giao bài."
+            : "Thao tác thất bại",
         variant: "destructive",
       });
     } finally {
@@ -1048,9 +1084,9 @@ export default function LessonDetailPage() {
                                   !Boolean(exercise.is_assigned)
                                 );
                               }}
-                              disabled={assigningExams.has(exercise.id)}
+                              disabled={assigningExercises.has(exercise.id)}
                             >
-                              {assigningExams.has(exercise.id)
+                              {assigningExercises.has(exercise.id)
                                 ? Boolean(exercise.is_assigned)
                                   ? t("undoing")
                                   : t("assigning")

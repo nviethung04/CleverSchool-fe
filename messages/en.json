@@ -1707,10 +1707,12 @@
       "empty": "No lecture available"
     },
     "durationLabel": "Duration",
+    "emptyHintNotAssigned": "Your teacher must click Assign on this lesson (in the course) before you can start.",
     "homework": {
-      "title": "Homework Title",
+      "title": "Homework",
       "progress": "Progress",
-      "empty": "No homework available"
+      "empty": "No homework has been assigned yet",
+      "emptyHint": "Your teacher must click Assign on this lesson (in the course) before you can start."
     },
     "actions": {
       "review": "View results",
@@ -1720,8 +1722,15 @@
       "resultSubmission": "Result submission"
     },
     "test": {
-      "title": "Test Title",
-      "empty": "No tests available",
+      "title": "Test",
+      "empty": "No test has been assigned yet",
+      "emptyHint": "Your teacher must click Assign on this lesson (in the course) before you can start.",
+      "questions": "Questions"
+    },
+    "exercise": {
+      "title": "Exercise",
+      "empty": "No exercise has been assigned yet",
+      "emptyHint": "Your teacher must click Assign on this lesson (in the course) before you can start.",
       "questions": "Questions"
     },
     "vocabulary": {

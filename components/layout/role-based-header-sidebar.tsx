@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/context/auth-context";
 import { SidebarProvider, useAdminSidebar } from "@/lib/context/sidebar-context";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import { useMounted } from "@/hooks/use-mounted";
 
 /**
  * Mobile menu button for opening sidebar on mobile
@@ -81,6 +82,12 @@ const AdminContentWrapper: React.FC<{ children: React.ReactNode }> = ({ children
  */
 export const RoleBasedHeaderSidebar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
+  const mounted = useMounted();
+
+  // Defer role-specific chrome until client mount — prevents Radix id hydration mismatches.
+  if (!mounted) {
+    return <div className="min-h-screen">{children}</div>;
+  }
 
   if (user?.type === "admin") {
     return (

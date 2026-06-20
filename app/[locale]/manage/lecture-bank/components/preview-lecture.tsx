@@ -464,6 +464,9 @@ export default function PreviewLecture({
   const [lessonDataFromAPI, setLessonDataFromAPI] = useState<any>(null);
   const [loadingLessonData, setLoadingLessonData] = useState(false);
   const [resolvedLessonId, setResolvedLessonId] = useState<string | null>(null);
+  const [effectiveCourseId, setEffectiveCourseId] = useState<number | undefined>(
+    courseId ? Number(courseId) : undefined
+  );
   const [canShowAssignmentButton, setCanShowAssignmentButton] = useState(false);
   // State for assigning loading (declare only once!)
   const [assigningIds, setAssigningIds] = useState<Set<string>>(new Set());
@@ -484,16 +487,21 @@ export default function PreviewLecture({
         throw new Error("Lesson ID is not available");
       }
 
+      if (!effectiveCourseId) {
+        throw new Error("course_id is required");
+      }
+
       await AssignHomework(homeworkId, Number(lessonId), {
         is_assigned: true,
-        course_id: courseId ? Number(courseId) : undefined,
+        course_id: effectiveCourseId,
       });
 
       toast({
         title: tCommon("success"),
         description: t("successAssignHomeWork", { title: homeworkTitle }),
       });
-      fetchLessonDataFromAPI();
+      patchAssignmentStatus("homework", homeworkId, true);
+      await fetchLessonDataFromAPI();
     } catch (err) {
       toast({
         title: tCommon("error"),
@@ -521,16 +529,21 @@ export default function PreviewLecture({
         throw new Error("Lesson ID is not available");
       }
 
+      if (!effectiveCourseId) {
+        throw new Error("course_id is required");
+      }
+
       await AssignHomework(homeworkId, Number(lessonId), {
         is_assigned: false,
-        course_id: courseId ? Number(courseId) : undefined,
+        course_id: effectiveCourseId,
       });
 
       toast({
         title: tCommon("success"),
         description: t("successUndoAssignHomeWork", { title: homeworkTitle }),
       });
-      fetchLessonDataFromAPI();
+      patchAssignmentStatus("homework", homeworkId, false);
+      await fetchLessonDataFromAPI();
     } catch (err) {
       toast({
         title: tCommon("error"),
@@ -555,16 +568,21 @@ export default function PreviewLecture({
         throw new Error("Lesson ID is not available");
       }
 
+      if (!effectiveCourseId) {
+        throw new Error("course_id is required");
+      }
+
       await AssignExam(examId, Number(lessonId), {
         is_assigned: true,
-        course_id: courseId ? Number(courseId) : undefined,
+        course_id: effectiveCourseId,
       });
 
       toast({
         title: tCommon("success"),
         description: t("successAssignExam", { title: examTitle }),
       });
-      fetchLessonDataFromAPI();
+      patchAssignmentStatus("exam", examId, true);
+      await fetchLessonDataFromAPI();
     } catch (err) {
       toast({
         title: tCommon("error"),
@@ -589,16 +607,21 @@ export default function PreviewLecture({
         throw new Error("Lesson ID is not available");
       }
 
+      if (!effectiveCourseId) {
+        throw new Error("course_id is required");
+      }
+
       await AssignExam(examId, Number(lessonId), {
         is_assigned: false,
-        course_id: courseId ? Number(courseId) : undefined,
+        course_id: effectiveCourseId,
       });
 
       toast({
         title: tCommon("success"),
         description: t("successUndoAssignExam", { title: examTitle }),
       });
-      fetchLessonDataFromAPI();
+      patchAssignmentStatus("exam", examId, false);
+      await fetchLessonDataFromAPI();
     } catch (err) {
       toast({
         title: tCommon("error"),
@@ -648,6 +671,27 @@ export default function PreviewLecture({
   useEffect(() => {
     checkCanShowAssignmentButton();
   }, [lessonId, lessonPlan, user]);
+
+  useEffect(() => {
+    if (courseId) {
+      const parsed = Number(courseId);
+      setEffectiveCourseId(parsed);
+      if (resolvedLessonId && typeof window !== "undefined") {
+        sessionStorage.setItem(
+          `lesson_course_${resolvedLessonId}`,
+          String(parsed)
+        );
+      }
+      return;
+    }
+
+    if (resolvedLessonId && typeof window !== "undefined") {
+      const stored = sessionStorage.getItem(`lesson_course_${resolvedLessonId}`);
+      if (stored) {
+        setEffectiveCourseId(Number(stored));
+      }
+    }
+  }, [courseId, resolvedLessonId]);
 
   // Fetch course detail to get book_url
   useEffect(() => {
@@ -823,7 +867,9 @@ export default function PreviewLecture({
   // Listen for fullscreen change events
   useEffect(() => {
     const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
+      const active = Boolean(document.fullscreenElement);
+      setIsFullscreen(active);
+      if (!active) {
         setIsContentFullscreen(false);
       }
     };
@@ -1166,12 +1212,14 @@ export default function PreviewLecture({
 
   console.log("Rendering loading or no content state");
 
+  const isInFullscreen = isFullscreen || isContentFullscreen;
+
   // Thêm các class CSS cho điều khiển toàn màn hình
   const fullscreenControlsClass = cn(
     "absolute bottom-0 left-0 right-0 p-2 flex items-center justify-between transition-all duration-300",
     {
       "opacity-100": showFullscreenControls,
-      "opacity-0": !showFullscreenControls && document.fullscreenElement,
+      "opacity-0": !showFullscreenControls && isInFullscreen,
     }
   );
 
@@ -1306,7 +1354,7 @@ export default function PreviewLecture({
             </Button>
 
             {/* Điều khiển khi ở chế độ toàn màn hình */}
-            {document.fullscreenElement && activeContentType === "youtube" && (
+            {isInFullscreen && activeContentType === "youtube" && (
               <div className={videoControlsClass}>
                 <Button
                   variant="ghost"
@@ -1368,7 +1416,7 @@ export default function PreviewLecture({
             </Button>
 
             {/* Điều khiển khi ở chế độ toàn màn hình */}
-            {document.fullscreenElement && activeContentType === "video" && (
+            {isInFullscreen && activeContentType === "video" && (
               <div className={videoControlsClass}>
                 <Button
                   variant="ghost"
@@ -1433,7 +1481,7 @@ export default function PreviewLecture({
             </Button>
 
             {/* Điều khiển khi ở chế độ toàn màn hình */}
-            {document.fullscreenElement && activeContentType === "pdf" && (
+            {isInFullscreen && activeContentType === "pdf" && (
               <div className={documentControlsClass}>
                 <Button
                   variant="outline"
@@ -1477,7 +1525,7 @@ export default function PreviewLecture({
               allowFullScreen
             ></iframe>
             {/* Điều khiển khi ở chế độ toàn màn hình */}
-            {document.fullscreenElement &&
+            {isInFullscreen &&
               activeContentType === "powerpoint" && (
                 <div className={documentControlsClass}>
                   <Button
@@ -1654,7 +1702,7 @@ export default function PreviewLecture({
             </Button>
 
             {/* Điều khiển khi ở chế độ toàn màn hình */}
-            {document.fullscreenElement && activeContentType === "html" && (
+            {isInFullscreen && activeContentType === "html" && (
               <div className={documentControlsClass}>
                 <Button
                   variant="outline"
@@ -1879,19 +1927,40 @@ export default function PreviewLecture({
   }, [controlsTimeout]);
 
   // Fetch lesson data when modal opens
-  const fetchLessonDataFromAPI = async () => {
+  const fetchLessonDataFromAPI = useCallback(async () => {
     if (!resolvedLessonId) return;
 
     setLoadingLessonData(true);
     try {
-      console.log("Fetching lesson detail for ID:", resolvedLessonId);
+      let courseIdForFetch = effectiveCourseId;
+
       const response = await GetLessonDetail(
         resolvedLessonId,
-        courseId ? Number(courseId) : undefined
+        courseIdForFetch
       );
-      const lessonDetail = response.data || response;
+      let lessonDetail = response.data || response;
 
-      console.log("Lesson detail from API:", lessonDetail);
+      if (!courseIdForFetch && lessonDetail?.schedules?.length > 0) {
+        const scheduleWithCourse = lessonDetail.schedules.find(
+          (schedule: any) => schedule?.course_id
+        );
+        if (scheduleWithCourse?.course_id) {
+          courseIdForFetch = Number(scheduleWithCourse.course_id);
+          setEffectiveCourseId(courseIdForFetch);
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem(
+              `lesson_course_${resolvedLessonId}`,
+              String(courseIdForFetch)
+            );
+          }
+          const refetch = await GetLessonDetail(
+            resolvedLessonId,
+            courseIdForFetch
+          );
+          lessonDetail = refetch.data || refetch;
+        }
+      }
+
       setLessonDataFromAPI({
         title: lessonDetail.title,
         homeworks: lessonDetail.homeworks || [],
@@ -1903,13 +1972,59 @@ export default function PreviewLecture({
     } finally {
       setLoadingLessonData(false);
     }
+  }, [resolvedLessonId, effectiveCourseId]);
+
+  const patchAssignmentStatus = (
+    type: "homework" | "exam",
+    id: string,
+    isAssigned: boolean
+  ) => {
+    setLessonDataFromAPI((prev: any) => {
+      if (!prev) return prev;
+      const key = type === "homework" ? "homeworks" : "exams";
+      return {
+        ...prev,
+        [key]: (prev[key] || []).map((item: any) =>
+          String(item.id) === String(id)
+            ? {
+                ...item,
+                is_assigned: isAssigned,
+                assigned_at: isAssigned ? item.assigned_at : null,
+              }
+            : item
+        ),
+      };
+    });
+  };
+
+  // Refresh assignment list when dialog is open and tab regains focus
+  useEffect(() => {
+    if (!assignmentDialogOpen || !resolvedLessonId) return;
+
+    const refreshAssignments = () => {
+      if (document.visibilityState === "visible") {
+        fetchLessonDataFromAPI();
+      }
+    };
+
+    window.addEventListener("focus", refreshAssignments);
+    document.addEventListener("visibilitychange", refreshAssignments);
+    return () => {
+      window.removeEventListener("focus", refreshAssignments);
+      document.removeEventListener("visibilitychange", refreshAssignments);
+    };
+  }, [assignmentDialogOpen, resolvedLessonId, fetchLessonDataFromAPI]);
+
+  const handleAssignmentDialogChange = (open: boolean) => {
+    setAssignmentDialogOpen(open);
+    if (open && resolvedLessonId) {
+      fetchLessonDataFromAPI();
+    }
   };
 
   // Handle assignment dialog open
   const handleAssignmentDialogOpen = () => {
-    // Fetch lesson data when modal opens
-    fetchLessonDataFromAPI();
-    setAssignmentDialogOpen(true);
+    handleAssignmentDialogChange(true);
   };
 
   if (loading) {
@@ -1981,7 +2096,7 @@ export default function PreviewLecture({
       <div className="px-8 py-6">
         <div className="max-w-8xl mx-auto flex flex-col gap-4">
           {/* Back button */}
-          {window.history.length > 1 && <Button
+          {typeof window !== "undefined" && window.history.length > 1 && <Button
             variant="ghost"
             size="sm"
             onClick={router.back}
@@ -2293,7 +2408,7 @@ export default function PreviewLecture({
       {/* Assignment Dialog - Minimalist Design */}
       <Dialog
         open={assignmentDialogOpen}
-        onOpenChange={setAssignmentDialogOpen}
+        onOpenChange={handleAssignmentDialogChange}
       >
         <DialogContent className="max-w-5xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden bg-white/95 backdrop-blur-md border border-slate-200/60 flex flex-col">
           <DialogHeader className="pb-4 sm:pb-6 border-b border-slate-200/60 flex-shrink-0">

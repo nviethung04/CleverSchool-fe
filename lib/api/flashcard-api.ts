@@ -168,9 +168,8 @@ export class FlashcardAPI {
             vocabulary_id: activityData.vocabulary_id,
             activity_type: activityData.activity_type,
             response_time: activityData.response_time,
-            is_correct: activityData.is_correct,
-            ...(activityData.response && { response: activityData.response }),
-            ...(activityData.pronunciation_score && { pronunciation_score: activityData.pronunciation_score })
+            response: activityData.response ?? (activityData.is_correct ? 'known' : activityData.activity_type === 'mark_unknown' ? 'unknown' : ''),
+            ...(activityData.pronunciation_score != null && { pronunciation_score: activityData.pronunciation_score })
         }
 
         console.log('📤 Final request body:', cleanedData)

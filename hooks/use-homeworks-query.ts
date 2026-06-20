@@ -16,7 +16,7 @@ export function useHomeworksQuery(filters: HomeworkQueryFilters) {
     queryKey: ["homeworks", { ...listFilters, page, limit }],
     queryFn: () => GetHomeworkList({ ...listFilters, page, limit }),
     enabled,
-    staleTime: 1000 * 60 * 2,
-    placeholderData: (previousData) => previousData,
+    staleTime: 0,
+    refetchOnMount: true,
   });
 }

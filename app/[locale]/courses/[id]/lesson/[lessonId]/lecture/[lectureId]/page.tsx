@@ -60,6 +60,7 @@ export default function LecturePreviewPage() {
       <PreviewLecture
         lessonPlanId={params.lectureId}
         lessonId={params.lessonId}
+        courseId={params.id}
         lessonPlan={lessonPlan as any}
         lessonParts={lessonParts as any}
         loading={loading}

@@ -25,6 +25,7 @@ interface SessionCompleteDialogProps {
         wordsKnown: number
         totalWords: number
         completionRate: number
+        knownRate?: number
         averageScore: number
     }
 }
@@ -37,23 +38,27 @@ export const SessionCompleteDialog = ({
     stats
 }: SessionCompleteDialogProps) => {
     const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60)
-        const secs = seconds % 60
+        const safeSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0
+        const mins = Math.floor(safeSeconds / 60)
+        const secs = safeSeconds % 60
         return `${mins}:${secs.toString().padStart(2, '0')}`
     }
 
     const getPerformanceMessage = () => {
-        const percentage = (stats.wordsKnown / stats.totalWords) * 100
-        if (percentage >= 80) return { text: "Xuất sắc!", color: "text-green-600" }
-        if (percentage >= 60) return { text: "Tốt!", color: "text-blue-600" }
-        if (percentage >= 40) return { text: "Khá!", color: "text-yellow-600" }
+        const knownPct = stats.totalWords > 0
+            ? (stats.wordsKnown / stats.totalWords) * 100
+            : 0
+        if (knownPct >= 80) return { text: "Xuất sắc!", color: "text-green-600" }
+        if (knownPct >= 60) return { text: "Tốt!", color: "text-blue-600" }
+        if (knownPct >= 40) return { text: "Khá!", color: "text-yellow-600" }
+        if ((stats.completionRate || 0) >= 1) return { text: "Đã hoàn thành phiên học!", color: "text-blue-600" }
         return { text: "Cần cố gắng thêm!", color: "text-orange-600" }
     }
 
     const performance = getPerformanceMessage()
 
     return (
-        <Dialog open={open} onOpenChange={onClose}>
+        <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose() }}>
             <DialogContent className="max-w-md">
                 <DialogHeader>
                     <DialogTitle className="text-center text-2xl font-bold flex items-center justify-center gap-2">
@@ -102,8 +107,8 @@ export const SessionCompleteDialog = ({
                         <Card>
                             <CardContent className="p-3 text-center">
                                 <Target className="h-5 w-5 mx-auto mb-1 text-orange-500" />
-                                <p className="text-sm text-muted-foreground">Tỷ lệ</p>
-                                <p className="font-semibold">{Math.round(stats.completionRate * 100)}%</p>
+                                <p className="text-sm text-muted-foreground">Tiến độ học</p>
+                                <p className="font-semibold">{Math.round((stats.completionRate || 0) * 100)}%</p>
                             </CardContent>
                         </Card>
                     </div>
@@ -114,13 +119,13 @@ export const SessionCompleteDialog = ({
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-sm text-muted-foreground">Tiến độ hoàn thành</span>
                                 <Badge variant="secondary">
-                                    {Math.round(stats.completionRate * 100)}%
+                                    {Math.round((stats.completionRate || 0) * 100)}%
                                 </Badge>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-2">
                                 <div
                                     className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-500"
-                                    style={{ width: `${stats.completionRate * 100}%` }}
+                                    style={{ width: `${(stats.completionRate || 0) * 100}%` }}
                                 />
                             </div>
                         </CardContent>
@@ -130,7 +135,10 @@ export const SessionCompleteDialog = ({
                     <div className="flex gap-3 mt-6">
                         <Button
                             variant="outline"
-                            onClick={onRestartSession}
+                            onClick={() => {
+                                onClose()
+                                void onRestartSession()
+                            }}
                             className="flex-1 flex items-center justify-center gap-2"
                         >
                             <RotateCcw className="h-4 w-4" />

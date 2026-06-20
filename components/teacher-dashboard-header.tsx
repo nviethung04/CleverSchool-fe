@@ -45,10 +45,12 @@ import { Logo } from "./logo";
 import { getGravatarUrl } from "@/utils/avatar";
 import NotificationPermissionButton from "./notification-permission-button";
 import { filterNavByHref } from "@/lib/nav/filter-nav";
+import { useMounted } from "@/hooks/use-mounted";
 
 export function TeacherDashboardHeader() {
   const pathname = usePathname();
   const { logout } = useAuth();
+  const mounted = useMounted();
   const params = useParams();
   const locale = params?.locale || "vi";
   const t = useTypedTranslations("teacherHeader");
@@ -255,7 +257,21 @@ export function TeacherDashboardHeader() {
                   </Link>
                 ))}
 
-                {resourceItems.length > 0 && (
+                {resourceItems.length > 0 && !mounted && (
+                  <Button
+                    variant="ghost"
+                    className="px-4 py-2.5 text-sm font-medium text-gray-600 flex items-center gap-2 rounded-lg"
+                    type="button"
+                    aria-hidden
+                    tabIndex={-1}
+                  >
+                    <LucideBookOpen className="h-4 w-4" />
+                    {t("resources.title")}
+                    <LucideChevronDown className="h-4 w-4" />
+                  </Button>
+                )}
+
+                {resourceItems.length > 0 && mounted && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -344,6 +360,7 @@ export function TeacherDashboardHeader() {
               {/* Notification Permission Button */}
               {/* <NotificationPermissionButton /> */}
 
+              {mounted ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -452,6 +469,31 @@ export function TeacherDashboardHeader() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              ) : (
+                <Button
+                  variant="ghost"
+                  className="relative h-11 w-11 rounded-full p-0"
+                  type="button"
+                  aria-hidden
+                  tabIndex={-1}
+                >
+                  <Avatar className="h-10 w-10">
+                    {user ? (
+                      <>
+                        <AvatarImage
+                          src={avatarUrl}
+                          alt={user?.name || t("user.fallbackName")}
+                        />
+                        <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-green-600 text-white font-bold text-lg">
+                          {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+                        </AvatarFallback>
+                      </>
+                    ) : (
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                    )}
+                  </Avatar>
+                </Button>
+              )}
             </div>
           </div>
         </div>

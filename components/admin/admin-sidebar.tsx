@@ -62,7 +62,7 @@ import { BRAND_COLORS } from "@/lib/constants/colors";
 import { useTranslations } from "next-intl";
 import { filterSidebarItems } from "@/lib/nav/filter-nav";
 import NotificationPermissionButton from "../notification-permission-button";
-import { User as UserLogin } from "@/lib/types/auth";
+import { useMounted } from "@/hooks/use-mounted";
 
 type SidebarItem = {
   icon: React.ReactNode;
@@ -76,11 +76,11 @@ type SidebarItem = {
 };
 
 export function AdminSidebar() {
-  const userLogin = JSON.parse(localStorage.getItem('user')!) as UserLogin
+  const { user: authUser, logout } = useAuth();
+  const mounted = useMounted();
   const pathname = usePathname();
   const params = useParams();
   const locale = params?.locale || "vi"; // Default to 'vi' if no locale
-  const { logout } = useAuth();
   const t = useTranslations("sidebar");
 
   const sidebarItems: SidebarItem[] = [
@@ -161,7 +161,7 @@ export function AdminSidebar() {
         },
       ],
     },
-    ...(userLogin.sub_type !== "school"
+    ...(authUser?.sub_type !== "school"
       ? [
         {
           icon: <Star className="h-5 w-5" />,
@@ -192,7 +192,7 @@ export function AdminSidebar() {
         },
       ]
       : []),
-    ...(userLogin.sub_type !== "school"
+    ...(authUser?.sub_type !== "school"
       ? [
         {
           icon: <MessageSquare className="h-5 w-5" />,
@@ -602,6 +602,7 @@ export function AdminSidebar() {
           </div> */}
 
           {/* User Profile */}
+          {mounted ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -706,6 +707,31 @@ export function AdminSidebar() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          ) : (
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full justify-start gap-3 p-3 rounded-xl",
+                !expanded && "justify-center"
+              )}
+              type="button"
+              aria-hidden
+              tabIndex={-1}
+            >
+              <Avatar className="h-8 w-8 ring-2 ring-white/50">
+                <AvatarImage
+                  src={user?.avatar || "/avatar-kid.png"}
+                  alt={user?.name || "Admin"}
+                />
+                <AvatarFallback
+                  className="text-white text-sm font-semibold"
+                  style={{ backgroundColor: BRAND_COLORS.purple }}
+                >
+                  {user?.name ? user.name.charAt(0).toUpperCase() : "AD"}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          )}
         </div>
       </aside>
     </>

@@ -264,7 +264,8 @@ URL thường có thêm `lesson_id`, `course_id` (query) — không xóa khi chi
 | PUT lesson 500 | Lỗi `dependency_id` / duplicate lesson_plan | Cập nhật BE 2026-06-18 |
 | Từ vựng không lưu | Chưa sync flashcard API | Cập nhật FE 2026-06-18; bấm **Lưu** form bài học |
 | `/courses` trống | Chưa gắn khóa | Admin sửa user → thêm khóa học |
-| Vào bài học không thấy bài tập | Chưa **giao bài** | GV bật Giao trên bài học |
+| Vào bài học không thấy bài tập | Chưa **giao bài** | GV bật **Giao bài** trên `/teacher/lessons/[id]?course_id=...` cho từng homework/exercise/exam |
+| HS không thấy tab Luyện tập / Kiểm tra | Tab bị ẩn trên UI (đã sửa) | Vào bài học từ **Khóa học** → `/courses/[courseId]/lesson/[lessonId]` — có 3 tab: Bài tập về nhà, Luyện tập, Bài kiểm tra |
 | Không nộp được kiểm tra | Quá deadline / hết time_limit | Kiểm tra cấu hình exam |
 | 401 / không vào được | Sai token / hết phiên | Đăng nhập lại |
 

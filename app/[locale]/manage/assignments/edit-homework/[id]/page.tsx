@@ -16,6 +16,11 @@ import {
 import { getAssignmentsRoute } from "@/lib/utils/route-utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useTypedTranslations } from "@/lib/i18n/client";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  ASSIGNMENTS_HOMEWORKS_REFRESH_KEY,
+  markListForRefresh,
+} from "@/lib/utils/list-refresh";
 
 export default function EditHomeworkPage() {
   const router = useRouter();
@@ -24,6 +29,7 @@ export default function EditHomeworkPage() {
   const { toast } = useToast();
   const { user } = useAuth();
   const t = useTypedTranslations("manageAssignments");
+  const queryClient = useQueryClient();
 
   // State for loading
   const [isLoading, setIsLoading] = useState(true);
@@ -549,9 +555,9 @@ export default function EditHomeworkPage() {
         description: t("homeworkForm.updateSuccess"),
       });
 
-      setTimeout(() => {
-        router.push(getAssignmentsRoute(user));
-      }, 500);
+      await queryClient.invalidateQueries({ queryKey: ["homeworks"] });
+      markListForRefresh(ASSIGNMENTS_HOMEWORKS_REFRESH_KEY);
+      router.replace(`${getAssignmentsRoute(user)}?tab=homework`);
     } catch (error: any) {
       console.error("Error updating homework:", error);
       toast({

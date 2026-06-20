@@ -34,10 +34,12 @@ import { getGravatarUrl } from "@/utils/avatar";
 import { useTypedTranslations } from "@/lib/i18n/client";
 import Image from "next/image";
 import { filterNavByHref } from "@/lib/nav/filter-nav";
+import { useMounted } from "@/hooks/use-mounted";
 
 export function DashboardHeader() {
   const pathname = usePathname();
   const { logout } = useAuth();
+  const mounted = useMounted();
   const [user, setUser] = useState<any>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [holidayPopupOpen, setHolidayPopupOpen] = useState(false);
@@ -299,6 +301,7 @@ export function DashboardHeader() {
                   <Skeleton className="h-4 w-[60px] rounded-full bg-gray-200" />
                 )}
               </span>
+              {mounted ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -409,6 +412,33 @@ export function DashboardHeader() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              ) : (
+                <Button
+                  variant="ghost"
+                  className="relative h-11 w-11 rounded-full p-0 flex items-center shadow border border-slate-200"
+                  type="button"
+                  aria-hidden
+                  tabIndex={-1}
+                >
+                  <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
+                    {user ? (
+                      <>
+                        <AvatarImage
+                          src={getAvatarUrl(user)}
+                          alt={user?.name || "User"}
+                        />
+                        <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-green-600 text-white font-bold text-lg">
+                          {user?.name
+                            ? user.name.charAt(0).toUpperCase()
+                            : "U"}
+                        </AvatarFallback>
+                      </>
+                    ) : (
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                    )}
+                  </Avatar>
+                </Button>
+              )}
             </div>
           </div>
         </div>

@@ -76,6 +76,7 @@ import {
 import { useDebounce } from "@/hooks/use-debounce";
 import {
   ASSIGNMENTS_EXERCISES_REFRESH_KEY,
+  ASSIGNMENTS_HOMEWORKS_REFRESH_KEY,
   clearListForRefresh,
   peekListForRefresh,
 } from "@/lib/utils/list-refresh";
@@ -369,10 +370,41 @@ export default function ExamsPage() {
       tab === "assessment"
     ) {
       setActiveTab(tab);
+    } else if (peekListForRefresh(ASSIGNMENTS_HOMEWORKS_REFRESH_KEY)) {
+      setActiveTab("homework");
     } else if (peekListForRefresh(ASSIGNMENTS_EXERCISES_REFRESH_KEY)) {
       setActiveTab("exercise");
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    const shouldRefreshHomeworks = peekListForRefresh(
+      ASSIGNMENTS_HOMEWORKS_REFRESH_KEY
+    );
+    if (!shouldRefreshHomeworks) return;
+
+    let cancelled = false;
+
+    const refreshHomeworks = async () => {
+      setActiveTab("homework");
+      setHomeworkFilters((prev) => ({ ...prev, page: 1 }));
+
+      try {
+        await queryClient.invalidateQueries({ queryKey: ["homeworks"] });
+        if (!cancelled) {
+          clearListForRefresh(ASSIGNMENTS_HOMEWORKS_REFRESH_KEY);
+        }
+      } catch (error) {
+        console.error("Failed to refresh homeworks list:", error);
+      }
+    };
+
+    void refreshHomeworks();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [queryClient, searchParams]);
 
   useEffect(() => {
     const shouldRefresh = peekListForRefresh(ASSIGNMENTS_EXERCISES_REFRESH_KEY);

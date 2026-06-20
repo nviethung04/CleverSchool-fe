@@ -53,6 +53,26 @@ type GetSettingsEnvelope = ApiEnvelope<{
 
 type UpsertSettingEnvelope = ApiEnvelope<SettingItem>;
 
+export async function GetSettingByKey(key: string): Promise<SettingItem | null> {
+  try {
+    const response = await axiosInstance.get(
+      `/manage/settings/by-key/${encodeURIComponent(key)}`
+    );
+    const data = response.data as UpsertSettingEnvelope;
+    if (Number(data.code) !== 200 || !data.data) {
+      return null;
+    }
+    return data.data;
+  } catch (error: unknown) {
+    const status = (error as { response?: { status?: number } })?.response
+      ?.status;
+    if (status === 404) {
+      return null;
+    }
+    throw error;
+  }
+}
+
 export async function GetSettings(
   params: GetSettingsParams = {}
 ): Promise<GetSettingsResult> {

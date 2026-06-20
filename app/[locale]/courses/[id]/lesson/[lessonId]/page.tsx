@@ -79,11 +79,14 @@ import axiosInstance from "@/lib/api/axios";
 import { SessionCompleteDialog } from "@/components/flashcard/session-complete-dialog";
 
 // Flashcard API functions
-const createFlashcardSession = async (lessonId: string) => {
-  const response = await axiosInstance.post("/manage/flashcard/sessions", {
-    lesson_id: parseInt(lessonId),
-    session_type: "learning",
-  });
+const createFlashcardSession = async (lessonId: string, forceNew = false) => {
+  const response = await axiosInstance.post(
+    `/manage/flashcard/sessions${forceNew ? "?force_new=true" : ""}`,
+    {
+      lesson_id: parseInt(lessonId),
+      session_type: "learning",
+    }
+  );
   return response.data;
 };
 
@@ -94,10 +97,19 @@ const getFlashcardActivities = async (sessionId: number) => {
   return response.data;
 };
 
-const completeFlashcardSession = async (sessionId: number, results: any) => {
+const completeFlashcardSession = async (
+  sessionId: number,
+  payload: {
+    total_time_spent: number;
+    words_studied?: number;
+    words_known?: number;
+    words_learning?: number;
+    completion_rate?: number;
+  }
+) => {
   const response = await axiosInstance.put(
     `/manage/flashcard/sessions/${sessionId}/complete`,
-    results
+    payload
   );
   return response.data;
 };
@@ -110,16 +122,28 @@ const trackActivity = async (
   responseTime: number = 0,
   isCorrect: boolean = false
 ) => {
-  const response = await axiosInstance.post(
+  let response = "";
+  if (activityType === "mark_known") response = "known";
+  else if (activityType === "mark_unknown") response = "unknown";
+  else if (isCorrect) response = "correct";
+
+  const responseData = await axiosInstance.post(
     `/manage/flashcard/sessions/${sessionId}/activities`,
     {
       vocabulary_id: vocabularyId,
       activity_type: activityType,
       response_time: responseTime,
-      is_correct: isCorrect,
+      response,
     }
   );
-  return response.data;
+  return responseData.data;
+};
+
+const getVocabularyIdFromItem = (item: any): number | undefined => {
+  const id = item?.vocabulary?.id ?? item?.vocabulary_id;
+  if (id == null || id === "") return undefined;
+  const parsed = Number(id);
+  return Number.isFinite(parsed) ? parsed : undefined;
 };
 
 const getLessonVocabularies = async (
@@ -227,7 +251,7 @@ export default function LessonDetailPage({
   // Đồng bộ tab từ query param
   useEffect(() => {
     const tab = searchParams.get("tab");
-    if (tab && ["lecture", "homework", "test"].includes(tab)) {
+    if (tab && ["lecture", "homework", "exercise", "test", "vocabulary"].includes(tab)) {
       setActiveTab(tab);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -265,14 +289,30 @@ export default function LessonDetailPage({
   };
 
   // Initialize flashcard session
-  const startFlashcardSession = async () => {
-    if (!vocabulariesLoaded) {
-      await loadLessonVocabularies();
-    }
-
+  const startFlashcardSession = async (options?: { forceNew?: boolean }) => {
     setLoadingFlashcards(true);
     try {
-      const sessionResponse = await createFlashcardSession(lessonId);
+      let vocabs = lessonVocabularies;
+      if (!vocabs.length) {
+        const vocabResponse = await getLessonVocabularies(lessonId, 1, 100);
+        if (vocabResponse.code === 200 && vocabResponse.data) {
+          vocabs = Array.isArray(vocabResponse.data)
+            ? vocabResponse.data
+            : vocabResponse.data.vocabularies || [];
+          setLessonVocabularies(vocabs);
+          setVocabulariesLoaded(true);
+        }
+      }
+
+      if (!vocabs.length) {
+        toast.error("Chưa có từ vựng trong bài học này");
+        return;
+      }
+
+      const sessionResponse = await createFlashcardSession(
+        lessonId,
+        options?.forceNew ?? false
+      );
 
       if (sessionResponse.code === 200 || sessionResponse.code === 201) {
         const sessionData = sessionResponse.data;
@@ -281,76 +321,60 @@ export default function LessonDetailPage({
         const isResumedSession = !sessionData.is_new_session;
         const resumeIndex = sessionData.current_index || 0;
 
-        if (isResumedSession) {
-          console.log("🔄 Resuming existing session at index:", resumeIndex);
-        } else {
-          console.log("🆕 Starting new session");
+        setFlashcardActivities(vocabs);
+        setShowVocabLearning(true);
+        setVocabKnowledgeStatus({});
+        setSessionResults([]);
+        setWordsStudiedCount(0);
+
+        let startingIndex = 0;
+        if (isResumedSession && resumeIndex >= vocabs.length) {
+          startingIndex = 0;
+        } else if (isResumedSession) {
+          const zeroBasedIndex = resumeIndex;
+          const oneBasedIndex = resumeIndex - 1;
+
+          if (zeroBasedIndex >= 0 && zeroBasedIndex < vocabs.length) {
+            startingIndex = zeroBasedIndex;
+          } else if (oneBasedIndex >= 0 && oneBasedIndex < vocabs.length) {
+            startingIndex = oneBasedIndex;
+          }
         }
 
-        if (lessonVocabularies.length > 0) {
-          setFlashcardActivities(lessonVocabularies);
-          setShowVocabLearning(true);
+        setCurrentVocabIndex(startingIndex);
 
-          // Handle both 0-based and 1-based indexing from API
-          let startingIndex = 0;
-          if (isResumedSession) {
-            // Try both 0-based and 1-based indexing
-            const zeroBasedIndex = resumeIndex;
-            const oneBasedIndex = resumeIndex - 1;
+        const currentTime = Date.now();
+        setSessionStartTime(currentTime);
+        setCurrentCardStartTime(currentTime);
+        setFlipStartTime(0);
+        setShowAnswer(false);
 
-            // Check which one makes more sense based on array bounds
-            if (
-              zeroBasedIndex >= 0 &&
-              zeroBasedIndex < lessonVocabularies.length
-            ) {
-              startingIndex = zeroBasedIndex;
-              console.log("🎯 Using 0-based index:", startingIndex);
-            } else if (
-              oneBasedIndex >= 0 &&
-              oneBasedIndex < lessonVocabularies.length
-            ) {
-              startingIndex = oneBasedIndex;
-              console.log("🎯 Using 1-based index (converted):", startingIndex);
-            } else {
-              startingIndex = 0;
-              console.log("⚠️ Invalid resume index, starting from 0");
-            }
-          }
-
-          setCurrentVocabIndex(startingIndex);
-
-          const currentTime = Date.now();
-          setSessionStartTime(currentTime);
-          setCurrentCardStartTime(currentTime);
-          setFlipStartTime(0);
-          setShowAnswer(false);
-          setSessionResults([]);
-
-          const firstVocabId =
-            lessonVocabularies[startingIndex]?.vocabulary?.id ||
-            lessonVocabularies[startingIndex]?.id;
-          if (firstVocabId && sessionResponse.data?.session_id) {
-            setTimeout(() => {
-              trackActivity(
-                sessionResponse.data.session_id,
-                firstVocabId,
-                "view",
-                0,
-                false
-              );
-            }, 1000);
-          }
-        } else {
-          setFlashcardActivities([]);
-          setShowVocabLearning(true);
+        const firstVocabId = getVocabularyIdFromItem(vocabs[startingIndex]);
+        if (firstVocabId && sessionData?.session_id) {
+          setTimeout(() => {
+            trackActivity(sessionData.session_id, firstVocabId, "view", 0, false);
+          }, 300);
         }
       }
     } catch (error) {
       console.error("💥 Error starting flashcard session:", error);
-      alert("Không thể kết nối đến server. Vui lòng thử lại.");
+      toast.error("Không thể kết nối đến server. Vui lòng thử lại.");
     } finally {
       setLoadingFlashcards(false);
     }
+  };
+
+  const restartFlashcardSession = async () => {
+    setShowCompletionPopup(false);
+    setCompletionStats(null);
+    setShowVocabLearning(false);
+    setFlashcardSession(null);
+    setVocabKnowledgeStatus({});
+    setCurrentVocabIndex(0);
+    setShowAnswer(false);
+    setWordsStudiedCount(0);
+    setSessionResults([]);
+    await startFlashcardSession({ forceNew: true });
   };
 
   // Handle vocabulary navigation
@@ -364,9 +388,7 @@ export default function LessonDetailPage({
       setCurrentCardStartTime(currentTime);
       setFlipStartTime(0);
 
-      const vocabId =
-        flashcardActivities[newIndex]?.vocabulary?.id ||
-        flashcardActivities[newIndex]?.id;
+      const vocabId = getVocabularyIdFromItem(flashcardActivities[newIndex]);
       if (vocabId && flashcardSession?.session_id) {
         setTimeout(() => {
           trackActivity(flashcardSession.session_id, vocabId, "view", 0, false);
@@ -385,9 +407,7 @@ export default function LessonDetailPage({
       setCurrentCardStartTime(currentTime);
       setFlipStartTime(0);
 
-      const vocabId =
-        flashcardActivities[newIndex]?.vocabulary?.id ||
-        flashcardActivities[newIndex]?.id;
+      const vocabId = getVocabularyIdFromItem(flashcardActivities[newIndex]);
       if (vocabId && flashcardSession?.session_id) {
         setTimeout(() => {
           trackActivity(flashcardSession.session_id, vocabId, "view", 0, false);
@@ -396,26 +416,39 @@ export default function LessonDetailPage({
     }
   };
 
-  // Handle answer flip
-  const handleFlipCard = () => {
-    if (!showAnswer) {
-      setShowAnswer(true);
-      const currentTime = Date.now();
-      setFlipStartTime(currentTime);
+  const flipToAnswer = () => {
+    const currentTime = Date.now();
+    setShowAnswer(true);
+    setFlipStartTime(currentTime);
 
-      const currentVocab = flashcardActivities[currentVocabIndex];
-      const vocabId = currentVocab?.vocabulary?.id || currentVocab?.id;
-      const timeOnCard = currentTime - currentCardStartTime;
+    const currentVocab = flashcardActivities[currentVocabIndex];
+    const vocabId = getVocabularyIdFromItem(currentVocab);
+    const timeOnCard = currentTime - currentCardStartTime;
 
-      if (vocabId && flashcardSession?.session_id && timeOnCard > 0) {
-        trackActivity(
-          flashcardSession.session_id,
-          vocabId,
-          "flip",
-          timeOnCard,
-          false
-        );
-      }
+    if (vocabId && flashcardSession?.session_id && timeOnCard > 0) {
+      trackActivity(
+        flashcardSession.session_id,
+        vocabId,
+        "flip",
+        timeOnCard,
+        false
+      );
+    }
+  };
+
+  const flipToWord = () => {
+    setShowAnswer(false);
+    setFlipStartTime(0);
+    setCurrentCardStartTime(Date.now());
+  };
+
+  const handleFlipCard = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    if (showAnswer) {
+      flipToWord();
+    } else {
+      flipToAnswer();
     }
   };
 
@@ -424,7 +457,7 @@ export default function LessonDetailPage({
     if (!flashcardSession?.session_id) return;
 
     const currentVocab = flashcardActivities[currentVocabIndex];
-    const vocabId = currentVocab?.vocabulary?.id || currentVocab?.id;
+    const vocabId = getVocabularyIdFromItem(currentVocab);
     if (!vocabId) return;
 
     const currentTime = Date.now();
@@ -447,7 +480,7 @@ export default function LessonDetailPage({
       const isLastCard = currentVocabIndex === flashcardActivities.length - 1;
 
       if (isLastCard) {
-        await completeFlashcardSessionHandler();
+        await completeFlashcardSessionHandler(vocabId, knownStatus);
       } else {
         handleNextVocab();
       }
@@ -457,26 +490,96 @@ export default function LessonDetailPage({
   };
 
   // Complete flashcard session
-  const completeFlashcardSessionHandler = async () => {
+  const completeFlashcardSessionHandler = async (
+    lastVocabId?: number,
+    lastKnownStatus?: string
+  ) => {
     if (!flashcardSession?.session_id) return;
 
     try {
+      const totalTimeSec = Math.round((Date.now() - sessionStartTime) / 1000);
+      const totalWords =
+        lessonVocabularies.length || flashcardActivities.length || 0;
 
-      const totalTime = Date.now() - sessionStartTime;
-      const completionResponse = await completeFlashcardSession(
-        flashcardSession.session_id,
-        totalTime
-      );
-
-      if (completionResponse.code === 200 && completionResponse.data) {
-        const results =
-          completionResponse.data.statistics || completionResponse.data;
-
-        setSessionResults(results);
-        setShowCompletionPopup(true);
-        setCompletionStats(results);
-        setShowVocabLearning(false);
+      const studiedIds = new Set<number>();
+      for (let i = 0; i <= currentVocabIndex; i++) {
+        const id = getVocabularyIdFromItem(flashcardActivities[i]);
+        if (id) studiedIds.add(id);
       }
+
+      const knownMap = { ...vocabKnowledgeStatus };
+      if (lastVocabId && lastKnownStatus) {
+        knownMap[lastVocabId] = lastKnownStatus;
+        studiedIds.add(lastVocabId);
+      }
+      Object.keys(knownMap).forEach((id) => studiedIds.add(Number(id)));
+
+      const wordsStudied =
+        studiedIds.size > 0 ? studiedIds.size : Math.max(currentVocabIndex + 1, 1);
+      const wordsKnown = Object.values(knownMap).filter(
+        (s) => s === "known"
+      ).length;
+      const wordsLearning = Math.max(0, wordsStudied - wordsKnown);
+      const completionRate =
+        totalWords > 0 ? Math.min(1, wordsStudied / totalWords) : 0;
+
+      const stats = {
+        totalTimeSpent: totalTimeSec,
+        wordsStudied,
+        wordsKnown,
+        totalWords,
+        completionRate,
+        knownRate: totalWords > 0 ? wordsKnown / totalWords : 0,
+        averageScore: 0,
+      };
+
+      try {
+        const apiRes = await completeFlashcardSession(
+          flashcardSession.session_id,
+          {
+            total_time_spent: totalTimeSec,
+            words_studied: wordsStudied,
+            words_known: wordsKnown,
+            words_learning: wordsLearning,
+            completion_rate: completionRate,
+          }
+        );
+        const sessionData = apiRes?.data;
+        if (sessionData) {
+          if (sessionData.study_duration > 0) {
+            stats.totalTimeSpent = sessionData.study_duration;
+          }
+          if (typeof sessionData.completed_cards === "number") {
+            stats.wordsStudied = Math.max(
+              stats.wordsStudied,
+              sessionData.completed_cards
+            );
+          }
+          if (sessionData.total_cards > 0) {
+            stats.totalWords = sessionData.total_cards;
+          }
+          if (typeof sessionData.known_cards === "number") {
+            stats.wordsKnown = Math.max(
+              stats.wordsKnown,
+              sessionData.known_cards
+            );
+          }
+          stats.completionRate =
+            stats.totalWords > 0
+              ? Math.min(1, stats.wordsStudied / stats.totalWords)
+              : stats.completionRate;
+          stats.knownRate =
+            stats.totalWords > 0 ? stats.wordsKnown / stats.totalWords : 0;
+        }
+      } catch (error) {
+        console.error("💥 Error completing session:", error);
+      }
+
+      setWordsStudiedCount(stats.wordsStudied);
+      setSessionResults(stats);
+      setCompletionStats(stats);
+      setShowCompletionPopup(true);
+      setShowVocabLearning(false);
     } catch (error) {
       console.error("💥 Error completing session:", error);
     }
@@ -732,23 +835,23 @@ export default function LessonDetailPage({
               {t("tabs.homework")}
             </TabsTrigger>
 
-            {/* <TabsTrigger
+            <TabsTrigger
               value="exercise"
               className="px-6 py-3 transition-all font-medium border-b-2 border-transparent data-[state=active]:text-[#0066CC] data-[state=active]:border-[#0066CC] data-[state=active]:font-bold data-[state=inactive]:text-gray-700 data-[state=inactive]:font-medium"
               style={{ borderRadius: 0 }}
             >
-              <LucideClipboard className="h-4 w-4 mr-2" />
+              <LucideFileCheck className="h-4 w-4 mr-2" />
               {t("tabs.exercise")}
-            </TabsTrigger> */}
+            </TabsTrigger>
 
-            {/* <TabsTrigger
+            <TabsTrigger
               value="test"
               className="px-6 py-3 transition-all font-medium border-b-2 border-transparent data-[state=active]:text-[#0066CC] data-[state=active]:border-[#0066CC] data-[state=active]:font-bold data-[state=inactive]:text-gray-700 data-[state=inactive]:font-medium"
               style={{ borderRadius: 0 }}
             >
               <LucideFileCheck className="h-4 w-4 mr-2" />
               {t("tabs.test")}
-            </TabsTrigger> */}
+            </TabsTrigger>
 
             <TabsTrigger
               value="vocabulary"
@@ -820,15 +923,13 @@ export default function LessonDetailPage({
                         <div className="text-gray-700 whitespace-pre-line mb-4">
                           {plan.description || ""}
                         </div>
-                        <Link
-                          href={`/courses/${courseId}/lesson/${lessonId}/lecture/${plan.id}`}
-                          passHref
-                          legacyBehavior
-                        >
-                          <Button className="w-full mt-2" variant="default">
+                        <Button asChild className="w-full mt-2" variant="default">
+                          <Link
+                            href={`/courses/${courseId}/lesson/${lessonId}/lecture/${plan.id}`}
+                          >
                             {t("lecture.viewLecture")}
-                          </Button>
-                        </Link>
+                          </Link>
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}
@@ -988,8 +1089,9 @@ export default function LessonDetailPage({
                     ))}
                 </div>
               ) : (
-                <div className="text-gray-400 text-sm">
-                  {t("homework.empty")}
+                <div className="text-gray-500 text-sm space-y-1">
+                  <p>{t("homework.empty")}</p>
+                  <p className="text-gray-400 text-xs">{t("emptyHintNotAssigned")}</p>
                 </div>
               )}
             </div>
@@ -1117,8 +1219,9 @@ export default function LessonDetailPage({
                   ))}
                 </div>
               ) : (
-                <div className="text-gray-400 text-sm">
-                  {t("exercise.empty")}
+                <div className="text-gray-500 text-sm space-y-1">
+                  <p>{t("exercise.empty")}</p>
+                  <p className="text-gray-400 text-xs">{t("emptyHintNotAssigned")}</p>
                 </div>
               )}
             </div>
@@ -1245,7 +1348,10 @@ export default function LessonDetailPage({
                   ))}
                 </div>
               ) : (
-                <div className="text-gray-400 text-sm">{t("test.empty")}</div>
+                <div className="text-gray-500 text-sm space-y-1">
+                  <p>{t("test.empty")}</p>
+                  <p className="text-gray-400 text-xs">{t("emptyHintNotAssigned")}</p>
+                </div>
               )}
             </div>
           </TabsContent>
@@ -1456,7 +1562,7 @@ export default function LessonDetailPage({
                     className={`bg-gradient-to-br from-purple-50 to-purple-100 rounded-3xl p-8 text-center min-h-[400px] flex flex-col justify-center cursor-pointer transition-all duration-300 ${
                       showAnswer ? "from-green-50 to-green-100" : ""
                     }`}
-                    onClick={() => setShowAnswer(!showAnswer)}
+                    onClick={handleFlipCard}
                   >
                     {!showAnswer ? (
                       // Front side - Word
@@ -1634,12 +1740,12 @@ export default function LessonDetailPage({
                         <div className="bg-white/70 rounded-2xl p-4">
                           <div className="flex items-center justify-center gap-2">
                             {(() => {
-                              const vocabularyId =
+                              const vocabularyId = getVocabularyIdFromItem(
                                 flashcardActivities[currentVocabIndex]
-                                  .vocabulary?.id ||
-                                flashcardActivities[currentVocabIndex].id;
-                              const knowledgeStatus =
-                                vocabKnowledgeStatus[vocabularyId];
+                              );
+                              const knowledgeStatus = vocabularyId
+                                ? vocabKnowledgeStatus[vocabularyId]
+                                : undefined;
 
                               if (knowledgeStatus === "known") {
                                 return (
@@ -1695,8 +1801,9 @@ export default function LessonDetailPage({
             {flashcardActivities.length > 0 && (
               <div className="space-y-6">
                 {/* Navigation and Flip */}
-                <div className="flex justify-between items-center">
+                <div className="relative z-10 flex justify-between items-center">
                   <Button
+                    type="button"
                     variant="outline"
                     className="rounded-2xl px-6"
                     onClick={handlePrevVocab}
@@ -1707,19 +1814,17 @@ export default function LessonDetailPage({
                   </Button>
 
                   <Button
+                    type="button"
                     variant="outline"
                     className="rounded-2xl px-6"
-                    onClick={handleFlipCard}
+                    onClick={(e) => handleFlipCard(e)}
                   >
-                    {showAnswer ? (
-                      <RotateCcw className="h-5 w-5 mr-2" />
-                    ) : (
-                      <RotateCcw className="h-5 w-5 mr-2" />
-                    )}
+                    <RotateCcw className="h-5 w-5 mr-2" />
                     {showAnswer ? "Lật lại" : "Lật thẻ"}
                   </Button>
 
                   <Button
+                    type="button"
                     variant="outline"
                     className="rounded-2xl px-6"
                     onClick={handleNextVocab}
@@ -1735,6 +1840,7 @@ export default function LessonDetailPage({
                 {/* Finish Study Button - Always visible */}
                 <div className="flex justify-center">
                   <Button
+                    type="button"
                     className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl px-8 py-3"
                     onClick={completeFlashcardSessionHandler}
                   >
@@ -1745,8 +1851,9 @@ export default function LessonDetailPage({
 
                 {/* Knowledge Status Button - Known/Unknown buttons */}
                 {showAnswer && (
-                  <div className="flex gap-3 justify-center">
+                  <div className="relative z-10 flex gap-3 justify-center">
                     <Button
+                      type="button"
                       variant="outline"
                       className="rounded-2xl px-6 py-3 border-red-300 text-red-600 hover:bg-red-50"
                       onClick={() => updateVocabularyStatus("unknown")}
@@ -1763,6 +1870,7 @@ export default function LessonDetailPage({
                     </Button>
 
                     <Button
+                      type="button"
                       className="bg-green-600 hover:bg-green-700 text-white rounded-2xl px-6 py-3"
                       onClick={() => updateVocabularyStatus("known")}
                       disabled={updatingVocabStatus}
@@ -1800,10 +1908,11 @@ export default function LessonDetailPage({
             setShowCompletionPopup(false);
             setCompletionStats(null);
           }}
-          onRestartSession={startFlashcardSession}
+          onRestartSession={restartFlashcardSession}
           onGoBack={() => {
             setShowCompletionPopup(false);
             setCompletionStats(null);
+            setShowVocabLearning(false);
           }}
           stats={completionStats}
         />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { GetSettings, SettingItem } from "@/lib/api/settings";
+import { GetSettingByKey, SettingItem } from "@/lib/api/settings";
 
 export function useSetting(key: string): {
   isEnabled: boolean;
@@ -14,10 +14,7 @@ export function useSetting(key: string): {
     async function fetchSetting() {
       try {
         setLoading(true);
-        const result = await GetSettings();
-
-        // Tìm setting có key chính xác
-        const foundSetting = result.settings.find((s) => s.key === key);
+        const foundSetting = await GetSettingByKey(key);
 
         if (foundSetting) {
           setSetting(foundSetting);
