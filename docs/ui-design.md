@@ -177,5 +177,6 @@ Component: `fe/components/lesson-form.tsx` — dùng cho `/manage/lessons/create
 | Từ vựng | Sau lưu lesson → `syncLessonVocabularies` → `PUT /manage/flashcard/lessons/:id/vocabularies` |
 | Assessment trên form | UI có; **BE chưa** lưu quan hệ lesson ↔ assessment |
 | Thêm bài vào CT | Làm ở `/manage/programs/[id]/edit`, không ở sửa khóa học |
+| Chi tiết bài học (`/manage/lessons/[id]`) | Dùng chung component với GV. Đủ 5 tab (kể cả Luyện tập, Kiểm tra) cho mọi role. **Giao bài** / **Xem** / **Chấm điểm**: GV luôn thấy khi có `?course_id=`; admin thấy Giao/Xem (cần quyền assignments), không **Chấm điểm**. |
 
 API client: `fe/lib/api/lessons.ts`. Backend: `be/docs/features.md` §3.4.

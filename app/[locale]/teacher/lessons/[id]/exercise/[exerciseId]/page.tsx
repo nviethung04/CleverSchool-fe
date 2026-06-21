@@ -12,6 +12,7 @@ import {
   Eye,
   Calendar,
   GraduationCap,
+  RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,11 +30,22 @@ import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import {
   getExerciseStudents,
+  resetExerciseAttempt,
   type UIExerciseInfo,
   type UIStudentSubmission,
 } from "@/lib/api/exercises";
 import { useToast } from "@/components/ui/use-toast";
 import { useTypedTranslations } from "@/lib/i18n/client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function ExerciseManagementPage() {
   const params = useParams();
@@ -51,6 +63,10 @@ export default function ExerciseManagementPage() {
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(50);
+  const [resetTarget, setResetTarget] = useState<UIStudentSubmission | null>(
+    null
+  );
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     fetchExerciseData(page, limit);
@@ -77,8 +93,14 @@ export default function ExerciseManagementPage() {
       });
 
       if (response.code === 200 && response.data) {
-        const apiExerciseInfo = response.data.exercise_info;
-        const apiStudents = response.data.students;
+        const apiExerciseInfo =
+          response.data.exam_info ?? response.data.exercise_info;
+        const apiStudents = response.data.students ?? [];
+
+        if (!apiExerciseInfo) {
+          throw new Error("Missing exercise info in API response");
+        }
+
         // Lấy total_count từ API nếu có
         const apiTotalCount = response.data.total_count
           ? Number(response.data.total_count)
@@ -228,23 +250,47 @@ export default function ExerciseManagementPage() {
   };
 
   const handleGradeStudent = (studentId: string) => {
-    // Lấy id từ params
     const lessonId = params.lessonId || params.id;
     const exerciseId = params.exerciseId;
-    const student = students.find((s) => s.studentId === studentId);
+    const courseId = searchParams.get("course_id");
 
     if (lessonId && exerciseId && studentId) {
-      if (student?.gradingStatus === "graded") {
-        // Xem điểm
-        router.push(
-          `/${locale}/teacher/lessons/${lessonId}/exercise/${exerciseId}/student/${studentId}`
-        );
-      } else {
-        // Chấm điểm
-        router.push(
-          `/${locale}/teacher/lessons/${lessonId}/exercise/${exerciseId}/student/${studentId}`
-        );
-      }
+      const courseQuery = courseId ? `?course_id=${courseId}` : "";
+      router.push(
+        `/${locale}/teacher/lessons/${lessonId}/exercise/${exerciseId}/student/${studentId}${courseQuery}`
+      );
+    }
+  };
+
+  const handleConfirmReset = async () => {
+    if (!resetTarget) return;
+    const lessonIdRaw = params.lessonId || params.id;
+    const lessonIdNum = lessonIdRaw ? Number(lessonIdRaw) : undefined;
+
+    try {
+      setResetting(true);
+      await resetExerciseAttempt({
+        exercise_id: Number.parseInt(params.exerciseId as string),
+        user_id: Number.parseInt(resetTarget.studentId),
+        ...(lessonIdNum && !Number.isNaN(lessonIdNum)
+          ? { lesson_id: lessonIdNum }
+          : {}),
+      });
+      toast({
+        title: t("resetAttemptSuccess"),
+        description: resetTarget.studentName,
+      });
+      setResetTarget(null);
+      await fetchExerciseData(page, limit);
+    } catch (error) {
+      console.error("Error resetting exercise attempt:", error);
+      toast({
+        title: t("error"),
+        description: t("resetAttemptFailed"),
+        variant: "destructive",
+      });
+    } finally {
+      setResetting(false);
     }
   };
 
@@ -270,9 +316,9 @@ export default function ExerciseManagementPage() {
     graded: students.filter((s) => s.gradingStatus === "graded").length,
     averageScore:
       students
-        .filter((s) => s.score !== undefined)
-        .reduce((acc, s) => acc + (s.score || 0), 0) /
-        students.filter((s) => s.score !== undefined).length || 0,
+        .filter((s) => s.submissionStatus === "submitted" && s.ratio !== undefined)
+        .reduce((acc, s) => acc + (s.ratio || 0), 0) /
+        students.filter((s) => s.submissionStatus === "submitted" && s.ratio !== undefined).length || 0,
   };
 
   if (loading) {
@@ -573,30 +619,41 @@ export default function ExerciseManagementPage() {
                           </TableCell>
                           <TableCell className="text-center">
                             {student.submissionStatus === "submitted" ? (
-                              <Button
-                                size="sm"
-                                className={`rounded-full font-semibold shadow-sm px-4 py-2 transition-all duration-150 ${
-                                  student.gradingStatus === "graded"
-                                    ? "bg-white text-blue-700 border border-blue-400 hover:bg-blue-50"
-                                    : "bg-blue-600 text-white hover:bg-blue-700"
-                                }`}
-                                onClick={() =>
-                                  handleGradeStudent(student.studentId)
-                                }
-                                variant="ghost"
-                              >
-                                {student.gradingStatus === "graded" ? (
-                                  <>
-                                    <Eye className="h-4 w-4 mr-1" />
-                                    {t("viewScore")}
-                                  </>
-                                ) : (
-                                  <>
-                                    <CheckCircle className="h-4 w-4 mr-1" />
-                                    {t("grade")}
-                                  </>
-                                )}
-                              </Button>
+                              <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
+                                <Button
+                                  size="sm"
+                                  className={`rounded-full font-semibold shadow-sm px-4 py-2 transition-all duration-150 ${
+                                    student.gradingStatus === "graded"
+                                      ? "bg-white text-blue-700 border border-blue-400 hover:bg-blue-50"
+                                      : "bg-blue-600 text-white hover:bg-blue-700"
+                                  }`}
+                                  onClick={() =>
+                                    handleGradeStudent(student.studentId)
+                                  }
+                                  variant="ghost"
+                                >
+                                  {student.gradingStatus === "graded" ? (
+                                    <>
+                                      <Eye className="h-4 w-4 mr-1" />
+                                      {t("viewScore")}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <CheckCircle className="h-4 w-4 mr-1" />
+                                      {t("grade")}
+                                    </>
+                                  )}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="rounded-full font-semibold shadow-sm px-4 py-2 border-orange-300 text-orange-700 hover:bg-orange-50"
+                                  onClick={() => setResetTarget(student)}
+                                >
+                                  <RotateCcw className="h-4 w-4 mr-1" />
+                                  {t("resetAttempt")}
+                                </Button>
+                              </div>
                             ) : (
                               <span className="text-gray-400 text-base">
                                 {t("notSubmitted")}
@@ -658,6 +715,42 @@ export default function ExerciseManagementPage() {
           </div>
         </div>
       </div>
+
+      <AlertDialog
+        open={resetTarget != null}
+        onOpenChange={(open) => {
+          if (!open && !resetting) setResetTarget(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("resetAttemptConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("resetAttemptConfirmDesc")}
+              {resetTarget ? (
+                <span className="mt-2 block font-semibold text-gray-900">
+                  {resetTarget.studentName}
+                </span>
+              ) : null}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={resetting}>
+              {t("cancelReset")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={resetting}
+              onClick={(e) => {
+                e.preventDefault();
+                void handleConfirmReset();
+              }}
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              {resetting ? t("resetting") : t("resetAttempt")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -438,14 +438,17 @@ export function AssessmentTab() {
         }
       } catch (error: any) {
         console.error("Error fetching study report evaluates:", error);
-        toast({
-          title: t("errors.error"),
-          description:
-            error?.response?.data?.message ||
-            error?.message ||
-            t("errors.failedToLoadData"),
-          variant: "destructive",
-        });
+        const isNotFound = error?.response?.status === 404;
+        if (!isNotFound) {
+          toast({
+            title: t("errors.error"),
+            description:
+              error?.response?.data?.message ||
+              error?.message ||
+              t("errors.failedToLoadData"),
+            variant: "destructive",
+          });
+        }
         setEvaluatedItems([]);
         setUnevaluatedItems([]);
       } finally {

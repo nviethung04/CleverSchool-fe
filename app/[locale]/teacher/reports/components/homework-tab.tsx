@@ -247,7 +247,7 @@ export function HomeworkTab({ courses }: HomeworkTabProps) {
     }
   }, [courses, selectedCourse]);
 
-  // Reset các bộ lọc chủ đề/bài học/bài luyện tập khi đổi khóa học
+  // Reset các bộ lọc chủ đề/bài học/BTVN khi đổi khóa học
   useEffect(() => {
     setSelectedChapter("all");
     setLessons([]);
@@ -735,7 +735,7 @@ export function HomeworkTab({ courses }: HomeworkTabProps) {
         .filter((name) => name !== "");
     }
 
-    // Lấy tên bài luyện tập (nếu có cụ thể)
+    // Lấy tên BTVN (nếu có cụ thể)
     let homeworkNames: string[] = [];
     if (isDetail && isSingleAssignmentView) {
       // Trường hợp export detail (1 bài tập)
@@ -778,7 +778,7 @@ export function HomeworkTab({ courses }: HomeworkTabProps) {
       }
     }
     if (homeworkNames.length > 0) {
-      // Nếu có nhiều bài luyện tập, chỉ lấy tên đầu tiên và thêm số lượng
+      // Nếu có nhiều BTVN, chỉ lấy tên đầu tiên và thêm số lượng
       if (homeworkNames.length === 1) {
         fileNameParts.push(homeworkNames[0]);
       } else {

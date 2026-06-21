@@ -38,6 +38,9 @@ export default function ExercisePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const exerciseId = params.id as string;
+  const [lessonId, setLessonId] = useState<string | null>(
+    searchParams.get("lessonId")
+  );
   const [exerciseName, setExerciseName] = useState<string>(
     searchParams.get("name") || ""
   );
@@ -356,8 +359,21 @@ export default function ExercisePage() {
       }
     }
 
+    const resolvedLessonId =
+      lessonId ||
+      searchParams.get("lessonId") ||
+      (exerciseDetail?.lesson_id != null
+        ? String(exerciseDetail.lesson_id)
+        : null);
+
+    if (user?.type === "student" && !resolvedLessonId) {
+      console.error("Lesson ID is required for submitting exercise");
+      return;
+    }
+
     const requestData: SaveScoreBulkRequest = {
       exercise_id: Number(exerciseId),
+      ...(resolvedLessonId ? { lesson_id: Number(resolvedLessonId) } : {}),
       time: elapsedTimeInSeconds, // Send elapsed time as number
       list_answers,
     };
@@ -403,6 +419,8 @@ export default function ExercisePage() {
     timeLeft,
     user,
     searchParams,
+    lessonId,
+    exerciseDetail,
   ]);
 
   // Function để hiển thị popup xác nhận

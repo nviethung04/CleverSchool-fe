@@ -150,7 +150,7 @@ Homework / Exercise: cấu hình trong form tạo/sửa tương ứng; bài gắ
 | Đường dẫn | Việc cần làm |
 |-----------|--------------|
 | Sửa bài học | `/manage/lessons/[id]/edit` | Chọn exam, homework, exercise, bài giảng, từ vựng → **Lưu** (nút lưu chính của form) |
-| Xem bài học | `/manage/lessons/[id]` hoặc `/manage/programs/[id]/lessons/[lessonId]` | Kiểm tra tab nội dung sau khi lưu |
+| Xem bài học | `/manage/lessons/[id]` hoặc `/manage/programs/[id]/lessons/[lessonId]` | Kiểm tra tab nội dung sau khi lưu. **GV** (kèm `?course_id=`) thấy đủ tab Bài tập / Luyện tập / Kiểm tra, nút **Giao bài** và **Chấm điểm**. **Admin** không có **Chấm điểm** (route `/teacher/...`). |
 | Từ chương trình | `/manage/programs/[id]/edit` | Tab *Chương & Bài học* → **Thêm chương** / **Thêm bài học** |
 
 **Luồng lưu (2026-06-18)**
@@ -220,10 +220,13 @@ Body: `{ lesson_id, is_assigned, course_id? }`
 
 | Tình huống | Đường dẫn |
 |------------|-----------|
+| Danh sách HS — bài kiểm tra | `/teacher/lessons/[id]/exam/[examId]?course_id=...` (bắt buộc `course_id` trên URL) |
+| Chấm / xem bài kiểm tra từng HS | `/teacher/lessons/[id]/exam/[examId]/student/[studentId]?course_id=...` |
+| Danh sách HS — luyện tập | `/teacher/lessons/[id]/exercise/[exerciseId]?course_id=...` — cột **Reset lượt làm** (HS đã nộp) |
 | Chấm bài tập HS (tự luận / upload) | `/teacher/lessons/[id]/homework/[homeworkId]/student/[studentId]` |
-| Báo cáo / theo dõi | `/teacher/reports` (tab homework, …) |
+| Báo cáo / theo dõi | `/teacher/reports` — tab **Bài tập về nhà** (BTVN), **Bài luyện tập** (exercise), **Bài kiểm tra** (exam). Tab *Kiểm tra và đánh giá* / *Xuất mẫu* ẩn — `fe/config/hiddenModules.ts` |
 
-Trắc nghiệm: hệ thống **chấm tự động** sau khi HS nộp.
+Trắc nghiệm: hệ thống **chấm tự động** sau khi HS nộp. GV vẫn mở trang chấm để **xem điểm** và chấm tay câu Writing/Speaking (nếu có).
 
 ---
 
@@ -268,6 +271,24 @@ URL thường có thêm `lesson_id`, `course_id` (query) — không xóa khi chi
 | HS không thấy tab Luyện tập / Kiểm tra | Tab bị ẩn trên UI (đã sửa) | Vào bài học từ **Khóa học** → `/courses/[courseId]/lesson/[lessonId]` — có 3 tab: Bài tập về nhà, Luyện tập, Bài kiểm tra |
 | Không nộp được kiểm tra | Quá deadline / hết time_limit | Kiểm tra cấu hình exam |
 | 401 / không vào được | Sai token / hết phiên | Đăng nhập lại |
+| Báo cáo tiến độ — tab Bài luyện tập trống | API cũ (homework) hoặc BE chưa có route mới | Cập nhật BE+FE 2026-06-21; **restart backend**; chọn đúng khóa học |
+| Luyện tập nộp xong vẫn **Làm bài** / không lưu kết quả | Thiếu `lesson_id` khi gọi `save-score/bulk` | Cập nhật BE+FE 2026-06-21; vào bài từ tab Luyện tập bài học (URL có `lessonId`); restart BE |
+| Báo cáo tiến độ — 404 `exercise-list` | Server Go chạy bản cũ | Dừng process port 8080 → `go run .` trong `be/` |
+
+### 5.3 Báo cáo tiến độ (`/progress-report`)
+
+Menu học sinh → **Báo cáo tiến độ**.
+
+| Tab | Nội dung | API |
+|-----|----------|-----|
+| Bài luyện tập | Thống kê + bảng chi tiết **exercise** đã giao / đã làm | `GET /dashboard/student/exercise`, `exercise-list` |
+| Đánh giá | Bài assessment theo môn / khóa | `GET /dashboard/student/assessments` |
+
+**Tab Bài luyện tập — hiển thị:** tỉ lệ làm đúng, số bài đã làm / được giao, tỷ lệ hoàn thành, câu đã hoàn thành, biểu đồ theo tuần, bảng chi tiết (làm tiếp / xem kết quả).
+
+**Đã ẩn (2026-06-21):** bộ lọc loại bài exam/homework, thống kê Gem, cột số câu bỏ qua, dữ liệu mock biểu đồ.
+
+**Lưu ý:** Chỉ đếm bài **exercise đã giao** (`exercise_ref_lessons.assigned_by > 0`) trong khóa đã chọn. Homework (BTVN) không nằm tab này.
 
 ---
 

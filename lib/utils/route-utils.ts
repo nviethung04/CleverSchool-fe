@@ -13,6 +13,12 @@ const resolveLocale = (): string => {
   return "vi";
 };
 
+/** Path for next-intl Link/router — locale prefix is added automatically */
+function pathForIntlLink(baseRoute: string, pathname: string): string {
+  const path = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  return `${baseRoute}${path}`;
+}
+
 /**
  * Utility function to get the base route based on user role
  */
@@ -199,8 +205,10 @@ export const doHomeworkFromDetailLessonRoute = (
   lessonId: string | number
 ): string => {
   const baseRoute = getBaseRoute(user);
-  const locale = resolveLocale();
-  return `${baseRoute}/assignments/do-homework/${id}?from=lesson-detail&courseId=${courseId}&lessonId=${lessonId}`;
+  return pathForIntlLink(
+    baseRoute,
+    `/assignments/do-homework/${id}?from=lesson-detail&courseId=${courseId}&lessonId=${lessonId}`
+  );
 };
 
 export const doHomeworkFromReportRoute = (
@@ -211,6 +219,17 @@ export const doHomeworkFromReportRoute = (
   const baseRoute = getBaseRoute(user);
   const locale = resolveLocale();
   const baseUrl = `/${locale}${baseRoute}/assignments/do-homework/${id}?from=progress-report`;
+  return lessonId ? `${baseUrl}&lessonId=${lessonId}` : baseUrl;
+};
+
+export const doExerciseFromReportRoute = (
+  user: User | null,
+  id: string | number,
+  lessonId?: string | number
+): string => {
+  const baseRoute = getBaseRoute(user);
+  const locale = resolveLocale();
+  const baseUrl = `/${locale}${baseRoute}/assignments/do-exercise/${id}?from=progress-report`;
   return lessonId ? `${baseUrl}&lessonId=${lessonId}` : baseUrl;
 };
 
@@ -271,16 +290,19 @@ export const reviewResultHomeworkFromDetailLessonStudentRoute = (
   lessonId?: string | number
 ): string => {
   const baseRoute = getBaseRoute(user);
-  const locale = resolveLocale();
   let query = [];
   if (from) query.push(`from=${from}`);
   if (courseId) query.push(`courseId=${courseId}`);
   if (lessonId) query.push(`lessonId=${lessonId}`);
   return query.length > 0
-    ? `/${locale}${baseRoute}/assignments/homework/${id}/result?from=lesson-detail${query.join(
-        "&"
-      )}`
-    : `/${locale}${baseRoute}/assignments/homework/${id}/result?from=lesson-detail`;
+    ? pathForIntlLink(
+        baseRoute,
+        `/assignments/homework/${id}/result?from=lesson-detail&${query.join("&")}`
+      )
+    : pathForIntlLink(
+        baseRoute,
+        `/assignments/homework/${id}/result?from=lesson-detail`
+      );
 };
 
 export const reviewResultHomeworkFromReportStudentRoute = (
@@ -335,8 +357,10 @@ export const doExamFromDetailLessonRoute = (
   lessonId: string | number
 ): string => {
   const baseRoute = getBaseRoute(user);
-  const locale = resolveLocale();
-  return `${baseRoute}/assignments/do/${id}?from=lesson-detail&courseId=${courseId}&lessonId=${lessonId}`;
+  return pathForIntlLink(
+    baseRoute,
+    `/assignments/do/${id}?from=lesson-detail&courseId=${courseId}&lessonId=${lessonId}`
+  );
 };
 
 export const doExamFromReportRoute = (
@@ -436,7 +460,7 @@ export const resultExerciseRoute = (
 ): string => {
   const baseRoute = getBaseRoute(user);
   const locale = resolveLocale();
-  return `${baseRoute}/assignments/do-exercise/${id}/result`;
+  return `/${locale}${baseRoute}/assignments/do-exercise/${id}/result`;
 };
 
 export const doExerciseFromAssignmentsRoute = (
@@ -455,8 +479,10 @@ export const doExerciseFromDetailLessonRoute = (
   lessonId: string | number
 ): string => {
   const baseRoute = getBaseRoute(user);
-  const locale = resolveLocale();
-  return `${baseRoute}/assignments/do-excerise/${id}?from=lesson-detail&courseId=${courseId}&lessonId=${lessonId}`;
+  return pathForIntlLink(
+    baseRoute,
+    `/assignments/do-exercise/${id}?from=lesson-detail&courseId=${courseId}&lessonId=${lessonId}`
+  );
 };
 
 export const reviewExerciseStudentRoute = (
@@ -467,14 +493,16 @@ export const reviewExerciseStudentRoute = (
   lessonId?: string | number
 ): string => {
   const baseRoute = getBaseRoute(user);
-  const locale = resolveLocale();
   let query = [];
   if (from) query.push(`from=${from}`);
   if (courseId) query.push(`courseId=${courseId}`);
   if (lessonId) query.push(`lessonId=${lessonId}`);
   return query.length > 0
-    ? `${baseRoute}/assignments/exercise/${id}/review?${query.join("&")}`
-    : `${baseRoute}/assignments/exercise/${id}/review`;
+    ? pathForIntlLink(
+        baseRoute,
+        `/assignments/exercise/${id}/review?${query.join("&")}`
+      )
+    : pathForIntlLink(baseRoute, `/assignments/exercise/${id}/review`);
 };
 
 export const reviewResultExerciseStudentRoute = (

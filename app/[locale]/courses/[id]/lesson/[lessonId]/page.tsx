@@ -214,12 +214,14 @@ export default function LessonDetailPage({
   const [loadingVocabularies, setLoadingVocabularies] = useState(false);
   const [vocabulariesLoaded, setVocabulariesLoaded] = useState(false);
 
-  // Simple pronunciation practice states
+  // Simple pronunciation practice states (per vocabulary)
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const [recordedAudio, setRecordedAudio] = useState<string | null>(null);
+  const [recordedAudios, setRecordedAudios] = useState<
+    Record<number, string>
+  >({});
 
   // Chỉ hiển thị các bài tập và bài kiểm tra đã được giao (is_assigned = true)
   const assignedHomeworks = Array.isArray(lesson?.homeworks)
@@ -374,12 +376,18 @@ export default function LessonDetailPage({
     setShowAnswer(false);
     setWordsStudiedCount(0);
     setSessionResults([]);
+    stopActiveRecording();
+    setRecordedAudios((prev) => {
+      Object.values(prev).forEach((url) => URL.revokeObjectURL(url));
+      return {};
+    });
     await startFlashcardSession({ forceNew: true });
   };
 
   // Handle vocabulary navigation
   const handlePrevVocab = async () => {
     if (currentVocabIndex > 0) {
+      stopActiveRecording();
       const newIndex = currentVocabIndex - 1;
       setCurrentVocabIndex(newIndex);
       setShowAnswer(false);
@@ -399,6 +407,7 @@ export default function LessonDetailPage({
 
   const handleNextVocab = async () => {
     if (currentVocabIndex < flashcardActivities.length - 1) {
+      stopActiveRecording();
       const newIndex = currentVocabIndex + 1;
       setCurrentVocabIndex(newIndex);
       setShowAnswer(false);
@@ -596,49 +605,71 @@ export default function LessonDetailPage({
   };
 
   // Simple audio recording functions
-  const toggleRecording = async () => {
-    if (isRecording) {
-      // Stop recording
-      if (mediaRecorder) {
-        mediaRecorder.stop();
-        setIsRecording(false);
-      }
-    } else {
-      // Start recording
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-        const recorder = new MediaRecorder(stream);
-        const audioChunks: BlobPart[] = [];
-
-        recorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            audioChunks.push(event.data);
-          }
-        };
-
-        recorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          setRecordedAudio(audioUrl);
-          stream.getTracks().forEach((track) => track.stop());
-        };
-
-        recorder.start();
-        setMediaRecorder(recorder);
-        setIsRecording(true);
-      } catch (error) {
-        console.error("Error accessing microphone:", error);
-        alert("Không thể truy cập microphone. Vui lòng cho phép quyền ghi âm.");
-      }
+  const stopActiveRecording = () => {
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+      setMediaRecorder(null);
     }
   };
 
-  // Play recorded audio
-  const playRecordedAudio = () => {
-    if (recordedAudio) {
-      const audio = new Audio(recordedAudio);
+  const toggleRecording = async () => {
+    if (isRecording) {
+      stopActiveRecording();
+      return;
+    }
+
+    const vocabId = getVocabularyIdFromItem(
+      flashcardActivities[currentVocabIndex]
+    );
+    if (!vocabId) return;
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+      const recorder = new MediaRecorder(stream);
+      const audioChunks: BlobPart[] = [];
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        setRecordedAudios((prev) => {
+          const next = { ...prev };
+          if (next[vocabId]) {
+            URL.revokeObjectURL(next[vocabId]);
+          }
+          next[vocabId] = audioUrl;
+          return next;
+        });
+        stream.getTracks().forEach((track) => track.stop());
+        setMediaRecorder(null);
+      };
+
+      recorder.start();
+      setMediaRecorder(recorder);
+      setIsRecording(true);
+    } catch (error) {
+      console.error("Error accessing microphone:", error);
+      alert("Không thể truy cập microphone. Vui lòng cho phép quyền ghi âm.");
+    }
+  };
+
+  // Play recorded audio for current vocabulary
+  const playRecordedAudio = (vocabId?: number) => {
+    const id =
+      vocabId ??
+      getVocabularyIdFromItem(flashcardActivities[currentVocabIndex]);
+    if (!id) return;
+    const audioUrl = recordedAudios[id];
+    if (audioUrl) {
+      const audio = new Audio(audioUrl);
       audio.play();
     }
   };
@@ -1649,7 +1680,11 @@ export default function LessonDetailPage({
                             </Button>
 
                             {/* Play recorded audio */}
-                            {recordedAudio && (
+                            {recordedAudios[
+                              getVocabularyIdFromItem(
+                                flashcardActivities[currentVocabIndex]
+                              ) ?? -1
+                            ] && (
                               <Button
                                 variant="outline"
                                 size="lg"

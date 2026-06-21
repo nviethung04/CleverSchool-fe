@@ -231,20 +231,13 @@ export default function ExamManagementPage() {
     // Lấy id từ params
     const lessonId = params.lessonId || params.id;
     const examId = params.examId;
-    const student = students.find((s) => s.studentId === studentId);
+    const courseId = searchParams.get("course_id");
 
     if (lessonId && examId && studentId) {
-      if (student?.gradingStatus === "graded") {
-        // Xem điểm
-        router.push(
-          `/${locale}/teacher/lessons/${lessonId}/exam/${examId}/student/${studentId}`
-        );
-      } else {
-        // Chấm điểm
-        router.push(
-          `/${locale}/teacher/lessons/${lessonId}/exam/${examId}/student/${studentId}`
-        );
-      }
+      const courseQuery = courseId ? `?course_id=${courseId}` : "";
+      router.push(
+        `/${locale}/teacher/lessons/${lessonId}/exam/${examId}/student/${studentId}${courseQuery}`
+      );
     }
   };
 
@@ -270,9 +263,9 @@ export default function ExamManagementPage() {
     graded: students.filter((s) => s.gradingStatus === "graded").length,
     averageScore:
       students
-        .filter((s) => s.score !== undefined)
-        .reduce((acc, s) => acc + (s.score || 0), 0) /
-        students.filter((s) => s.score !== undefined).length || 0,
+        .filter((s) => s.submissionStatus === "submitted" && s.ratio !== undefined)
+        .reduce((acc, s) => acc + (s.ratio || 0), 0) /
+        students.filter((s) => s.submissionStatus === "submitted" && s.ratio !== undefined).length || 0,
   };
 
   if (loading) {

@@ -1575,10 +1575,7 @@ export default function GradeExercisePage() {
           <AlertDialogHeader>
             <AlertDialogTitle>{t("ungradedQuestionsRemain")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("gradeRemainingQuestions").replace(
-                "{count}",
-                unscoredCount.toString()
-              )}
+              {t("gradeRemainingQuestions", { count: unscoredCount })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -39,6 +39,25 @@ export async function getStudentHomeworkDashboard({
   return res.data;
 }
 
+export async function getStudentExerciseDashboard({
+  course_id,
+  start_date,
+  end_date,
+}: {
+  course_id: string;
+  start_date: number;
+  end_date: number;
+}) {
+  const res = await axiosInstance.get("/dashboard/student/exercise", {
+    params: {
+      course_id,
+      start_date,
+      end_date,
+    },
+  });
+  return res.data;
+}
+
 export async function getStudentListExam({
   course_id,
   start_date,
@@ -89,6 +108,31 @@ export async function getStudentListHomework({
   return res.data;
 }
 
+export async function getStudentListExercise({
+  course_id,
+  start_date,
+  end_date,
+  page,
+  limit,
+}: {
+  course_id: string;
+  start_date: number;
+  end_date: number;
+  page: number;
+  limit: number;
+}) {
+  const res = await axiosInstance.get("/dashboard/student/exercise-list", {
+    params: {
+      course_id,
+      start_date,
+      end_date,
+      page,
+      limit,
+    },
+  });
+  return res.data;
+}
+
 // Exam Ranking
 export async function getExamRanking({
   course_id,
@@ -103,8 +147,8 @@ export async function getExamRanking({
   order_by?: "asc" | "desc";
   limit?: number;
   page?: number;
-  start_date: number;
-  end_date: number;
+  start_date?: number;
+  end_date?: number;
   exam_id?: string;
 }) {
   const params: any = {
@@ -112,9 +156,14 @@ export async function getExamRanking({
     order_by,
     limit,
     page,
-    start_date,
-    end_date,
   };
+
+  if (start_date != null) {
+    params.start_date = start_date;
+  }
+  if (end_date != null) {
+    params.end_date = end_date;
+  }
 
   // Thêm exam_id nếu có
   if (exam_id) {
@@ -377,6 +426,90 @@ export async function getTeacherAllHomework({
   const res = await axiosInstance.get("/dashboard/teacher/homework", {
     params,
   });
+  return res.data;
+}
+
+export async function getTeacherAllExercise({
+  course_id,
+  start_date,
+  end_date,
+  page,
+  limit,
+  order_by,
+  lesson_ids,
+  chapter_id,
+  exercise_ids,
+}: {
+  course_id: string;
+  start_date: number;
+  end_date: number;
+  page?: number;
+  limit?: number;
+  order_by?: "completed_exercises" | "average_score";
+  lesson_ids?: string;
+  chapter_id?: string;
+  exercise_ids?: string;
+}) {
+  const params: any = {
+    course_id,
+    start_date,
+    end_date,
+    page,
+    limit,
+  };
+
+  if (order_by) params.order_by = order_by;
+  if (lesson_ids) params.lesson_ids = lesson_ids;
+  if (chapter_id) params.chapter_id = chapter_id;
+  if (exercise_ids) params.exercise_ids = exercise_ids;
+
+  const res = await axiosInstance.get("/dashboard/teacher/exercise", {
+    params,
+  });
+  return res.data;
+}
+
+export async function getTeacherListExercises({
+  course_id,
+  start_date,
+  end_date,
+  page,
+  limit,
+  order_by,
+  lesson_ids,
+  chapter_id,
+  exercise_ids,
+  student_id,
+}: {
+  course_id: string;
+  start_date: number;
+  end_date: number;
+  page?: number;
+  limit?: number;
+  order_by?: "completed_exercises" | "average_score";
+  lesson_ids?: string;
+  chapter_id?: string;
+  exercise_ids?: string;
+  student_id?: string;
+}) {
+  const params: any = {
+    course_id,
+    start_date,
+    end_date,
+    page,
+    limit,
+  };
+
+  if (order_by) params.order_by = order_by;
+  if (lesson_ids) params.lesson_ids = lesson_ids;
+  if (chapter_id) params.chapter_id = chapter_id;
+  if (exercise_ids) params.exercise_ids = exercise_ids;
+  if (student_id) params.student_id = student_id;
+
+  const res = await axiosInstance.get(
+    "/dashboard/teacher/exercise/list-exercises",
+    { params }
+  );
   return res.data;
 }
 
@@ -736,10 +869,42 @@ export async function getListChapter({
 }: {
   course_id?: string;
 } = {}) {
-  const res = await axiosInstance.get("/dashboard/chapter-list", {
-    params: course_id ? { course_id } : {},
-  });
-  return res.data;
+  const params: Record<string, string> = {};
+  if (course_id) params.course_id = course_id;
+
+  const res = await axiosInstance.get("/dashboard/lesson-list", { params });
+  const body = res.data ?? {};
+  const lessons: Array<{
+    chapter_id?: number | string;
+    chapterId?: number | string;
+    chapter_name?: string;
+    chapterName?: string;
+  }> = body?.data?.lessons ?? body?.lessons ?? [];
+
+  const chaptersById = new Map<
+    string,
+    { id: string; title: string; name: string }
+  >();
+
+  for (const lesson of lessons) {
+    const chapterId = lesson.chapter_id ?? lesson.chapterId;
+    if (chapterId == null || chapterId === "" || chapterId === 0) continue;
+    const id = String(chapterId);
+    if (chaptersById.has(id)) continue;
+    const title = lesson.chapter_name ?? lesson.chapterName ?? "";
+    chaptersById.set(id, { id, title, name: title });
+  }
+
+  const chapters = Array.from(chaptersById.values());
+
+  return {
+    ...body,
+    data: {
+      ...(typeof body.data === "object" && body.data !== null ? body.data : {}),
+      chapters,
+      total: chapters.length,
+    },
+  };
 }
 
 export async function getListLesson({
@@ -796,6 +961,36 @@ export async function getListExam({
   const res = await axiosInstance.get("/dashboard/exam-list", {
     params,
   });
+  return res.data;
+}
+
+export async function getListExercise({
+  course_id,
+  subject_id,
+  lesson_ids,
+  is_assigned,
+  chapter_id,
+  start_date,
+  end_date,
+}: {
+  course_id?: string;
+  subject_id?: string;
+  lesson_ids?: string;
+  is_assigned?: boolean;
+  chapter_id?: boolean;
+  start_date?: number;
+  end_date?: number;
+}) {
+  const params: any = {};
+  if (course_id) params.course_id = course_id;
+  if (subject_id) params.subject_id = subject_id;
+  if (lesson_ids) params.lesson_ids = lesson_ids;
+  if (chapter_id) params.chapter_id = chapter_id;
+  if (typeof is_assigned !== "undefined") params.is_assigned = is_assigned;
+  if (start_date) params.start_date = start_date;
+  if (end_date) params.end_date = end_date;
+
+  const res = await axiosInstance.get("/dashboard/exercise-list", { params });
   return res.data;
 }
 

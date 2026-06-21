@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { FlashcardAPI } from '@/lib/api/flashcard-api'
 import { useToast } from '@/hooks/use-toast'
 
@@ -138,13 +138,28 @@ export const usePronunciation = ({
     }, [audioData, vocabularyId, studentId, onScoreReceived, toast])
 
     const reset = useCallback(() => {
+        if (audioElementRef.current) {
+            audioElementRef.current.pause()
+            audioElementRef.current = null
+        }
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+            mediaRecorderRef.current.stop()
+        }
         setAudioData(null)
         setScore(null)
         setFeedback(null)
         setIsRecording(false)
         setIsProcessing(false)
+        setIsPlaying(false)
+        setPlaybackProgress(0)
+        setAudioDuration(0)
+        setCurrentTime(0)
         audioChunks.current = []
     }, [])
+
+    useEffect(() => {
+        reset()
+    }, [vocabularyId, reset])
 
     const playRecordedAudio = useCallback(async () => {
         if (!audioData) return;

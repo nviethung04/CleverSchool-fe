@@ -585,7 +585,7 @@ export const getHomeworkAnswersByTeacher = async (
 
 export interface StudentHomeworkAnswersParams {
   homework_id: number;
-  lesson_id: number;
+  lesson_id?: number;
 }
 /**
  * Học sinh xem lại danh sách câu trả lời cho BTVN
@@ -600,7 +600,7 @@ export const getHomeworkAnswersByStudent = async (
       {
         params: {
           homework_id: params.homework_id,
-          lesson_id: params.lesson_id,
+          ...(params.lesson_id ? { lesson_id: params.lesson_id } : {}),
         },
       }
     );

@@ -772,12 +772,15 @@ export default function GradeExamPage() {
       if (
         response &&
         response.data &&
-        response.data.questions &&
-        response.data.questions.length > 0
+        Array.isArray(response.data.questions)
       ) {
         const questions = response.data.questions;
         const overview = response.data.overview;
         setQuestions(questions);
+
+        if (questions.length === 0 && !overview) {
+          throw new Error("No exam submission data");
+        }
 
         // Convert API data to UI format
         const convertedAnswers = questions.map((question: any) => {
@@ -1043,10 +1046,13 @@ export default function GradeExamPage() {
         console.log("Final submission data:", submissionData);
         setSubmission(submissionData);
       } else {
-        console.error("No questions found in response");
+        throw new Error("Invalid exam answers response");
       }
     } catch (error) {
       console.error("Error fetching submission:", error);
+      toast.error(t("error"), {
+        description: "Không thể tải bài làm của học sinh",
+      });
     } finally {
       setLoading(false);
     }
@@ -1575,10 +1581,7 @@ export default function GradeExamPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>{t("ungradedQuestionsRemain")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("gradeRemainingQuestions").replace(
-                "{count}",
-                unscoredCount.toString()
-              )}
+              {t("gradeRemainingQuestions", { count: unscoredCount })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

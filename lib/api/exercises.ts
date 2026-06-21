@@ -67,6 +67,7 @@ export type CreateExerciseBody = {
 
 export interface SaveScoreBulkRequest {
   exercise_id: number;
+  lesson_id?: number;
   time: number;
   list_answers: Array<{
     type_question: string;
@@ -215,8 +216,10 @@ export interface ExerciseStudentsResponse {
   message: string;
   data: {
     "@type": string;
-    exercise_info: ExerciseInfo;
-    students: ExerciseStudent[];
+    /** BE dùng chung proto ExamStudentResponseWithCount — field JSON là exam_info */
+    exam_info?: ExerciseInfo;
+    exercise_info?: ExerciseInfo;
+    students?: ExerciseStudent[];
     total_count: string;
   };
   error: string;
@@ -734,6 +737,27 @@ export const getExerciseStudents = async (
     throw error;
   }
 };
+
+export interface ResetExerciseAttemptParams {
+  exercise_id: number;
+  user_id: number;
+  lesson_id?: number;
+}
+
+export async function resetExerciseAttempt(
+  params: ResetExerciseAttemptParams
+): Promise<{ code: number; message: string }> {
+  const response = await axiosInstance.post("/study/exercise-reset", {
+    exercise_id: params.exercise_id,
+    user_id: params.user_id,
+    ...(params.lesson_id != null ? { lesson_id: params.lesson_id } : {}),
+  });
+  const data = response.data as { code: number; message: string; error?: string };
+  if (data.code === 200) {
+    return data;
+  }
+  throw new Error(data.message || data.error || "Failed to reset exercise attempt");
+}
 
 /**
  * Giáo viên Lấy danh sách câu trả lời của học sinh cho bài tập

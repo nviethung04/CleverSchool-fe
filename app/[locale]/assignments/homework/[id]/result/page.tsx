@@ -876,26 +876,41 @@ export default function HomeworkResultPage() {
   const fetchSubmission = async () => {
     try {
       setLoading(true);
+      const lessonIdParam = searchParams.get("lessonId");
       const response = await getHomeworkAnswersByStudent({
         homework_id: Number(homeworkId),
+        lesson_id: lessonIdParam ? Number(lessonIdParam) : 0,
       });
 
       if (response && response.data) {
-        setOverview(response.data.overview);
+        const overviewData = response.data.overview;
+        setOverview(overviewData);
         setIsAllScored(response.data.is_all_scored ?? true);
         setSubmitFiles(response.data.submit_files || []);
         setIsSubmitted(response.data.is_submitted ?? false);
         setIsScored(response.data.is_scored ?? false);
-
-        // Fetch questions from getQuestions API only if form type is "question"
-        if (response.data.overview.homework_question_form === "question") {
-          const questionsResponse = await getQuestions({
-            homework_id: Number(homeworkId),
-          });
-          setQuestions(questionsResponse.questions || []);
-        }
-
         setManualAnswers(response.data.manual_answers || []);
+
+        const isWriteForm = overviewData?.homework_question_form === "write";
+
+        if (!isWriteForm) {
+          const answerQuestions = response.data.questions;
+          if (Array.isArray(answerQuestions) && answerQuestions.length > 0) {
+            setQuestions(answerQuestions as HomeworkQuestion[]);
+          } else {
+            try {
+              const questionsResponse = await getQuestions({
+                homework_id: Number(homeworkId),
+              });
+              setQuestions(questionsResponse.questions || []);
+            } catch (questionError) {
+              console.error("Error fetching questions:", questionError);
+              setQuestions([]);
+            }
+          }
+        } else {
+          setQuestions([]);
+        }
       } else {
         setOverview(null);
         setQuestions([]);

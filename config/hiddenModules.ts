@@ -41,3 +41,15 @@ export const HIDDEN_USER_LIST_TABS: string[] = ["schools"];
  * Đặt `true` khi bật chat khóa học trên production.
  */
 export const COURSE_DISCUSSION_UI_ENABLED = false;
+
+/**
+ * Tab "Kiểm tra và đánh giá" trên `/teacher/reports`.
+ * BE chưa có `/api/manage/study-reports/*` — đặt `true` sau khi triển khai module study-reports.
+ */
+export const TEACHER_REPORTS_ASSESSMENT_TAB_ENABLED = false;
+
+/**
+ * Tab "Xuất mẫu nhập điểm & đánh giá" trên `/teacher/reports`.
+ * Ngoài MVP — đặt `true` khi bật lại trên production.
+ */
+export const TEACHER_REPORTS_EXPORT_TAB_ENABLED = false;

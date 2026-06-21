@@ -64,6 +64,11 @@ const getLessonVocabularies = async (
 export default function LessonDetailPage() {
   const { user } = useAuth();
   const { canEditLessons, canManageAssignments } = usePermissions();
+  const isTeacher = user?.type === "teacher";
+  /** Giao bài / chấm bài: GV luôn được; admin cần quyền assignments. */
+  const canAssignInLesson = isTeacher || canManageAssignments();
+  const canGradeAssignments = isTeacher;
+  const canPreviewAssignment = isTeacher || canManageAssignments();
   const params = useParams();
   const { toast } = useToast();
   const id = params?.id as string;
@@ -468,10 +473,7 @@ export default function LessonDetailPage() {
             className="space-y-6"
           >
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <TabsList
-                className={`max-sm:flex max-sm:flex-col max-sm:gap-1 grid w-full lg:w-auto h-auto ${user?.type === "admin" ? "grid grid-cols-5" : "grid grid-cols-3"
-                  } bg-gray-50 rounded-2xl p-1`}
-              >
+              <TabsList className="max-sm:flex max-sm:flex-col max-sm:gap-1 grid w-full lg:w-auto h-auto grid-cols-5 bg-gray-50 rounded-2xl p-1">
                 <TabsTrigger
                   value="lesson"
                   className="flex items-center gap-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm w-full"
@@ -486,24 +488,20 @@ export default function LessonDetailPage() {
                   <FileText className="h-4 w-4" />
                   {t("tabAssignments")}
                 </TabsTrigger>
-                {user?.type === "admin" && (
-                  <TabsTrigger
-                    value="exercises"
-                    className="flex items-center gap-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm w-full"
-                  >
-                    <PenTool className="h-4 w-4" />
-                    {t("tabExercises")}
-                  </TabsTrigger>
-                )}
-                {user?.type === "admin" && (
-                  <TabsTrigger
-                    value="tests"
-                    className="flex items-center gap-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm w-full"
-                  >
-                    <PenTool className="h-4 w-4" />
-                    {t("tabTests")}
-                  </TabsTrigger>
-                )}
+                <TabsTrigger
+                  value="exercises"
+                  className="flex items-center gap-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm w-full"
+                >
+                  <PenTool className="h-4 w-4" />
+                  {t("tabExercises")}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="tests"
+                  className="flex items-center gap-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm w-full"
+                >
+                  <PenTool className="h-4 w-4" />
+                  {t("tabTests")}
+                </TabsTrigger>
                 <TabsTrigger
                   value="vocabularies"
                   className="flex items-center gap-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm w-full"
@@ -865,7 +863,7 @@ export default function LessonDetailPage() {
                         <CardFooter className="pt-0 pb-6 px-6 mt-auto">
                           <div className="w-full space-y-3">
                             {/* Hàng 1: Nút Giao bài / Hoàn tác giao bài */}
-                            {canManageAssignments() && courseId && (
+                            {canAssignInLesson && courseId && (
                               <Button
                                 size="sm"
                                 className={`w-full rounded-xl ${Boolean(assignment.is_assigned)
@@ -908,7 +906,7 @@ export default function LessonDetailPage() {
                             )}
 
                             {/* Hàng 3: Nút Xem và Chấm điểm */}
-                            {canManageAssignments() && (
+                            {canPreviewAssignment && (
                               <div className="flex gap-2 flex-wrap">
                                 <Button
                                   size="sm"
@@ -925,23 +923,25 @@ export default function LessonDetailPage() {
                                     {t("view")}
                                   </Link>
                                 </Button>
-                                <Button
-                                  size="sm"
-                                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    const urlParams = new URLSearchParams(
-                                      window.location.search
-                                    );
-                                    const courseId = urlParams.get("course_id");
-                                    window.location.href = `/${locale}/teacher/lessons/${id}/homework/${assignment.id
-                                      }${courseId ? `?course_id=${courseId}` : ""
-                                      }`;
-                                  }}
-                                >
-                                  <ClipboardCheck className="h-4 w-4 mr-2" />
-                                  {t("grade")}
-                                </Button>
+                                {canGradeAssignments && (
+                                  <Button
+                                    size="sm"
+                                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const urlParams = new URLSearchParams(
+                                        window.location.search
+                                      );
+                                      const courseId = urlParams.get("course_id");
+                                      window.location.href = `/${locale}/teacher/lessons/${id}/homework/${assignment.id
+                                        }${courseId ? `?course_id=${courseId}` : ""
+                                        }`;
+                                    }}
+                                  >
+                                    <ClipboardCheck className="h-4 w-4 mr-2" />
+                                    {t("grade")}
+                                  </Button>
+                                )}
                               </div>
                             )}
 
@@ -1070,7 +1070,7 @@ export default function LessonDetailPage() {
                       <CardFooter className="pt-0 pb-6 px-6 mt-auto">
                         <div className="w-full space-y-3">
                           {/* Hàng 1: Nút Giao bài / Hoàn tác giao bài */}
-                          {canManageAssignments() && courseId && (
+                          {canAssignInLesson && courseId && (
                             <Button
                               size="sm"
                               className={`w-full rounded-xl ${Boolean(exercise.is_assigned)
@@ -1097,7 +1097,7 @@ export default function LessonDetailPage() {
                           )}
 
                           {/* Hàng 3: Nút Xem cho teacher và Chấm điểm */}
-                          {canManageAssignments() && (
+                          {canPreviewAssignment && (
                             <div className="flex gap-2">
                               <Button
                                 size="sm"
@@ -1113,21 +1113,23 @@ export default function LessonDetailPage() {
                                   {t("view")}
                                 </Link>
                               </Button>
-                              <Button
-                                size="sm"
-                                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white rounded-xl"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const urlParams = new URLSearchParams(
-                                    window.location.search
-                                  );
-                                  const courseId = urlParams.get("course_id");
-                                  window.location.href = `/${locale}/teacher/lessons/${id}/exercise/${exercise.id
-                                    }${courseId ? `?course_id=${courseId}` : ""}`;
-                                }}
-                              >
-                                {t("grade")}
-                              </Button>
+                              {canGradeAssignments && (
+                                <Button
+                                  size="sm"
+                                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white rounded-xl"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const urlParams = new URLSearchParams(
+                                      window.location.search
+                                    );
+                                    const courseId = urlParams.get("course_id");
+                                    window.location.href = `/${locale}/teacher/lessons/${id}/exercise/${exercise.id
+                                      }${courseId ? `?course_id=${courseId}` : ""}`;
+                                  }}
+                                >
+                                  {t("grade")}
+                                </Button>
+                              )}
                             </div>
                           )}
                         </div>
@@ -1234,7 +1236,7 @@ export default function LessonDetailPage() {
                       <CardFooter className="pt-0 pb-6 px-6 mt-auto">
                         <div className="w-full space-y-3">
                           {/* Hàng 1: Nút Giao bài / Hoàn tác giao bài */}
-                          {canManageAssignments() && courseId && (
+                          {canAssignInLesson && courseId && (
                             <Button
                               size="sm"
                               className={`w-full rounded-xl ${Boolean(test.is_assigned)
@@ -1277,7 +1279,7 @@ export default function LessonDetailPage() {
                           )}
 
                           {/* Hàng 3: Nút Xem cho teacher và Chấm điểm */}
-                          {canManageAssignments() && (
+                          {canPreviewAssignment && (
                             <div className="flex gap-2">
                               <Button
                                 size="sm"
@@ -1293,22 +1295,24 @@ export default function LessonDetailPage() {
                                   {t("view")}
                                 </Link>
                               </Button>
-                              <Button
-                                size="sm"
-                                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const urlParams = new URLSearchParams(
-                                    window.location.search
-                                  );
-                                  const courseId = urlParams.get("course_id");
-                                  window.location.href = `/${locale}/teacher/lessons/${id}/exam/${test.id
-                                    }${courseId ? `?course_id=${courseId}` : ""}`;
-                                }}
-                              >
-                                <ClipboardCheck className="h-4 w-4 mr-2" />
-                                {t("grade")}
-                              </Button>
+                              {canGradeAssignments && (
+                                <Button
+                                  size="sm"
+                                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const urlParams = new URLSearchParams(
+                                      window.location.search
+                                    );
+                                    const courseId = urlParams.get("course_id");
+                                    window.location.href = `/${locale}/teacher/lessons/${id}/exam/${test.id
+                                      }${courseId ? `?course_id=${courseId}` : ""}`;
+                                  }}
+                                >
+                                  <ClipboardCheck className="h-4 w-4 mr-2" />
+                                  {t("grade")}
+                                </Button>
+                              )}
                             </div>
                           )}
 

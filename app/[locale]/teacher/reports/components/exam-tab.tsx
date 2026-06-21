@@ -98,35 +98,55 @@ export function ExamTab({ courses, exams }: ExamTabProps) {
   const [totalStudents, setTotalStudents] = useState(0);
 
   // Hàm tính toán start_date và end_date từ các bộ lọc
-  const calculateDateRange = () => {
-    let startDate: Date;
-    let endDate: Date;
-
-    // Nếu có fromDate và toDate, ưu tiên sử dụng chúng
+  const calculateDateRange = (): {
+    start_date?: number;
+    end_date?: number;
+  } => {
     if (fromDate && toDate) {
-      startDate = new Date(fromDate);
-      endDate = new Date(toDate);
-    } else {
-      // Tính toán từ năm, quý, tháng
-      const year = parseInt(selectedYear) || new Date().getFullYear();
-
-      if (selectedMonth && selectedMonth !== "all") {
-        // Nếu có tháng cụ thể
-        const month = parseInt(selectedMonth) - 1; // JavaScript month is 0-based
-        startDate = new Date(year, month, 1);
-        endDate = new Date(year, month + 1, 0); // Last day of the month
-      } else {
-        // Nếu chỉ có năm
-        startDate = new Date(year, 0, 1); // January 1st
-        endDate = new Date(year, 11, 31); // December 31st
-      }
+      const start = new Date(fromDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(toDate);
+      end.setHours(23, 59, 59, 999);
+      return {
+        start_date: Math.floor(start.getTime() / 1000),
+        end_date: Math.floor(end.getTime() / 1000),
+      };
     }
 
-    return {
-      start_date: Math.floor(startDate.getTime() / 1000), // ✅ Chuyển về seconds (10 số)
-      end_date: Math.floor(endDate.getTime() / 1000), // ✅ Chuyển về seconds (10 số)
-    };
+    if (selectedYear === "all" && selectedMonth === "all") {
+      return {};
+    }
+
+    const year =
+      selectedYear !== "all"
+        ? parseInt(selectedYear)
+        : new Date().getFullYear();
+
+    if (selectedMonth && selectedMonth !== "all") {
+      const month = parseInt(selectedMonth) - 1;
+      const startDate = new Date(year, month, 1, 0, 0, 0, 0);
+      const endDate = new Date(year, month + 1, 0, 23, 59, 59, 999);
+      return {
+        start_date: Math.floor(startDate.getTime() / 1000),
+        end_date: Math.floor(endDate.getTime() / 1000),
+      };
+    }
+
+    if (selectedYear !== "all") {
+      const startDate = new Date(year, 0, 1, 0, 0, 0, 0);
+      const endDate = new Date(year, 11, 31, 23, 59, 59, 999);
+      return {
+        start_date: Math.floor(startDate.getTime() / 1000),
+        end_date: Math.floor(endDate.getTime() / 1000),
+      };
+    }
+
+    return {};
   };
+
+  const yearOptions = Array.from({ length: 6 }, (_, i) =>
+    (parseInt(currentYear) - i).toString()
+  );
 
   // Auto-select first course when none selected
   useEffect(() => {
@@ -202,7 +222,6 @@ export function ExamTab({ courses, exams }: ExamTabProps) {
 
       setLoading(true);
       try {
-        // Tính toán date range từ các bộ lọc
         const dateRange = calculateDateRange();
 
         const params: any = {
@@ -210,9 +229,14 @@ export function ExamTab({ courses, exams }: ExamTabProps) {
           order_by: sortOrder,
           limit: pageSize,
           page: currentPage,
-          start_date: dateRange.start_date,
-          end_date: dateRange.end_date,
         };
+
+        if (dateRange.start_date != null) {
+          params.start_date = dateRange.start_date;
+        }
+        if (dateRange.end_date != null) {
+          params.end_date = dateRange.end_date;
+        }
 
         // Thêm exam_id nếu có bài cụ thể được chọn
         if (
@@ -256,10 +280,15 @@ export function ExamTab({ courses, exams }: ExamTabProps) {
     })) || [];
 
   // Helpers to format values for display
-  const formatAverageRatio = (value: number | null | undefined) => {
-    if (value === null || value === undefined || isNaN(Number(value)))
-      return "-";
-    return Number(value).toFixed(2);
+  const formatAverageRatio = (value: number | string | null | undefined) => {
+    const num = typeof value === "string" ? parseFloat(value) : value;
+    if (num === null || num === undefined || isNaN(Number(num))) return "-";
+    return `${Math.round(Number(num))}%`;
+  };
+
+  const parseAverageRatio = (value: number | string | null | undefined) => {
+    const num = typeof value === "string" ? parseFloat(value) : value;
+    return isNaN(Number(num)) ? 0 : Number(num);
   };
 
   const formatSecondsToMinutesSeconds = (value: number | null | undefined) => {
@@ -290,15 +319,11 @@ export function ExamTab({ courses, exams }: ExamTabProps) {
                   <SelectItem value="all" className="rounded-lg">
                     {t("filters.allYears")}
                   </SelectItem>
-                  <SelectItem value="2025" className="rounded-lg">
-                    2025
-                  </SelectItem>
-                  <SelectItem value="2024" className="rounded-lg">
-                    2024
-                  </SelectItem>
-                  <SelectItem value="2023" className="rounded-lg">
-                    2023
-                  </SelectItem>
+                  {yearOptions.map((year) => (
+                    <SelectItem key={year} value={year} className="rounded-lg">
+                      {year}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -637,11 +662,11 @@ export function ExamTab({ courses, exams }: ExamTabProps) {
                       <TableCell className="px-6 py-3 text-center">
                         <Badge
                           className={`${
-                            student.average_ratio >= 80
+                            parseAverageRatio(student.average_ratio) >= 80
                               ? "bg-green-100 text-green-700"
-                              : student.average_ratio >= 65
+                              : parseAverageRatio(student.average_ratio) >= 65
                               ? "bg-blue-100 text-blue-700"
-                              : student.average_ratio >= 50
+                              : parseAverageRatio(student.average_ratio) >= 50
                               ? "bg-yellow-100 text-yellow-700"
                               : "bg-red-100 text-red-700"
                           } rounded-full px-3 py-1 font-bold`}
@@ -653,7 +678,7 @@ export function ExamTab({ courses, exams }: ExamTabProps) {
                         {formatSecondsToMinutesSeconds(student.average_time)}
                       </TableCell>
                       <TableCell className="px-6 py-3 text-center tabular-nums text-gray-600">
-                        {student.number_exams}
+                        {parseInt(String(student.number_exams ?? 0), 10) || 0}
                       </TableCell>
                     </TableRow>
                   ))}

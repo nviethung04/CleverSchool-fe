@@ -26,6 +26,15 @@ const nextConfig = {
         }
         : false,
   },
+  async redirects() {
+    return [
+      {
+        source: "/:locale(vi|en)/assignments/do-excerise/:id",
+        destination: "/:locale/assignments/do-exercise/:id",
+        permanent: false,
+      },
+    ];
+  },
   async rewrites() {
     const rewrites = [];
     const h5pBaseUrl = process.env.NEXT_PUBLIC_H5P_URL;
