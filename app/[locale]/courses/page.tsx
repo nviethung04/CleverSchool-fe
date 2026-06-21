@@ -21,6 +21,39 @@ import { GetCourseList } from "@/lib/api/courses";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/context/auth-context";
 
+function resolveCourseDisplayStatus(course: any): string {
+  const state = String(course.state || course.State || "").toLowerCase();
+  if (state === "active") return "in-progress";
+  if (state === "finished") return "completed";
+  if (state === "coming") return "not-started";
+
+  const startRaw = course.start_date || course.StartDate;
+  const endRaw = course.end_date || course.EndDate;
+  if (startRaw && endRaw) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(startRaw);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(endRaw);
+    end.setHours(23, 59, 59, 999);
+    if (today < start) return "not-started";
+    if (today > end) return "completed";
+    return "in-progress";
+  }
+
+  return "not-started";
+}
+
+function parseCourseProgress(course: any): number {
+  const raw = course.progress ?? course.Progress ?? 0;
+  if (typeof raw === "number") return raw;
+  if (typeof raw === "string") {
+    const parsed = parseInt(raw.replace("%", ""), 10);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }
+  return 0;
+}
+
 export default function CoursesPage() {
   const t = useTranslations("coursesPage");
   const tCommon = useTranslations("common");
@@ -154,8 +187,8 @@ function CourseCard({ course }: { course: any }) {
         0
       )
     : 0;
-  const progress = course.progress ?? course.Progress ?? 0;
-  const status = course.status || course.Status || "not-started";
+  const progress = parseCourseProgress(course);
+  const status = resolveCourseDisplayStatus(course);
   const id = course.id || course.Id;
 
   // Ensure progress is 0 for not-started courses
