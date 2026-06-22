@@ -1,3 +1,8 @@
+---
+description: 
+alwaysApply: true
+---
+
 # AGENTS.md — Frontend CleverSchool
 
 Chỉ dẫn cho agent khi sửa code trong thư mục `fe/`. Đọc kèm `be/AGENTS.md` và `be/docs/features.md`.

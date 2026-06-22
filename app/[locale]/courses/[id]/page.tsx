@@ -138,8 +138,14 @@ export default function CourseDetailPage({
   }, [searchParams]);
 
   // Chuyển đổi dữ liệu từ API thành format cho biểu đồ
-  const scoreChartData = courseScores?.exam_ressults
-    ? courseScores.exam_ressults
+  const examResults =
+    courseScores?.exam_results ??
+    courseScores?.examResults ??
+    courseScores?.exam_ressults ??
+    [];
+
+  const scoreChartData = examResults
+    ? examResults
         .filter((exam: any) => exam.score > 0 && exam.date) // Lọc những bài đã có điểm và ngày
         .map((exam: any, index: number) => {
           // Chuyển đổi định dạng ngày từ "10/07/2025" thành Date object
@@ -170,8 +176,8 @@ export default function CourseDetailPage({
     : [];
 
   // Chuyển đổi dữ liệu từ API thành format cho bảng điểm
-  const detailedScores = courseScores?.exam_ressults
-    ? courseScores.exam_ressults.map((exam: any) => ({
+  const detailedScores = examResults
+    ? examResults.map((exam: any) => ({
         id: exam.id,
         lessonName: exam.lesson || "Bài học",
         testName: exam.exam || "Bài kiểm tra",
@@ -193,19 +199,28 @@ export default function CourseDetailPage({
     : [];
 
   // Tính toán thống kê từ dữ liệu thực
-  const completedTests = detailedScores.filter(
-    (score: any) => score.status === "completed"
-  ).length;
-  const totalTests = detailedScores.length;
+  const completedTests =
+    courseScores?.finish_exam != null
+      ? Number(courseScores.finish_exam)
+      : detailedScores.filter((score: any) => score.status === "completed")
+          .length;
+  const totalTests =
+    courseScores?.exam_count != null
+      ? Number(courseScores.exam_count)
+      : detailedScores.length;
   const averageScore =
-    completedTests > 0
+    courseScores?.average_score != null && Number(courseScores.average_score) > 0
+      ? Number(courseScores.average_score)
+      : completedTests > 0
       ? detailedScores
           .filter((score: any) => score.score !== null)
           .reduce((sum: number, score: any) => sum + score.score, 0) /
         completedTests
       : 0;
   const highestScore =
-    completedTests > 0
+    courseScores?.max_score != null && Number(courseScores.max_score) > 0
+      ? Number(courseScores.max_score)
+      : completedTests > 0
       ? Math.max(
           ...detailedScores
             .filter((score: any) => score.score !== null)

@@ -33,15 +33,15 @@ import {
 } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import {
-  getStudentExerciseDashboard,
-  getStudentListExercise,
+  getStudentHomeworkDashboard,
+  getStudentListHomework,
   getListCourse,
 } from "@/lib/api/dashboard";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  doExerciseFromReportRoute,
-  reviewResultExerciseStudentRoute,
+  doHomeworkFromReportRoute,
+  reviewResultHomeworkFromReportStudentRoute,
 } from "@/lib/utils/route-utils";
 import { useAuth } from "@/lib/context/auth-context";
 import { sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
@@ -151,7 +151,7 @@ export default function ProgressReportPage() {
     };
   }, [year, month, startDate, endDate]);
 
-  // Chuẩn hóa dữ liệu overview và chart cho UI (bài luyện tập / exercise)
+  // Chuẩn hóa dữ liệu overview và chart cho UI (bài tập về nhà / homework)
   const normalizeOverview = (data: any) => {
     return {
       main1: {
@@ -254,7 +254,7 @@ export default function ProgressReportPage() {
 
     const fetchData = async () => {
       try {
-        const res = await getStudentExerciseDashboard(params);
+        const res = await getStudentHomeworkDashboard(params);
         setApiData(res?.data || null);
       } finally {
         setLoading(false);
@@ -265,11 +265,11 @@ export default function ProgressReportPage() {
 
   const mapApiToTableData = (data: any) => {
     if (!data) return [];
-    const exercises = data.homeworks || [];
-    return exercises.map((item: any) => ({
+    const items = data.homeworks || [];
+    return items.map((item: any) => ({
       id: item.id,
       name: item.name,
-      type: "Bài luyện tập",
+      type: "Bài tập về nhà",
       course: "-",
       lesson: item.lesson_title,
       lesson_id: item.lesson_id,
@@ -285,13 +285,13 @@ export default function ProgressReportPage() {
     }));
   };
 
-  const isExerciseCompleted = (score: any) =>
+  const isHomeworkCompleted = (score: any) =>
     score.is_submitted ||
     (score.total_questions > 0 &&
       score.questions_completed >= score.total_questions);
 
-  const isExerciseInProgress = (score: any) =>
-    !isExerciseCompleted(score) && score.questions_completed > 0;
+  const isHomeworkInProgress = (score: any) =>
+    !isHomeworkCompleted(score) && score.questions_completed > 0;
 
   // useEffect lấy dữ liệu bảng điểm chi tiết
   useEffect(() => {
@@ -316,7 +316,7 @@ export default function ProgressReportPage() {
 
     const fetchTableData = async () => {
       try {
-        const res = await getStudentListExercise(params);
+        const res = await getStudentListHomework(params);
         setScoreTableData(mapApiToTableData(res.data));
         setTotal(Number(res.data?.total || 0));
       } finally {
@@ -919,11 +919,11 @@ export default function ProgressReportPage() {
                                   <Badge className="text-base px-3 py-1 rounded-full font-bold bg-gray-300 text-gray-700 w-full justify-center">
                                     {t("statusNotDone")}
                                   </Badge>
-                                ) : isExerciseInProgress(score) ? (
+                                ) : isHomeworkInProgress(score) ? (
                                   <Badge className="text-base px-3 py-1 rounded-full font-bold bg-yellow-400 text-white w-full justify-center">
                                     {t("statusInProgress")}
                                   </Badge>
-                                ) : isExerciseCompleted(score) ? (
+                                ) : isHomeworkCompleted(score) ? (
                                   <Badge className="text-base px-3 py-1 rounded-full font-bold bg-blue-500 text-white w-full justify-center">
                                     {t("statusCompleted")}
                                   </Badge>
@@ -939,7 +939,7 @@ export default function ProgressReportPage() {
                                     className="bg-green-600 text-white hover:bg-green-700 text-base px-6 py-2 rounded-full shadow w-full"
                                     onClick={() =>
                                       router.push(
-                                        doExerciseFromReportRoute(
+                                        doHomeworkFromReportRoute(
                                           user,
                                           score.id,
                                           score.lesson_id
@@ -950,13 +950,13 @@ export default function ProgressReportPage() {
                                     <Play className="h-4 w-4 mr-2" />
                                     {t("actionStart")}
                                   </Button>
-                                ) : isExerciseInProgress(score) ? (
+                                ) : isHomeworkInProgress(score) ? (
                                   <Button
                                     size="lg"
                                     className="bg-[#EB8922] text-white hover:bg-[#d97a1d] text-base px-6 py-2 rounded-full shadow w-full"
                                     onClick={() =>
                                       router.push(
-                                        doExerciseFromReportRoute(
+                                        doHomeworkFromReportRoute(
                                           user,
                                           score.id,
                                           score.lesson_id
@@ -967,16 +967,18 @@ export default function ProgressReportPage() {
                                     <RotateCcw className="h-4 w-4 mr-2" />
                                     {t("actionContinue")}
                                   </Button>
-                                ) : isExerciseCompleted(score) ? (
+                                ) : isHomeworkCompleted(score) ? (
                                   <Button
                                     size="lg"
                                     className="bg-blue-600 text-white hover:bg-blue-700 text-base px-6 py-2 rounded-full shadow w-full"
                                     onClick={() =>
                                       router.push(
-                                        reviewResultExerciseStudentRoute(
+                                        reviewResultHomeworkFromReportStudentRoute(
                                           user,
                                           score.id,
-                                          "progress-report"
+                                          undefined,
+                                          courseId,
+                                          score.lesson_id
                                         )
                                       )
                                     }

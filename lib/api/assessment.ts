@@ -174,6 +174,62 @@ export async function GetAssessmentList(
 }
 
 /**
+ * Danh sách bài kiểm tra đánh giá cho học sinh (báo cáo tiến độ).
+ * Endpoint: GET /dashboard/student/assessment-list
+ */
+export async function GetStudentAssessmentList(
+  filters: AssessmentFilters = {}
+): Promise<{
+  assessment: Assessment[];
+  totalPages: number;
+  page: number;
+  total: number;
+}> {
+  try {
+    const response = await axiosInstance.get("/dashboard/student/assessment-list", {
+      params: filters,
+    });
+
+    const data = response.data as AssessmentResponse;
+
+    if (data.code === 200 && data.data) {
+      const page = filters.page || 1;
+      const limit = filters.limit || 10;
+      const totalCount =
+        typeof data.data.total === "string"
+          ? Number.parseInt(data.data.total)
+          : data.data.total;
+      const totalPages = Math.ceil(totalCount / limit);
+
+      return {
+        assessment: data.data.assessments,
+        totalPages,
+        page,
+        total: totalCount,
+      };
+    }
+
+    throw new Error(data.message || data.error);
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      console.warn(
+        "Student assessment list API is not available (404). Returning empty list."
+      );
+      const page = filters.page || 1;
+      return {
+        assessment: [],
+        totalPages: 0,
+        page,
+        total: 0,
+      };
+    }
+
+    console.error("Error fetching student assessment list:", error);
+    throw error;
+  }
+}
+
+/**
  * Tạo bài kiểm tra đánh giá mới
  */
 function parseNumberValue(value: any): number | undefined {
@@ -608,6 +664,19 @@ export async function GetDashboardStudentAssessments(
     });
     return response.data as DashboardStudentAssessmentListResponse;
   } catch (error: any) {
+    if (error.response?.status === 404) {
+      return {
+        code: 200,
+        message: "success",
+        data: {
+          "@type": "type.googleapis.com/prot.DashboardStudentAssessmentListResponse",
+          assessments: [],
+          total: "0",
+        },
+        error: "",
+      };
+    }
+
     console.error(
       "Error fetching student dashboard assessments with params:",
       params,
@@ -938,4 +1007,21 @@ export async function PublishAssessmentScore(
 
     throw error;
   }
+}
+
+export interface SubmitStudentAssessmentRequest {
+  assessment_id: number;
+  course_id: number;
+  file_infos: FileInfo[];
+}
+
+/**
+ * HS nộp bài kiểm tra đánh giá (upload ảnh/PDF bài làm)
+ * Endpoint: POST /study/assessment-submit
+ */
+export async function SubmitStudentAssessment(
+  payload: SubmitStudentAssessmentRequest
+): Promise<{ code: number; message: string }> {
+  const response = await axiosInstance.post("/study/assessment-submit", payload);
+  return response.data;
 }

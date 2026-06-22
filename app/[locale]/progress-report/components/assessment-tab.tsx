@@ -29,15 +29,19 @@ import {
   Eye,
   ArrowRight,
   Star,
+  Upload,
 } from "lucide-react";
+import { useUpload } from "@/hooks/use-upload";
 import { useRouter } from "next/navigation";
 import { GetCourseList } from "@/lib/api/courses";
 import { GetSubjectsList } from "@/lib/api/subjects";
 import {
-  GetAssessmentList,
+  GetStudentAssessmentList,
   Assessment,
   GetDashboardStudentAssessments,
   DashboardStudentAssessmentItem,
+  SubmitStudentAssessment,
+  type FileInfo,
 } from "@/lib/api/assessment";
 import {
   GetStudyReports,
@@ -63,6 +67,8 @@ export function AssessmentTab() {
   const currentLocale = useCurrentLocale();
   const router = useRouter();
   const { toast } = useToast();
+  const { uploadFile } = useUpload();
+  const [submittingAssessmentId, setSubmittingAssessmentId] = useState<string | null>(null);
 
   // Helper: Lấy filters từ localStorage
   const getStoredFilters = (): AssessmentFilters | null => {
@@ -273,7 +279,7 @@ export function AssessmentTab() {
           filters.type = reportType;
         }
 
-        const result = await GetAssessmentList(filters);
+        const result = await GetStudentAssessmentList(filters);
         const list = result.assessment || [];
         setAssessments(list);
 
@@ -320,6 +326,10 @@ export function AssessmentTab() {
           limit: 1000,
         };
 
+        if (reportType) {
+          params.type = reportType;
+        }
+
         if (reportValue) {
           params.assessment_id = reportValue;
         }
@@ -331,15 +341,17 @@ export function AssessmentTab() {
           setDashboardAssessments([]);
         }
       } catch (error: any) {
-        console.error("Error fetching dashboard assessments:", error);
-        toast({
-          title: t("errors.error"),
-          description:
-            error?.response?.data?.message ||
-            error?.message ||
-            t("errors.failedToLoadDashboardAssessments"),
-          variant: "destructive",
-        });
+        if (error?.response?.status !== 404) {
+          console.error("Error fetching dashboard assessments:", error);
+          toast({
+            title: t("errors.error"),
+            description:
+              error?.response?.data?.message ||
+              error?.message ||
+              t("errors.failedToLoadDashboardAssessments"),
+            variant: "destructive",
+          });
+        }
         setDashboardAssessments([]);
       } finally {
         setLoadingDashboardAssessments(false);
@@ -395,14 +407,17 @@ export function AssessmentTab() {
         setStudyReports(reportsList);
       } catch (error: any) {
         console.error("Error fetching study reports:", error);
-        toast({
-          title: t("errors.error"),
-          description:
-            error?.response?.data?.message ||
-            error?.message ||
-            t("errors.failedToLoadStudyReports"),
-          variant: "destructive",
-        });
+        // study-reports API chưa có trên BE — không hiện toast lỗi
+        if (error?.response?.status !== 404) {
+          toast({
+            title: t("errors.error"),
+            description:
+              error?.response?.data?.message ||
+              error?.message ||
+              t("errors.failedToLoadStudyReports"),
+            variant: "destructive",
+          });
+        }
         setStudyReports([]);
       } finally {
         setLoadingStudyReports(false);
@@ -613,6 +628,59 @@ export function AssessmentTab() {
     </div>
   );
 
+  const handleSubmitAssessmentFiles = async (
+    assessmentId: string,
+    files: FileList | null
+  ) => {
+    if (!files?.length || !selectedCourse) return;
+    try {
+      setSubmittingAssessmentId(assessmentId);
+      const fileInfos: FileInfo[] = [];
+      for (const file of Array.from(files)) {
+        const uploadResponse = await uploadFile(file, "assessment-files");
+        const fileInfo =
+          (uploadResponse as any)?.data?.file_info ||
+          (uploadResponse as any)?.file_info;
+        if (fileInfo?.path) {
+          fileInfos.push({
+            id: Number(fileInfo.id) || 0,
+            disk: fileInfo.disk || "public",
+            path: String(fileInfo.path),
+          });
+        }
+      }
+      if (fileInfos.length === 0) {
+        throw new Error("Upload failed");
+      }
+      await SubmitStudentAssessment({
+        assessment_id: Number(assessmentId),
+        course_id: Number(selectedCourse),
+        file_infos: fileInfos,
+      });
+      toast({
+        title: t("errors.error") === "Lỗi" ? "Thành công" : "Success",
+        description: "Đã nộp bài làm",
+      });
+      const response = await GetDashboardStudentAssessments({
+        course_id: selectedCourse,
+        assessment_id: reportValue || assessmentId,
+        page: 1,
+        limit: 1000,
+      });
+      if (response?.code === 200 && response?.data?.assessments) {
+        setDashboardAssessments(response.data.assessments);
+      }
+    } catch (error: any) {
+      toast({
+        title: t("errors.error"),
+        description: error?.message || "Không thể nộp bài",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmittingAssessmentId(null);
+    }
+  };
+
   const renderAverageStars = (value: number, maxStar: number) => {
     const normalized = normalizeQuarterStar(value);
 
@@ -810,6 +878,86 @@ export function AssessmentTab() {
           </div>
         </CardContent>
       </Card>
+
+      {dashboardAssessments.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Upload className="h-5 w-5 text-emerald-600" />
+              Nộp bài làm
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {dashboardAssessments.map((item) => {
+              const testFiles = item.assessment?.files || [];
+              const submitted = item.files?.length > 0;
+              return (
+                <div
+                  key={`submit-${item.assessment.id}`}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3"
+                >
+                  <div>
+                    <p className="font-semibold text-gray-800">
+                      {item.assessment.name}
+                    </p>
+                    {testFiles.length > 0 && (
+                      <div className="mt-1 flex flex-wrap gap-2">
+                        {testFiles.map((url, idx) => (
+                          <a
+                            key={idx}
+                            href={url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-xs text-blue-700 underline"
+                          >
+                            Tải đề bài {idx + 1}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                    {submitted && (
+                      <p className="mt-1 text-xs text-emerald-600">
+                        Đã nộp {item.files.length} tệp
+                      </p>
+                    )}
+                  </div>
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*,.pdf"
+                      multiple
+                      className="hidden"
+                      disabled={submittingAssessmentId === item.assessment.id}
+                      onChange={(e) =>
+                        handleSubmitAssessmentFiles(
+                          item.assessment.id,
+                          e.target.files
+                        )
+                      }
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      disabled={submittingAssessmentId === item.assessment.id}
+                    >
+                      <span>
+                        <Upload className="h-4 w-4 mr-1 inline" />
+                        {submittingAssessmentId === item.assessment.id
+                          ? "Đang tải..."
+                          : submitted
+                          ? "Nộp lại"
+                          : "Nộp bài"}
+                      </span>
+                    </Button>
+                  </label>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Table 1: Dashboard Student Assessments */}
       <Card>

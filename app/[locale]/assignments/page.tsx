@@ -45,11 +45,11 @@ export default function AssignmentsPageContainer() {
 
   // Bỏ đồng bộ theo weeks để tránh set state trùng dẫn tới gọi API lặp
 
-  // Load exams when selected week or course changes
+  // Load exams when selected week or course changes (week_id=0 khi chưa có lịch tuần)
   useEffect(() => {
-    if (selectedWeek && selectedCourseId) {
-      loadExamsByWeek(selectedWeek.id, selectedCourseId);
-    }
+    if (!selectedCourseId) return;
+    const weekId = selectedWeek?.id ?? "0";
+    loadExamsByWeek(weekId, selectedCourseId);
   }, [selectedWeek, selectedCourseId]);
 
   // Load weeks when course changes (chỉ reset về tuần hiện tại nếu do user đổi khóa)
@@ -102,6 +102,14 @@ export default function AssignmentsPageContainer() {
 
       if (response.code === 200) {
         setWeeks(response.data.weeks);
+        const cid = courseId ?? selectedCourseId;
+        if (response.data.weeks.length === 0) {
+          setSelectedWeek(null);
+          if (cid) {
+            await loadExamsByWeek("0", cid);
+          }
+          return;
+        }
         if (response.data.weeks.length > 0) {
           const params = new URLSearchParams(window.location.search);
           const weekParam = params.get("week");
@@ -170,6 +178,9 @@ export default function AssignmentsPageContainer() {
               homeworks: Array.isArray(lesson.homeworks)
                 ? lesson.homeworks
                 : [],
+              exercises: Array.isArray(lesson.exercises)
+                ? lesson.exercises
+                : [],
             })),
           }));
         } else if (Array.isArray(payload?.lessons)) {
@@ -189,6 +200,9 @@ export default function AssignmentsPageContainer() {
               exams: Array.isArray(lesson.exams) ? lesson.exams : [],
               homeworks: Array.isArray(lesson.homeworks)
                 ? lesson.homeworks
+                : [],
+              exercises: Array.isArray(lesson.exercises)
+                ? lesson.exercises
                 : [],
             })),
           } as any;

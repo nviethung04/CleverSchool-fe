@@ -46,7 +46,7 @@ export const COURSE_DISCUSSION_UI_ENABLED = false;
  * Tab "Kiểm tra và đánh giá" trên `/teacher/reports`.
  * BE chưa có `/api/manage/study-reports/*` — đặt `true` sau khi triển khai module study-reports.
  */
-export const TEACHER_REPORTS_ASSESSMENT_TAB_ENABLED = false;
+export const TEACHER_REPORTS_ASSESSMENT_TAB_ENABLED = true;
 
 /**
  * Tab "Xuất mẫu nhập điểm & đánh giá" trên `/teacher/reports`.

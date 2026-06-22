@@ -274,6 +274,10 @@ URL thường có thêm `lesson_id`, `course_id` (query) — không xóa khi chi
 | Báo cáo tiến độ — tab Bài luyện tập trống | API cũ (homework) hoặc BE chưa có route mới | Cập nhật BE+FE 2026-06-21; **restart backend**; chọn đúng khóa học |
 | Luyện tập nộp xong vẫn **Làm bài** / không lưu kết quả | Thiếu `lesson_id` khi gọi `save-score/bulk` | Cập nhật BE+FE 2026-06-21; vào bài từ tab Luyện tập bài học (URL có `lessonId`); restart BE |
 | Báo cáo tiến độ — 404 `exercise-list` | Server Go chạy bản cũ | Dừng process port 8080 → `go run .` trong `be/` |
+| Tab **Điểm** trên `/courses/[id]` trống dù đã làm bài KT | FE đọc sai field API (`exam_ressults`) | Cập nhật FE 2026-06-22; reload trang; cần bài kiểm tra đã **giao** trong khóa |
+| Tab **Đánh giá** báo cáo tiến độ — dropdown trống / 403 | HS gọi `/manage/assessments` | Cập nhật BE+FE 2026-06-22: `GET /dashboard/student/assessment-list`; restart BE |
+| Tab **Bài tập về nhà** báo cáo tiến độ trống dù HS đã làm BTVN | FE gọi nhầm API exercise | Cập nhật FE 2026-06-22: dùng `homework` + `homework-list`; reload trang |
+| Trang **`/assignments` HS trống** | `weeks` = 0 → FE không gọi API; BE chỉ join `lesson_schedules` | Cập nhật 2026-06-22: FE gọi API khi không có tuần (`week_id=0`); BE fallback `*_ref_lessons`; restart BE |
 
 ### 5.3 Báo cáo tiến độ (`/progress-report`)
 
@@ -281,14 +285,16 @@ Menu học sinh → **Báo cáo tiến độ**.
 
 | Tab | Nội dung | API |
 |-----|----------|-----|
-| Bài luyện tập | Thống kê + bảng chi tiết **exercise** đã giao / đã làm | `GET /dashboard/student/exercise`, `exercise-list` |
-| Đánh giá | Bài assessment theo môn / khóa | `GET /dashboard/student/assessments` |
+| Bài tập về nhà | Thống kê + bảng chi tiết **homework** (BTVN) đã giao / đã làm | `GET /dashboard/student/homework`, `homework-list` |
+| Đánh giá | Bài assessment theo môn / khóa | `GET /dashboard/student/assessment-list` (dropdown), `GET /dashboard/student/assessments` (bảng điểm) |
 
-**Tab Bài luyện tập — hiển thị:** tỉ lệ làm đúng, số bài đã làm / được giao, tỷ lệ hoàn thành, câu đã hoàn thành, biểu đồ theo tuần, bảng chi tiết (làm tiếp / xem kết quả).
+**Tab Bài tập về nhà — hiển thị:** tỉ lệ làm đúng, số bài đã làm / được giao, tỷ lệ hoàn thành, câu đã hoàn thành, biểu đồ theo tuần, bảng chi tiết (làm tiếp / xem kết quả).
 
 **Đã ẩn (2026-06-21):** bộ lọc loại bài exam/homework, thống kê Gem, cột số câu bỏ qua, dữ liệu mock biểu đồ.
 
-**Lưu ý:** Chỉ đếm bài **exercise đã giao** (`exercise_ref_lessons.assigned_by > 0`) trong khóa đã chọn. Homework (BTVN) không nằm tab này.
+**Lưu ý:** Chỉ đếm BTVN **đã giao** (`homework_ref_lessons.assigned_by > 0`) trong khóa đã chọn. **Bài luyện tập** (exercise trong bài học) không nằm tab này — xem trong bài học hoặc báo cáo GV.
+
+**Tab Đánh giá:** bài assessment gắn bài học (`assessment_ref_lessons`). HS: xem điểm (sau publish), nộp file bài làm (`POST /study/assessment-submit`), xem nhận xét (`GET /manage/study-reports`). GV: `/teacher/reports` tab *Kiểm tra và đánh giá* — chấm điểm + nhận xét. Admin: `/manage/assignments` tab *Đánh giá*.
 
 ---
 

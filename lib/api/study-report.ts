@@ -289,6 +289,15 @@ export async function GetStudyReports(
     });
     return response.data;
   } catch (error: any) {
+    if (error.response?.status === 404) {
+      return {
+        code: 200,
+        message: "success",
+        data: { study_reports: [] },
+        error: "",
+      } as StudyReportsListResponse;
+    }
+
     console.error("Error fetching study reports:", error);
 
     if (error.response) {
