@@ -1701,6 +1701,10 @@
     "tabAssignments": "Bài tập về nhà",
     "tabTests": "Bài kiểm tra",
     "tabExercises": "Luyện tập",
+    "tabAssessments": "Đánh giá",
+    "assessmentLabel": "Bài kiểm tra đánh giá",
+    "noAssessmentsTitle": "Không có bài đánh giá",
+    "noAssessmentsDescription": "Chưa có bài kiểm tra đánh giá nào được gắn với bài học này.",
     "preparing": "Đang chuẩn bị...",
     "teachingMode": "Chế độ giảng dạy",
     "tapToTeach": "Chạm để vào chế độ giảng dạy",
@@ -4070,6 +4074,7 @@
     "homeworksTitle": "Bài luyện tập",
     "examsTitle": "Bài kiểm tra",
     "exercisesTitle": "Bài tập về nhà",
+    "assessmentsTitle": "Bài kiểm tra đánh giá",
     "deadline": "Hạn nộp bài",
     "progressCounts": "{completed}/{total} câu",
     "badges": {

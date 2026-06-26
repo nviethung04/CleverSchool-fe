@@ -1276,7 +1276,8 @@ export function convertWritingToApiFormat(
         "Write your answer in the box.",
       points: questionState.points || 10,
       time: Math.round((questionState.timeLimit || 1.5) * 60), // Convert to seconds
-      max_characters: questionState.writingMaxCharacters || 1000,
+      // Only set when user explicitly configured it; 0 means "no limit".
+      max_characters: questionState.writingMaxCharacters || 0,
       allow_image_upload: questionState.writingAllowImageUpload || false,
     },
     content: {
@@ -1409,10 +1410,21 @@ export function convertCategoryToApiFormat(
 
   // Tạo danh sách các mục cần phân loại
   const items = [];
+  const correctList: Record<string, string> = {};
+  let itemIndex = 0;
 
   // Duyệt qua từng danh mục
   for (const [catIdx, category] of questionState.categories.entries()) {
+    const categoryGroupId =
+      !isCreate &&
+      typeof category.id === "number" &&
+      category.id > 0 &&
+      category.id < 1e6
+        ? String(category.id)
+        : String(catIdx + 1);
+
     for (const item of category.items) {
+      itemIndex++;
       // Xác định loại media và URL
       let mediaType = "text";
       let mediaUrl = undefined;
@@ -1448,6 +1460,9 @@ export function convertCategoryToApiFormat(
         item.id < 1e6
       ) {
         itemObj.id = item.id;
+        correctList[String(item.id)] = categoryGroupId;
+      } else {
+        correctList[String(itemIndex)] = categoryGroupId;
       }
       items.push(itemObj);
     }
@@ -1477,7 +1492,7 @@ export function convertCategoryToApiFormat(
       categories,
     },
     correct_answers: {
-      list: {},
+      list: correctList,
     },
     attributes,
   };

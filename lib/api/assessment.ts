@@ -1025,3 +1025,34 @@ export async function SubmitStudentAssessment(
   const response = await axiosInstance.post("/study/assessment-submit", payload);
   return response.data;
 }
+
+export async function AssignAssessment(
+  id: string | number,
+  lessonId: number,
+  requestBody: { is_assigned: boolean; course_id?: number }
+): Promise<{ lesson_id: string; is_assigned: boolean }> {
+  const response = await axiosInstance.post(
+    `/manage/assessments/${id}/assigned`,
+    {
+      ...requestBody,
+      lesson_id: lessonId,
+    },
+    {
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    }
+  );
+
+  if (response.data.code === 200) {
+    return {
+      lesson_id: response.data.data.lesson_id,
+      is_assigned: response.data.data.is_assigned,
+    };
+  }
+  throw new Error(
+    response.data.message ||
+      response.data.error ||
+      "Failed to assign assessment"
+  );
+}

@@ -990,17 +990,19 @@ function QuestionEditor() {
 
       // Process each category
       apiCategories.forEach((apiCategory: any, categoryIndex: number) => {
-        const categoryId = categoryIndex + 1;
+        const categoryId = apiCategory.id || categoryIndex + 1;
         const categoryItems: any[] = [];
 
         // Find items for this category
-        apiItems.forEach((apiItem: any, itemIndex: number) => {
+        apiItems.forEach((apiItem: any) => {
           const itemId = apiItem.id;
-          const itemCategoryId = categoryList[itemId];
-          const groupPosition = apiItem.group_position;
+          const itemCategoryId = categoryList[itemId] ?? categoryList[String(itemId)];
+          const groupPosition =
+            apiItem.group_position ?? apiItem.groupPosition;
 
           if (
-            itemCategoryId === apiCategory.id ||
+            String(itemCategoryId) === String(apiCategory.id) ||
+            groupPosition === categoryIndex + 1 ||
             groupPosition === categoryId
           ) {
             // Handle media for each category item
@@ -1011,7 +1013,7 @@ function QuestionEditor() {
             }
 
             categoryItems.push({
-              id: itemIndex + 1,
+              id: apiItem.id || categoryItems.length + 1,
               text: apiItem.text || "",
               categoryId,
               image,
@@ -1047,7 +1049,7 @@ function QuestionEditor() {
   const handleWritingData = (questionData: any) => {
     if (questionData.metadata) {
       dispatch(
-        setWritingMaxCharacters(questionData.metadata.max_characters || 1000)
+        setWritingMaxCharacters(questionData.metadata.max_characters || 0)
       );
       dispatch(
         setWritingAllowImageUpload(

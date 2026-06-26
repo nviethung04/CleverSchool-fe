@@ -319,6 +319,19 @@ export function CategoryQuestion({
     }));
   }, [categories, getCategoryResponsesMap]);
 
+  if (
+    !correctAnswer &&
+    categories.length === 0 &&
+    shuffledResponses.length === 0
+  ) {
+    return (
+      <div className="mx-auto max-w-lg rounded-xl border border-amber-200 bg-amber-50 p-4 text-center text-amber-800">
+        Câu hỏi danh mục chưa có dữ liệu (nhóm hoặc mục trả lời). Vui lòng mở
+        ngân hàng câu hỏi, chỉnh sửa câu hỏi này và lưu lại.
+      </div>
+    );
+  }
+
   // dnd-kit sensors - optimized for new layout
   const sensors = useSensors(
     useSensor(PointerSensor, {

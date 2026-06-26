@@ -27,8 +27,9 @@ import {
   Target,
   NotebookPen, // homework icon
   GraduationCap, // lesson icon
+  ClipboardList,
 } from "lucide-react";
-import type { Week, Course, Exam, Homework } from "@/lib/api/students";
+import type { Week, Course, Exam, Homework, Assessment } from "@/lib/api/students";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -48,6 +49,7 @@ import {
   resultExerciseRoute,
 } from "@/lib/utils/route-utils";
 import { useAuth } from "@/lib/context/auth-context";
+import { ASSESSMENTS_ENABLED } from "@/config/featureFlags";
 
 interface AssignmentsPageProps {
   weeks: Week[];
@@ -206,6 +208,26 @@ export default function AssignmentsPageSimplified({
             courseImage: course.image,
           });
         });
+
+        if (ASSESSMENTS_ENABLED) {
+          lesson.assessments?.forEach((assessment: Assessment) => {
+            let status: "pending" | "completed" | "partial" = "pending";
+            if (assessment.is_submitted) {
+              status = assessment.is_scored ? "completed" : "partial";
+            }
+
+            assignments.push({
+              id: assessment.id,
+              name: assessment.name,
+              type: "assessment",
+              courseName: course.name,
+              lessonTitle: lesson.title,
+              status,
+              data: assessment,
+              courseImage: course.image,
+            });
+          });
+        }
       });
     });
 
@@ -642,7 +664,8 @@ export default function AssignmentsPageSimplified({
         total +
         course.lessons.reduce(
           (lessonTotal: number, lesson: any) =>
-            lessonTotal + lesson.exams.length + lesson.homeworks.length,
+            lessonTotal + lesson.exams.length + lesson.homeworks.length +
+              (ASSESSMENTS_ENABLED ? (lesson.assessments?.length || 0) : 0),
           0
         ),
       0
@@ -947,11 +970,13 @@ export default function AssignmentsPageSimplified({
                         const totalA =
                           (a.exams?.length || 0) +
                           (a.homeworks?.length || 0) +
-                          (a.exercises?.length || 0);
+                          (a.exercises?.length || 0) +
+                          (ASSESSMENTS_ENABLED ? (a.assessments?.length || 0) : 0);
                         const totalB =
                           (b.exams?.length || 0) +
                           (b.homeworks?.length || 0) +
-                          (b.exercises?.length || 0);
+                          (b.exercises?.length || 0) +
+                          (ASSESSMENTS_ENABLED ? (b.assessments?.length || 0) : 0);
                         return totalB - totalA; // nhiều nhất lên đầu
                       })
                       .map((lesson) => {
@@ -961,11 +986,16 @@ export default function AssignmentsPageSimplified({
                           lesson.homeworks && lesson.homeworks.length > 0;
                         const hasExercises =
                           lesson.exercises && lesson.exercises.length > 0;
+                        const hasAssessments =
+                          ASSESSMENTS_ENABLED &&
+                          lesson.assessments &&
+                          lesson.assessments.length > 0;
                         // Xác định số cột cho grid ngoài cùng
                         const colCount =
                           (hasHomeworks ? 1 : 0) +
                           (hasExams ? 1 : 0) +
-                          (hasExercises ? 1 : 0);
+                          (hasExercises ? 1 : 0) +
+                          (hasAssessments ? 1 : 0);
                         return (
                           <div key={lesson.id} className="">
                             <div className="flex items-start gap-3 mb-4">
@@ -1715,6 +1745,96 @@ export default function AssignmentsPageSimplified({
                                                   {t("actions.start")}
                                                 </Button>
                                               )}
+                                            </div>
+                                          </CardContent>
+                                        </Card>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+                              {hasAssessments && (
+                                <div>
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <ClipboardList className="h-5 w-5 text-indigo-500" />
+                                    <span className="font-semibold text-indigo-700 text-lg">
+                                      {t("assessmentsTitle")}
+                                    </span>
+                                    <Badge className="bg-indigo-100 text-indigo-800 ml-2 text-base px-3 py-0.5 rounded-full">
+                                      {lesson.assessments!.length}
+                                    </Badge>
+                                  </div>
+                                  <div className="grid grid-cols-1 gap-4">
+                                    {lesson.assessments!.map((assessment) => {
+                                      let status:
+                                        | "pending"
+                                        | "completed"
+                                        | "partial" = "pending";
+                                      if (assessment.is_submitted) {
+                                        status = assessment.is_scored
+                                          ? "completed"
+                                          : "partial";
+                                      }
+                                      return (
+                                        <Card
+                                          key={assessment.id}
+                                          className="border-l-8 border-l-indigo-500 bg-indigo-50/60 shadow-md"
+                                        >
+                                          <CardContent className="p-4">
+                                            <div className="flex items-center justify-between mb-2">
+                                              <h4 className="font-bold text-gray-900 text-base line-clamp-1">
+                                                {assessment.name}
+                                              </h4>
+                                              <Badge
+                                                className={
+                                                  status === "completed"
+                                                    ? "bg-green-100 text-green-800 border-green-200 text-sm"
+                                                    : status === "partial"
+                                                    ? "bg-yellow-100 text-yellow-800 border-yellow-200 text-sm"
+                                                    : "bg-blue-100 text-blue-800 border-blue-200 text-sm"
+                                                }
+                                              >
+                                                {status === "completed" ? (
+                                                  <>
+                                                    <CheckCircle className="h-4 w-4 mr-1" />
+                                                    {t("status.completed")}
+                                                  </>
+                                                ) : status === "partial" ? (
+                                                  <>
+                                                    <AlertCircle className="h-4 w-4 mr-1" />
+                                                    {t("status.inProgress")}
+                                                  </>
+                                                ) : (
+                                                  <>
+                                                    <AlertCircle className="h-4 w-4 mr-1" />
+                                                    {t("status.notStarted")}
+                                                  </>
+                                                )}
+                                              </Badge>
+                                            </div>
+                                            <div className="flex justify-end mt-1">
+                                              <Button
+                                                size="sm"
+                                                className="bg-indigo-600 text-white hover:bg-indigo-700 text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow"
+                                                onClick={() => {
+                                                  const params = new URLSearchParams();
+                                                  params.set("tab", "assessment");
+                                                  if (course.id) {
+                                                    params.set(
+                                                      "courseId",
+                                                      String(course.id)
+                                                    );
+                                                  }
+                                                  router.push(
+                                                    `/${locale}/progress-report?${params.toString()}`
+                                                  );
+                                                }}
+                                              >
+                                                <Play className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                                                {status === "completed"
+                                                  ? t("actions.review")
+                                                  : t("actions.start")}
+                                              </Button>
                                             </div>
                                           </CardContent>
                                         </Card>

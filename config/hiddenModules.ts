@@ -18,23 +18,20 @@ export const HIDDEN_MODULES: string[] = [
   "admin/export",
   "admin/settings",
   "admin/notices",
-  "admin/feedback",
+  // Feedback (phản hồi/đánh giá): enable for Admin/GV/HS
   "criteria-assessment",
   "criteria-report",
 
-  // Learning extensions (H5P, SCORM, lecture bank, contest)
-  "admin/h5p",
+  // Learning extensions (SCORM, lecture bank, contest)
   "lecture-bank",
   "contest",
   "scorm",
 
-  // Teacher / student — secondary UX
-  "ranking",
-  "feedback",
+  // Teacher — secondary (admin feedback vẫn ẩn qua admin/feedback)
 ];
 
-/** Tabs hidden on /admin/users/list (MVP — hide school accounts tab) */
-export const HIDDEN_USER_LIST_TABS: string[] = ["schools"];
+/** Tabs on /admin/users/list — empty = show all role tabs including school managers */
+export const HIDDEN_USER_LIST_TABS: string[] = [];
 
 /**
  * Tab / nút "Thảo luận" trên trang khóa học (HS + GV).

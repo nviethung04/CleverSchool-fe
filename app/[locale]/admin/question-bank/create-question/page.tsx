@@ -11,6 +11,10 @@ import {
   LucideArrowLeftRight,
   LucideCheck,
   LucideLoader2,
+  LucideTag,
+  LucideLayoutGrid,
+  LucideFileText,
+  LucideMic,
 } from "lucide-react"
 import Link from "next/link"
 import { CustomSelect } from "@/components/question-editor/custom-select"
@@ -22,6 +26,10 @@ import { MatchingQuestion } from "@/components/question-editor/matching-question
 import { MultipleChoiceQuestion } from "@/components/question-editor/multiple-choice-question"
 import { FillInBlankQuestion } from "@/components/question-editor/fill-in-blank-question"
 import { DragDropQuestion } from "@/components/question-editor/drag-drop-question"
+import { LabelingQuestion } from "@/components/question-editor/labeling-question"
+import { CategoryQuestion } from "@/components/question-editor/category-question"
+import { WritingQuestion } from "@/components/question-editor/writing-question"
+import { SpeakingQuestion } from "@/components/question-editor/speaking-question"
 import { DefaultQuestion } from "@/components/question-editor/default-question"
 import {
   createQuestion,
@@ -30,6 +38,10 @@ import {
   convertOrderingToApiFormat,
   convertMatchingToApiFormat,
   convertDragDropToApiFormat,
+  convertLabelingToApiFormat,
+  convertCategoryToApiFormat,
+  convertWritingToApiFormat,
+  convertSpeakingToApiFormat,
 } from "@/lib/api/questions"
 import { useToast } from "@/components/ui/use-toast"
 import { useRouter } from "next/navigation"
@@ -108,6 +120,42 @@ function QuestionEditor() {
         </div>
       ),
     },
+    {
+      value: "labeling",
+      label: (
+        <div className="flex items-center">
+          <LucideTag className="h-4 w-4 mr-2" />
+          <span>Gắn nhãn</span>
+        </div>
+      ),
+    },
+    {
+      value: "category",
+      label: (
+        <div className="flex items-center">
+          <LucideLayoutGrid className="h-4 w-4 mr-2" />
+          <span>Phân loại</span>
+        </div>
+      ),
+    },
+    {
+      value: "writing",
+      label: (
+        <div className="flex items-center">
+          <LucideFileText className="h-4 w-4 mr-2" />
+          <span>Viết</span>
+        </div>
+      ),
+    },
+    {
+      value: "speaking",
+      label: (
+        <div className="flex items-center">
+          <LucideMic className="h-4 w-4 mr-2" />
+          <span>Nói</span>
+        </div>
+      ),
+    },
   ]
 
   const renderQuestionEditor = () => {
@@ -122,6 +170,14 @@ function QuestionEditor() {
         return <MatchingQuestion />
       case "drag-drop":
         return <DragDropQuestion />
+      case "labeling":
+        return <LabelingQuestion />
+      case "category":
+        return <CategoryQuestion />
+      case "writing":
+        return <WritingQuestion />
+      case "speaking":
+        return <SpeakingQuestion />
       default:
         return <DefaultQuestion />
     }
@@ -299,6 +355,59 @@ function QuestionEditor() {
         })
         return false
       }
+    } else if (questionType === "labeling") {
+      if (!questionState.labelImage) {
+        toast({
+          title: "Lỗi",
+          description: "Vui lòng tải lên hình ảnh cho câu hỏi gắn nhãn",
+          variant: "destructive",
+        })
+        return false
+      }
+      if (questionState.labelPositions.length < 1) {
+        toast({
+          title: "Lỗi",
+          description: "Cần ít nhất 1 nhãn trên hình",
+          variant: "destructive",
+        })
+        return false
+      }
+      const emptyLabels = questionState.labelPositions.some(
+        (position) =>
+          typeof position.groupPosition !== "number" ||
+          position.groupPosition === null ||
+          position.groupPosition === undefined ||
+          !questionState.labelGroups[position.groupPosition] ||
+          !questionState.labelGroups[position.groupPosition].text.trim()
+      )
+      if (emptyLabels) {
+        toast({
+          title: "Lỗi",
+          description: "Vui lòng chọn nhóm và nhập nội dung cho tất cả nhãn",
+          variant: "destructive",
+        })
+        return false
+      }
+    } else if (questionType === "category") {
+      if (questionState.categories.length < 2) {
+        toast({
+          title: "Lỗi",
+          description: "Cần ít nhất 2 nhóm phân loại",
+          variant: "destructive",
+        })
+        return false
+      }
+      const emptyCategoryItems = questionState.categories.some(
+        (category) => category.items.length === 0
+      )
+      if (emptyCategoryItems) {
+        toast({
+          title: "Lỗi",
+          description: "Mỗi nhóm phân loại cần ít nhất 1 mục",
+          variant: "destructive",
+        })
+        return false
+      }
     }
 
     return true
@@ -328,11 +437,19 @@ function QuestionEditor() {
       } else if (questionType === "drag-drop") {
         apiData = convertDragDropToApiFormat(questionState)
         console.log("API Data:", apiData)
+      } else if (questionType === "labeling") {
+        apiData = convertLabelingToApiFormat(questionState)
+      } else if (questionType === "category") {
+        apiData = convertCategoryToApiFormat(questionState)
+      } else if (questionType === "writing") {
+        apiData = convertWritingToApiFormat(questionState)
+      } else if (questionType === "speaking") {
+        apiData = convertSpeakingToApiFormat(questionState)
       } else {
-        // Xử lý các loại câu hỏi khác (sẽ triển khai sau)
         toast({
           title: "Thông báo",
-          description: "Chức năng lưu cho loại câu hỏi này đang được phát triển",
+          description: "Loại câu hỏi không được hỗ trợ",
+          variant: "destructive",
         })
         setIsSaving(false)
         return

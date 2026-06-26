@@ -82,6 +82,26 @@ const QUESTION_TYPES = {
     icon: <MoveHorizontal className="h-4 w-4" />,
     color: "bg-cyan-100 text-cyan-600",
   },
+  labeling: {
+    name: "Gắn nhãn",
+    icon: <Tag className="h-4 w-4" />,
+    color: "bg-pink-100 text-pink-600",
+  },
+  category: {
+    name: "Phân loại",
+    icon: <GripHorizontal className="h-4 w-4" />,
+    color: "bg-orange-100 text-orange-600",
+  },
+  writing: {
+    name: "Viết",
+    icon: <BookOpen className="h-4 w-4" />,
+    color: "bg-indigo-100 text-indigo-600",
+  },
+  speaking: {
+    name: "Nói",
+    icon: <MessageSquare className="h-4 w-4" />,
+    color: "bg-rose-100 text-rose-600",
+  },
 }
 
 // Định nghĩa các mức độ khó
@@ -196,6 +216,9 @@ export default function TeacherQuestionBankPage() {
                 category: question.topic || "general-knowledge",
                 points: question.metadata?.points || 10,
                 timeLimit: question.metadata?.time || 60,
+                writingMaxCharacters: question.metadata?.max_characters || 0,
+                writingAllowImageUpload: !!question.metadata?.allow_image_upload,
+                speakingMaxDuration: question.metadata?.max_recording_time || 0,
                 tags: [question.skill, question.topic].filter(Boolean),
                 createdAt: new Date().toLocaleDateString(),
                 usedCount: Math.floor(Math.random() * 20),

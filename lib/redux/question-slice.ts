@@ -387,8 +387,8 @@ const initialState: QuestionState = {
   timeLimit: 1.5,
 
   // Writing
-  writingMaxCharacters: 1000,
-  writingAllowImageUpload: true,
+  writingMaxCharacters: 0, // 0 = no limit
+  writingAllowImageUpload: false,
   writingInstructions: "",
 
   // Speaking

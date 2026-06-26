@@ -90,7 +90,7 @@ Học kỳ dùng khi tạo khóa học và xếp **lịch bài học theo tuần
 
 | Bước | Đường dẫn |
 |------|-----------|
-| Danh sách | `/admin/users/list` |
+| Danh sách | `/admin/users/list` — tab HS, GV, Admin, **Quản lý trường** |
 | Tạo GV | `/admin/users/list/create?role=2` |
 | Tạo HS | `/admin/users/list/create?role=3` |
 
@@ -127,6 +127,8 @@ Học kỳ dùng khi tạo khóa học và xếp **lịch bài học theo tuần
 | Hạng mục | Đường dẫn |
 |----------|-----------|
 | Ngân hàng câu hỏi | `/manage/question-bank` |
+| Tạo câu hỏi (admin) | `/admin/question-bank/create-question` |
+| Tạo câu hỏi (GV) | `/teacher/question-bank/create-question` |
 | Quản lý bài (admin) | `/admin/assignments` |
 | Quản lý bài (manage) | `/manage/assignments` |
 
@@ -144,6 +146,22 @@ Học kỳ dùng khi tạo khóa học và xếp **lịch bài học theo tuần
 - **Hạn nộp** (`deadline`: chọn ngày + giờ)
 
 Homework / Exercise: cấu hình trong form tạo/sửa tương ứng; bài gắn với **bài học** cụ thể.
+
+**Chín dạng câu hỏi (ngân hàng câu hỏi)** — dùng trong homework / exercise / exam:
+
+| # | Loại API | Tên hiển thị |
+|---|----------|--------------|
+| 1 | `multiple_choice` | Trắc nghiệm |
+| 2 | `fill_in_blanks` | Điền khuyết |
+| 3 | `ordering` | Sắp xếp |
+| 4 | `matching` | Ghép cặp |
+| 5 | `drag_drop` | Kéo thả |
+| 6 | `labeling` | Gắn nhãn |
+| 7 | `category` | Phân loại |
+| 8 | `writing` | Viết (chấm tay) |
+| 9 | `speaking` | Nói (chấm tay / ghi âm) |
+
+Tạo/sửa: admin + GV question-bank; làm bài: `/manage/assignments/do-homework|do-exercise|do/[examId]`.
 
 ### 2.8 Gắn bài vào bài học
 
@@ -199,12 +217,12 @@ Homework / Exercise: cấu hình trong form tạo/sửa tương ứng; bài gắ
 |------|-----------|-----------|
 | 1 | `/teacher/courses` | Chọn khóa được phân công |
 | 2 | `/teacher/lessons/[id]?course_id=...` | Mở bài học (luôn kèm `course_id` trên URL khi giao bài) |
-| 3 | Tab **Bài tập / Luyện tập / Kiểm tra** | Danh sách bài đã gắn bài học |
+| 3 | Tab **Bài tập / Luyện tập / Kiểm tra / Đánh giá** | Danh sách bài đã gắn bài học |
 | 4 | Nút **Giao** / **Thu hồi** | `is_assigned = true` → HS thấy bài |
 
 **API giao bài tập về nhà:** `POST /api/manage/homeworks/{id}/assigned`  
 Body: `{ lesson_id, is_assigned, course_id? }`  
-(Exercise / Exam tương tự qua API assigned của từng loại.)
+(Exercise / Exam / **Assessment** tương tự: `POST /manage/exercises|exams|assessments/{id}/assigned`.)
 
 ### 4.2 Tạo bài mới (giáo viên)
 
@@ -241,6 +259,7 @@ Trắc nghiệm: hệ thống **chấm tự động** sau khi HS nộp. GV vẫn
 | Bước | Đường dẫn | Ghi chú |
 |------|-----------|---------|
 | 1 | `/courses` | Chỉ khóa đã tham gia |
+| — | Menu: `/assignments`, `/progress-report`, `/ranking`, `/feedback` | Xếp hạng & phản hồi hiển thị trên header HS |
 | 2 | `/courses/[id]` | Chương / danh sách bài học |
 | 3 | `/courses/[id]/lesson/[lessonId]` | Tab homework, exercise, exam |
 | 4 | Làm bài | Xem bảng dưới |
@@ -358,10 +377,11 @@ Luồng học tập (mục 2–5) **không thay đổi** — chỉ màn báo cá
 
 Sau khi cập nhật code hoặc migration trên server:
 
-1. Push backend → CI deploy → migration tự chạy
-2. Chạy `post-deploy-check.sh` trên VPS (nếu có)
-3. Push frontend → Vercel redeploy
-4. Kiểm tra `NEXT_PUBLIC_API_BASE_URL` khớp API
+1. Push backend → CI deploy → migration tự chạy (hiện tại tới `0051` — quyền feedback/H5P/role trường)
+2. Trên VPS: `go run . refresh-permissions` (hoặc lệnh tương đương trong container) nếu gặp 403 sau bật menu mới
+3. Chạy `post-deploy-check.sh` trên VPS (nếu có)
+4. Push frontend → Vercel redeploy
+5. Kiểm tra `NEXT_PUBLIC_API_BASE_URL` khớp API
 
 Chi tiết: [be/docs/vps-release-checklist.md](../../be/docs/vps-release-checklist.md)
 

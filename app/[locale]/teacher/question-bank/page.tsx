@@ -263,6 +263,9 @@ export default function QuestionBankPage() {
               type,
               points: question.metadata?.points || 10,
               timeLimit: question.metadata?.time || 60,
+              writingMaxCharacters: question.metadata?.max_characters || 0,
+              writingAllowImageUpload: !!question.metadata?.allow_image_upload,
+              speakingMaxDuration: question.metadata?.max_recording_time || 0,
               createdAt: question.created_at
                 ? new Date(question.created_at).toLocaleString()
                 : "",

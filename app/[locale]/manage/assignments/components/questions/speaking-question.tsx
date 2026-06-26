@@ -38,6 +38,12 @@ interface SpeakingQuestionProps {
     options: {
       maxDuration?: number;
     };
+    metadata?: {
+      // Speaking: maximum recording duration (seconds)
+      max_recording_time?: number;
+      // Generic time limit for the whole question (seconds)
+      time?: number;
+    };
   };
   userAnswer?: {
     audioBlob?: Blob;
@@ -120,6 +126,12 @@ export function SpeakingQuestion({
   const objectUrlRef = useRef<string | null>(null);
 
   const isTextMedia = question.content.media?.type === "text";
+
+  // Speaking: prefer metadata.max_recording_time (from BE) over legacy options.maxDuration.
+  const maxRecordingTime =
+    question.metadata?.max_recording_time ??
+    question.options?.maxDuration ??
+    60;
 
   // --- util / mime helpers (unchanged) ---
   const getSupportedAudioMimeType = () => {
@@ -287,7 +299,7 @@ export function SpeakingQuestion({
       timerRef.current = setInterval(() => {
         durationCounter++;
         setRecordingDuration(durationCounter);
-        if (durationCounter >= (question.options?.maxDuration || 300)) stopRecording();
+        if (durationCounter >= maxRecordingTime) stopRecording();
       }, 1000);
     } catch (err) {
       console.error("Recording error", err);

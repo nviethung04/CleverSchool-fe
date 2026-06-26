@@ -4,6 +4,10 @@ import {
   PenTool,
   Shuffle,
   MoveHorizontal,
+  Tag,
+  LayoutGrid,
+  FileText,
+  Mic,
 } from "lucide-react";
 
 export const QUESTION_TYPES = {
@@ -31,6 +35,26 @@ export const QUESTION_TYPES = {
     name: "Drag & drop",
     icon: MoveHorizontal,
     color: "bg-cyan-100 text-cyan-600",
+  },
+  labeling: {
+    name: "Labeling",
+    icon: Tag,
+    color: "bg-pink-100 text-pink-600",
+  },
+  category: {
+    name: "Category",
+    icon: LayoutGrid,
+    color: "bg-indigo-100 text-indigo-600",
+  },
+  writing: {
+    name: "Writing",
+    icon: FileText,
+    color: "bg-slate-100 text-slate-600",
+  },
+  speaking: {
+    name: "Speaking",
+    icon: Mic,
+    color: "bg-rose-100 text-rose-600",
   },
 };
 

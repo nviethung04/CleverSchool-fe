@@ -4,7 +4,7 @@ Tài liệu đồng bộ UI admin/teacher với brand Clever School. Tham chiế
 
 **Quy tắc:** mọi thay đổi UI/form phải cập nhật file này (xem `fe/AGENTS.md` §1).
 
-Cập nhật: **2026-06-18**
+Cập nhật: **2026-06-23**
 
 ---
 
@@ -175,8 +175,28 @@ Component: `fe/components/lesson-form.tsx` — dùng cho `/manage/lessons/create
 | Exam / homework / exercise / bài giảng | Body `PUT /manage/lessons/:id` — lưu ở mức chương trình (`course_id=0` trong DB) |
 | Không gửi `course_id` khi PUT lesson | Query `course_id` chỉ dùng khi **đọc** chi tiết (giao bài theo khóa), không dùng khi cập nhật mẫu bài học |
 | Từ vựng | Sau lưu lesson → `syncLessonVocabularies` → `PUT /manage/flashcard/lessons/:id/vocabularies` |
-| Assessment trên form | UI có; **BE chưa** lưu quan hệ lesson ↔ assessment |
+| Assessment trên form | Lưu qua `PUT /lessons` field `assessments`; giao bài tab **Đánh giá** trên `/teacher/lessons/[id]?course_id=` (`ASSESSMENTS_ENABLED`) |
 | Thêm bài vào CT | Làm ở `/manage/programs/[id]/edit`, không ở sửa khóa học |
-| Chi tiết bài học (`/manage/lessons/[id]`) | Dùng chung component với GV. Đủ 5 tab (kể cả Luyện tập, Kiểm tra) cho mọi role. **Giao bài** / **Xem** / **Chấm điểm**: GV luôn thấy khi có `?course_id=`; admin thấy Giao/Xem (cần quyền assignments), không **Chấm điểm**. |
+| Chi tiết bài học (`/teacher/lessons/[id]`) | Tab Bài giảng, BTVN, Luyện tập, Kiểm tra, **Đánh giá** (nếu bật flag), Từ vựng. **Giao bài** khi có `?course_id=` |
 
 API client: `fe/lib/api/lessons.ts`. Backend: `be/docs/features.md` §3.4.
+
+---
+
+## 14. Ngân hàng câu hỏi — 9 dạng
+
+| Loại Redux/UI | Loại API | Màn tạo |
+|---------------|----------|---------|
+| `multiple-choice` | `multiple_choice` | Admin + GV create-question, modal trong form bài |
+| `fill-in-blank` | `fill_in_blanks` | ↑ |
+| `ordering` | `ordering` | ↑ |
+| `matching` | `matching` | ↑ |
+| `drag-drop` | `drag_drop` | ↑ |
+| `labeling` | `labeling` | ↑ |
+| `category` | `category` | ↑ |
+| `writing` | `writing` | ↑ |
+| `speaking` | `speaking` | ↑ |
+
+Hằng số dùng chung: `fe/lib/constants/questionTypes.ts`. Màn làm bài HS/GV preview: `do-homework`, `do-exercise`, `do/[examId]` — cùng bộ component `fe/app/[locale]/manage/assignments/components/questions/*`.
+
+**Category:** Nếu câu hỏi chưa có nhóm/mục trong DB, `CategoryQuestion` hiển thị cảnh báo vàng (không render vùng kéo thả trống). Sau khi sửa & lưu trong ngân hàng câu hỏi, làm bài homework tự nạp lại `options` từ DB (`GetCloned` + `refreshQuestionOptionsFromDB`).

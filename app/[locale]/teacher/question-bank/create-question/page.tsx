@@ -11,6 +11,10 @@ import {
   LucideArrowLeftRight,
   LucideCheck,
   LucideLoader2,
+  LucideTag,
+  LucideLayoutGrid,
+  LucideFileText,
+  LucideMic,
 } from "lucide-react";
 import Link from "next/link";
 import { CustomSelect } from "@/components/question-editor/custom-select";
@@ -26,6 +30,10 @@ import { MatchingQuestion } from "@/components/question-editor/matching-question
 import { MultipleChoiceQuestion } from "@/components/question-editor/multiple-choice-question";
 import { FillInBlankQuestion } from "@/components/question-editor/fill-in-blank-question";
 import { DragDropQuestion } from "@/components/question-editor/drag-drop-question";
+import { LabelingQuestion } from "@/components/question-editor/labeling-question";
+import { CategoryQuestion } from "@/components/question-editor/category-question";
+import { WritingQuestion } from "@/components/question-editor/writing-question";
+import { SpeakingQuestion } from "@/components/question-editor/speaking-question";
 import { DefaultQuestion } from "@/components/question-editor/default-question";
 import {
   createQuestion,
@@ -34,6 +42,10 @@ import {
   convertOrderingToApiFormat,
   convertMatchingToApiFormat,
   convertDragDropToApiFormat,
+  convertLabelingToApiFormat,
+  convertCategoryToApiFormat,
+  convertWritingToApiFormat,
+  convertSpeakingToApiFormat,
   type QuestionAttributePayload,
 } from "@/lib/api/questions";
 import { useToast } from "@/components/ui/use-toast";
@@ -141,6 +153,42 @@ function QuestionEditor() {
         </div>
       ),
     },
+    {
+      value: "labeling",
+      label: (
+        <div className="flex items-center">
+          <LucideTag className="h-4 w-4 mr-2" />
+          <span>{t("questionTypes.labeling")}</span>
+        </div>
+      ),
+    },
+    {
+      value: "category",
+      label: (
+        <div className="flex items-center">
+          <LucideLayoutGrid className="h-4 w-4 mr-2" />
+          <span>{t("questionTypes.category")}</span>
+        </div>
+      ),
+    },
+    {
+      value: "writing",
+      label: (
+        <div className="flex items-center">
+          <LucideFileText className="h-4 w-4 mr-2" />
+          <span>{t("questionTypes.writing")}</span>
+        </div>
+      ),
+    },
+    {
+      value: "speaking",
+      label: (
+        <div className="flex items-center">
+          <LucideMic className="h-4 w-4 mr-2" />
+          <span>{t("questionTypes.speaking")}</span>
+        </div>
+      ),
+    },
   ];
 
   const renderQuestionEditor = () => {
@@ -155,6 +203,14 @@ function QuestionEditor() {
         return <MatchingQuestion ref={tiptapEditorRef} />;
       case "drag-drop":
         return <DragDropQuestion ref={tiptapEditorRef} />;
+      case "labeling":
+        return <LabelingQuestion ref={tiptapEditorRef} />;
+      case "category":
+        return <CategoryQuestion ref={tiptapEditorRef} />;
+      case "writing":
+        return <WritingQuestion ref={tiptapEditorRef} />;
+      case "speaking":
+        return <SpeakingQuestion ref={tiptapEditorRef} />;
       default:
         return <DefaultQuestion />;
     }
@@ -353,6 +409,59 @@ function QuestionEditor() {
       //   });
       //   return false;
       // }
+    } else if (questionType === "labeling") {
+      if (!questionState.labelImage) {
+        toast({
+          title: "Lỗi",
+          description: t("validation.uploadImage"),
+          variant: "destructive",
+        });
+        return false;
+      }
+      if (questionState.labelPositions.length < 1) {
+        toast({
+          title: "Lỗi",
+          description: t("validation.atLeastOneLabel"),
+          variant: "destructive",
+        });
+        return false;
+      }
+      const emptyLabels = questionState.labelPositions.some(
+        (position) =>
+          typeof position.groupPosition !== "number" ||
+          position.groupPosition === null ||
+          position.groupPosition === undefined ||
+          !questionState.labelGroups[position.groupPosition] ||
+          !questionState.labelGroups[position.groupPosition].text.trim()
+      );
+      if (emptyLabels) {
+        toast({
+          title: "Lỗi",
+          description: t("validation.selectGroupForAllLabels"),
+          variant: "destructive",
+        });
+        return false;
+      }
+    } else if (questionType === "category") {
+      if (questionState.categories.length < 2) {
+        toast({
+          title: "Lỗi",
+          description: t("validation.atLeastTwoCategories"),
+          variant: "destructive",
+        });
+        return false;
+      }
+      const emptyCategoryItems = questionState.categories.some(
+        (category) => category.items.length === 0
+      );
+      if (emptyCategoryItems) {
+        toast({
+          title: "Lỗi",
+          description: t("validation.eachCategoryOneItem"),
+          variant: "destructive",
+        });
+        return false;
+      }
     }
 
     return true;
@@ -446,13 +555,39 @@ function QuestionEditor() {
           true,
           customInstructions
         );
-        console.log("API Data:", apiData);
+      } else if (questionType === "labeling") {
+        apiData = convertLabelingToApiFormat(
+          questionState,
+          attributes,
+          true,
+          customInstructions
+        );
+      } else if (questionType === "category") {
+        apiData = convertCategoryToApiFormat(
+          questionState,
+          attributes,
+          true,
+          customInstructions
+        );
+      } else if (questionType === "writing") {
+        apiData = convertWritingToApiFormat(
+          questionState,
+          attributes,
+          true,
+          customInstructions
+        );
+      } else if (questionType === "speaking") {
+        apiData = convertSpeakingToApiFormat(
+          questionState,
+          attributes,
+          true,
+          customInstructions
+        );
       } else {
-        // Xử lý các loại câu hỏi khác (sẽ triển khai sau)
         toast({
           title: "Thông báo",
-          description:
-            "Chức năng lưu cho loại câu hỏi này đang được phát triển",
+          description: "Loại câu hỏi không được hỗ trợ",
+          variant: "destructive",
         });
         setIsSaving(false);
         return;

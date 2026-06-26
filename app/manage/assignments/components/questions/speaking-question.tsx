@@ -20,6 +20,10 @@ interface SpeakingQuestionProps {
     options: {
       maxDuration?: number;
     };
+    metadata?: {
+      max_recording_time?: number;
+      time?: number;
+    };
   };
   userAnswer?: {
     audioBlob?: Blob;
@@ -59,6 +63,11 @@ export function SpeakingQuestion({
   const objectUrlRef = useRef<string | null>(null);
 
   const isTextMedia = question.content.media?.type === "text";
+
+  const maxRecordingTime =
+    question.metadata?.max_recording_time ??
+    question.options?.maxDuration ??
+    60;
 
   // Pick a supported audio MIME type for the current browser (Safari/iPad often doesn't support webm)
   const getSupportedAudioMimeType = () => {
@@ -220,7 +229,7 @@ export function SpeakingQuestion({
       timerRef.current = setInterval(() => {
         duration++;
         setRecordingDuration(duration);
-        if (duration >= (question.options?.maxDuration || 300)) stopRecording();
+        if (duration >= maxRecordingTime) stopRecording();
       }, 1000);
     } catch (err) {
       console.error("Recording error", err);

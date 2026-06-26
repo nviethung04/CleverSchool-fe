@@ -45,6 +45,7 @@ import { GetCourseList } from "@/lib/api/courses";
 import axiosInstance from "@/lib/api/axios";
 import { useToast } from "@/components/ui/use-toast";
 import { usePermissions } from "@/hooks/use-permissions";
+import { ASSESSMENTS_ENABLED } from "@/config/featureFlags";
 
 // Get lesson vocabularies for teacher view
 const getLessonVocabularies = async (
@@ -92,6 +93,9 @@ export default function LessonDetailPage() {
   );
   const [assigningExams, setAssigningExams] = useState<Set<string>>(new Set());
   const [assigningExercises, setAssigningExercises] = useState<Set<string>>(
+    new Set()
+  );
+  const [assigningAssessments, setAssigningAssessments] = useState<Set<string>>(
     new Set()
   );
   const [showCoursePopup, setShowCoursePopup] = useState(false);
@@ -370,6 +374,55 @@ export default function LessonDetailPage() {
     }
   };
 
+  const handleAssignAssessment = async (
+    assessmentId: string,
+    isAssigned: boolean
+  ) => {
+    setAssigningAssessments((prev) => new Set(prev).add(assessmentId));
+    try {
+      const lessonId = lesson?.id;
+      if (!lessonId) {
+        throw new Error("Lesson ID is not available");
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const courseIdParam = urlParams.get("course_id");
+      if (!courseIdParam) {
+        throw new Error("course_id is required");
+      }
+
+      await import("@/lib/api/assessment").then(({ AssignAssessment }) =>
+        AssignAssessment(assessmentId, Number(lessonId), {
+          is_assigned: isAssigned,
+          course_id: Number(courseIdParam),
+        })
+      );
+
+      await fetchLesson({ showLoading: false });
+      toast({
+        title: "Thành công",
+        description: isAssigned ? "Đã giao bài" : "Đã hoàn tác giao bài",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error("Error updating assessment assignment status:", error);
+      toast({
+        title: "Thất bại",
+        description:
+          error instanceof Error && error.message === "course_id is required"
+            ? "Thiếu course_id trong URL. Mở bài học từ khóa học để giao bài."
+            : "Thao tác thất bại",
+        variant: "destructive",
+      });
+    } finally {
+      setAssigningAssessments((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(assessmentId);
+        return newSet;
+      });
+    }
+  };
+
   // Popup: fetch course list when open
   useEffect(() => {
     if (showCoursePopup) {
@@ -411,6 +464,7 @@ export default function LessonDetailPage() {
   const materials = lesson.materials || [];
   const assignments = lesson.homeworks || [];
   const tests = lesson.exams || [];
+  const assessments = lesson.assessments || [];
 
   return (
     <RoleBasedHeaderSidebar>
@@ -473,7 +527,11 @@ export default function LessonDetailPage() {
             className="space-y-6"
           >
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <TabsList className="max-sm:flex max-sm:flex-col max-sm:gap-1 grid w-full lg:w-auto h-auto grid-cols-5 bg-gray-50 rounded-2xl p-1">
+              <TabsList
+                className={`max-sm:flex max-sm:flex-col max-sm:gap-1 grid w-full lg:w-auto h-auto ${
+                  ASSESSMENTS_ENABLED ? "grid-cols-6" : "grid-cols-5"
+                } bg-gray-50 rounded-2xl p-1`}
+              >
                 <TabsTrigger
                   value="lesson"
                   className="flex items-center gap-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm w-full"
@@ -502,6 +560,15 @@ export default function LessonDetailPage() {
                   <PenTool className="h-4 w-4" />
                   {t("tabTests")}
                 </TabsTrigger>
+                {ASSESSMENTS_ENABLED && (
+                  <TabsTrigger
+                    value="assessments"
+                    className="flex items-center gap-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm w-full"
+                  >
+                    <ClipboardCheck className="h-4 w-4" />
+                    {t("tabAssessments")}
+                  </TabsTrigger>
+                )}
                 <TabsTrigger
                   value="vocabularies"
                   className="flex items-center gap-2 rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm w-full"
@@ -1351,6 +1418,143 @@ export default function LessonDetailPage() {
                 )}
               </div>
             </TabsContent>
+
+            {ASSESSMENTS_ENABLED && (
+              <TabsContent value="assessments" className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {assessments.length > 0 ? (
+                    assessments.map((item: any) => (
+                      <Card
+                        key={item.id}
+                        className="bg-white rounded-3xl border border-gray-200 hover:border-indigo-300 hover:shadow-xl transition-all duration-300 group flex flex-col h-full"
+                      >
+                        <CardHeader className="pb-4">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+                              <ClipboardCheck className="h-6 w-6 text-indigo-600" />
+                            </div>
+                            <div className="flex flex-col items-end gap-2">
+                              {Boolean(item.is_assigned) && (
+                                <Badge className="bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full font-medium">
+                                  ✓ {t("assigned")}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          <CardTitle className="text-xl font-bold text-gray-900 line-clamp-2 leading-snug mb-2">
+                            {item.name}
+                          </CardTitle>
+                          <CardDescription className="text-sm text-gray-600 line-clamp-2">
+                            {item.description}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1 pb-4">
+                          <div className="bg-indigo-50 rounded-xl p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                              <span className="text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                                {t("assessmentLabel")}
+                              </span>
+                            </div>
+                            {item.type && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-gray-600">{t("type")}:</span>
+                                <span className="font-medium text-gray-900">
+                                  {item.type}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                        <CardFooter className="pt-0 pb-6 px-6 mt-auto">
+                          <div className="w-full space-y-3">
+                            {canAssignInLesson && courseId && (
+                              <Button
+                                size="sm"
+                                className={`w-full rounded-xl ${
+                                  Boolean(item.is_assigned)
+                                    ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                    : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                                }`}
+                                disabled={assigningAssessments.has(String(item.id))}
+                                onClick={() =>
+                                  handleAssignAssessment(
+                                    String(item.id),
+                                    !Boolean(item.is_assigned)
+                                  )
+                                }
+                              >
+                                {assigningAssessments.has(String(item.id)) ? (
+                                  <>
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                    {Boolean(item.is_assigned)
+                                      ? t("undoing")
+                                      : t("assigning")}
+                                  </>
+                                ) : Boolean(item.is_assigned) ? (
+                                  <>
+                                    <RotateCcw className="h-4 w-4 mr-2" />
+                                    {t("undoAssign")}
+                                  </>
+                                ) : (
+                                  <>
+                                    <Send className="h-4 w-4 mr-2" />
+                                    {t("assign")}
+                                  </>
+                                )}
+                              </Button>
+                            )}
+                            {canPreviewAssignment && (
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="flex-1 rounded-xl border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600"
+                                  asChild
+                                >
+                                  <Link
+                                    href={`/${locale}/manage/assignments/edit-assessment/${item.id}`}
+                                  >
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    {t("view")}
+                                  </Link>
+                                </Button>
+                                {canGradeAssignments && (
+                                  <Button
+                                    size="sm"
+                                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl"
+                                    asChild
+                                  >
+                                    <Link
+                                      href={`/${locale}/teacher/reports?tab=assessment`}
+                                    >
+                                      <ClipboardCheck className="h-4 w-4 mr-2" />
+                                      {t("grade")}
+                                    </Link>
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    ))
+                  ) : (
+                    <div className="col-span-full text-center py-16">
+                      <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <ClipboardCheck className="h-8 w-8 text-gray-400" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                        {t("noAssessmentsTitle")}
+                      </h3>
+                      <p className="text-gray-500">
+                        {t("noAssessmentsDescription")}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            )}
 
             <TabsContent value="vocabularies" className="space-y-6">
               <div className="grid grid-cols-1 gap-8">

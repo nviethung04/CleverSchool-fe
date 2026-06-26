@@ -88,6 +88,12 @@ export function WritingQuestion({
   const [isMobile, setIsMobile] = useState(false);
   // Audio player states (match Multiple Choice)
   const [isPlaying, setIsPlaying] = useState(false);
+
+  // Writing: only enforce a character limit when explicitly provided (> 0).
+  const maxCharacters =
+    question.options?.maxCharacters && question.options.maxCharacters > 0
+      ? question.options.maxCharacters
+      : undefined;
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -390,11 +396,11 @@ export function WritingQuestion({
               height: isMobile ? "8rem" : "12rem", // Mobile: 128px, Desktop: 288px
               minHeight: isMobile ? "8rem" : "12rem",
             }}
-            maxLength={question.options?.maxCharacters || 1000}
+            maxLength={maxCharacters}
           />
           <div className="mt-2 text-right">
             <span className="text-[#32428D] text-sm">
-              {text.length}/{question.options?.maxCharacters || 1000}
+              {maxCharacters ? `${text.length}/${maxCharacters}` : `${text.length}`}
             </span>
           </div>
         </div>

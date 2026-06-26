@@ -141,6 +141,16 @@ export interface Homework {
   is_submitted: boolean;
 }
 
+export interface Assessment {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  is_submitted: boolean;
+  is_scored: boolean;
+  is_published: boolean;
+}
+
 export interface Lesson {
   id: string;
   title: string;
@@ -149,6 +159,7 @@ export interface Lesson {
   exams: Exam[];
   exercises: Exercise[];
   homeworks: Homework[];
+  assessments?: Assessment[];
 }
 
 export interface Course {

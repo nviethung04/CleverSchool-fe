@@ -2,7 +2,17 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { EditableMathField, StaticMathField } from "react-mathquill";
+import dynamic from "next/dynamic";
+
+// react-mathquill touches `window` at module eval time → must be dynamically imported client-side.
+const EditableMathField = dynamic(
+  () => import("react-mathquill").then((m: any) => m.EditableMathField),
+  { ssr: false }
+);
+const StaticMathField = dynamic(
+  () => import("react-mathquill").then((m: any) => m.StaticMathField),
+  { ssr: false }
+);
 
 interface MathInputProps {
   value: string;

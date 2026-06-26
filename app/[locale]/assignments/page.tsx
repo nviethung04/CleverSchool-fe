@@ -181,6 +181,9 @@ export default function AssignmentsPageContainer() {
               exercises: Array.isArray(lesson.exercises)
                 ? lesson.exercises
                 : [],
+              assessments: Array.isArray(lesson.assessments)
+                ? lesson.assessments
+                : [],
             })),
           }));
         } else if (Array.isArray(payload?.lessons)) {
@@ -203,6 +206,9 @@ export default function AssignmentsPageContainer() {
                 : [],
               exercises: Array.isArray(lesson.exercises)
                 ? lesson.exercises
+                : [],
+              assessments: Array.isArray(lesson.assessments)
+                ? lesson.assessments
                 : [],
             })),
           } as any;
