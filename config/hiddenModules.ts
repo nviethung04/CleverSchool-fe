@@ -50,3 +50,9 @@ export const TEACHER_REPORTS_ASSESSMENT_TAB_ENABLED = true;
  * Ngoài MVP — đặt `true` khi bật lại trên production.
  */
 export const TEACHER_REPORTS_EXPORT_TAB_ENABLED = false;
+
+/**
+ * Sửa câu hỏi theo bản clone trong bài tập (homework/exam/exercise).
+ * Khi `false`: link sửa từ form bài tập luôn mở ngân hàng câu hỏi gốc, không gửi homework_id/exam_id/exercise_id.
+ */
+export const CLONE_QUESTION_EDIT_ENABLED = false;

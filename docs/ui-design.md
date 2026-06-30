@@ -92,6 +92,8 @@ MVP core hiển thị: Tổng quan, Người dùng, Trường, **Môn học**, C
 **Ẩn trên trang khóa học:** tab/nút **Thảo luận** — `COURSE_DISCUSSION_UI_ENABLED = false` trong `fe/config/hiddenModules.ts` (bật lại khi triển khai chat).  
 Bật/tắt chat theo setting `chat_course`: hook `useSetting` gọi `GET /manage/settings/by-key/:key` (không cần quyền admin; tránh `GET /manage/settings` — 403 với HS/GV).
 
+**Ẩn sửa câu hỏi theo bản clone:** `CLONE_QUESTION_EDIT_ENABLED = false` — nút sửa câu hỏi trên form BTVN/kiểm tra/luyện tập không gắn `homework_id`/`exam_id`/`exercise_id`; luôn sửa bản gốc trong ngân hàng câu hỏi.
+
 ---
 
 ## 7. Checklist khi thêm trang admin mới

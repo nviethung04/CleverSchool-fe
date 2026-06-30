@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,7 @@ import { LatexText } from "@/components/latex-text";
 import { CreateQuestionDialog } from "@/components/ui/dialog";
 import { useTypedTranslations } from "@/lib/i18n/client";
 import { useParams } from "next/navigation";
+import { CLONE_QUESTION_EDIT_ENABLED } from "@/config/hiddenModules";
 const CreateQuestionModal = dynamic(
   () =>
     import("@/components/question-editor/create-question-modal").then(
@@ -112,7 +113,7 @@ interface HomeworkFormProps {
   homeworkId?: string | number;
   exerciseId?: string | number;
 
-  // ÄÃ³ng modal chá»n cÃ¢u há»i vÃ  lÆ°u localStorage
+  // Đóng modal chọn câu hỏi và lưu localStorage
   handleCloseQuestionBank?: () => void;
 
   // State setters for questions
@@ -451,11 +452,11 @@ export function HomeworkForm({
                                               />
                                             </div>
 
-                                            {/* Question Media - Æ°u tiÃªn medias array */}
+                                            {/* Question Media - ưu tiên medias array */}
                                             {question.content?.medias &&
                                             question.content.medias.length >
                                               0 ? (
-                                              // Hiá»ƒn thá»‹ táº¥t cáº£ media tá»« medias array
+                                              // Hiển thị tất cả media từ medias array
                                               <div className="space-y-2">
                                                 {question.content.medias.map(
                                                   (media: any, idx: number) => (
@@ -468,7 +469,7 @@ export function HomeworkForm({
                                                 )}
                                               </div>
                                             ) : (
-                                              // Fallback vá» media cÅ©
+                                              // Fallback về media cũ
                                               question.content?.media &&
                                               renderMediaContent(
                                                 question.content.media
@@ -631,7 +632,9 @@ export function HomeworkForm({
                                                   </div>
                                                   <div>
                                                     <div className="text-xs font-medium text-pink-600 mb-2">
-                                                      ÄÃ­ch:
+                                                      {t(
+                                                        "form.questions.targets"
+                                                      )}
                                                     </div>
                                                     <div className="space-y-2">
                                                       {(
@@ -876,7 +879,9 @@ export function HomeworkForm({
                                                               {correctPosition >
                                                                 0 && (
                                                                 <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                                                                  Vá»‹ trÃ­{" "}
+                                                                  {t(
+                                                                    "form.questions.position"
+                                                                  )}{" "}
                                                                   {
                                                                     correctPosition
                                                                   }
@@ -897,7 +902,9 @@ export function HomeworkForm({
                                                       +
                                                       {question.options.answers
                                                         .length - 4}{" "}
-                                                      items ná»¯a
+                                                      {t(
+                                                        "form.questions.moreItems"
+                                                      )}
                                                     </div>
                                                   )}
                                                 </div>
@@ -1009,7 +1016,9 @@ export function HomeworkForm({
                                                 href={`/${locale}/manage/question-bank/edit/${
                                                   question.id
                                                 }${
-                                                  mode === "edit" && homeworkId
+                                                  CLONE_QUESTION_EDIT_ENABLED &&
+                                                  mode === "edit" &&
+                                                  homeworkId
                                                     ? `?homework_id=${homeworkId}`
                                                     : ""
                                                 }`}
@@ -1109,7 +1118,7 @@ export function HomeworkForm({
                                     );
                                   } else {
                                     console.warn(
-                                      "[HomeworkForm] KhÃ´ng cÃ³ id trong object question:",
+                                      "[HomeworkForm] Không có id trong object question:",
                                       question
                                     );
                                   }
@@ -1171,7 +1180,7 @@ export function HomeworkForm({
                 </div>
 
                 <div className="space-y-4">
-                  {/* BÆ°á»›c 1 */}
+                  {/* Bước 1 */}
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-green-600 text-white rounded-2xl flex items-center justify-center flex-shrink-0 font-semibold text-sm">
                       1
@@ -1190,7 +1199,7 @@ export function HomeworkForm({
                     </div>
                   </div>
 
-                  {/* BÆ°á»›c 2 - thay Ä‘á»•i theo assignmentMode */}
+                  {/* Bước 2 - thay đổi theo assignmentMode */}
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-green-600 text-white rounded-2xl flex items-center justify-center flex-shrink-0 font-semibold text-sm">
                       2
@@ -1209,7 +1218,7 @@ export function HomeworkForm({
                     </div>
                   </div>
 
-                  {/* BÆ°á»›c 3 - Táº¡o bÃ i luyá»‡n táº­p */}
+                  {/* Bước 3 - Tạo bài luyện tập */}
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-green-600 text-white rounded-2xl flex items-center justify-center flex-shrink-0 font-semibold text-sm">
                       3
@@ -1230,7 +1239,7 @@ export function HomeworkForm({
                 </div>
               </div>
             </div>
-            {/* ...pháº§n Important Notes giá»¯ nguyÃªn... */}
+            {/* ...phần Important Notes giữ nguyên... */}
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-6">
                 <div className="mb-4">

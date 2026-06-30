@@ -40,6 +40,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { QuestionBankDialog } from "@/components/QuestionBankDialog";
 import { CreateQuestionDialog } from "@/components/ui/dialog";
+import { CLONE_QUESTION_EDIT_ENABLED } from "@/config/hiddenModules";
 import LatexText from "@/components/latex-text";
 const CreateQuestionModal = dynamic(
   () =>
@@ -1025,7 +1026,9 @@ export function HomeworkForm({
                                               href={`/manage/question-bank/edit/${
                                                 question.id
                                               }${
-                                                mode === "edit" && homeworkId
+                                                CLONE_QUESTION_EDIT_ENABLED &&
+                                                mode === "edit" &&
+                                                homeworkId
                                                   ? `?homework_id=${homeworkId}`
                                                   : ""
                                               }`}

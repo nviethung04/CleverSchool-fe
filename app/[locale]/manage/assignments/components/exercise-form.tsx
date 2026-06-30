@@ -66,6 +66,7 @@ import { QuestionBankDialog } from "@/components/QuestionBankDialog";
 import { LatexText } from "@/components/latex-text";
 import { CreateQuestionDialog } from "@/components/ui/dialog";
 import { useCurrentLocale, useTypedTranslations } from "@/lib/i18n/client";
+import { CLONE_QUESTION_EDIT_ENABLED } from "@/config/hiddenModules";
 
 interface ExerciseFormProps {
   // Form data
@@ -1211,7 +1212,9 @@ export function ExerciseForm({
                                             href={`/${currentLocale}/manage/question-bank/edit/${
                                               question.id
                                             }${
-                                              exerciseId ? `?exercise_id=${exerciseId}` : ""
+                                              CLONE_QUESTION_EDIT_ENABLED && exerciseId
+                                                ? `?exercise_id=${exerciseId}`
+                                                : ""
                                             }`}
                                             target="_blank"
                                           >

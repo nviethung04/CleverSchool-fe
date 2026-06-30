@@ -91,6 +91,7 @@ import { RoleBasedHeaderSidebar } from "@/components/layout/role-based-header-si
 import { GetSubjectsList } from "@/lib/api/subjects";
 import { useTranslations } from "next-intl";
 import { isValidSubjectId, sortAlphabetGeneric } from "@/lib/utils";
+import { CLONE_QUESTION_EDIT_ENABLED } from "@/config/hiddenModules";
 
 const EditableMathField = dynamic(
   () => import("react-mathquill").then((mod) => mod.EditableMathField),
@@ -204,6 +205,7 @@ function QuestionEditor() {
 
   // Get homework_id from URL query parameters
   const getHomeworkIdFromUrl = () => {
+    if (!CLONE_QUESTION_EDIT_ENABLED) return undefined;
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       const homeworkId = urlParams.get("homework_id");
@@ -214,6 +216,7 @@ function QuestionEditor() {
 
   // Get exam_id from URL query parameters
   const getExamIdFromUrl = () => {
+    if (!CLONE_QUESTION_EDIT_ENABLED) return undefined;
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       const examId = urlParams.get("exam_id");

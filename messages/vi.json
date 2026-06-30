@@ -2770,6 +2770,7 @@
         "sources": "Nguồn:",
         "targets": "Đích:",
         "moreItems": "mục nữa",
+        "position": "Vị trí",
         "ordering": "Thứ tự đúng:",
         "dragDrop": "Kéo thả:",
         "labels": "Nhãn:",

@@ -760,7 +760,8 @@ export function CategoryQuestion({
     // Map: categoryId -> list of item objects
     const categoryToItems: Record<string, any[]> = {};
     (question.options.items || []).forEach((item: any) => {
-      const catId = answerToCategory[item.id];
+      const catId =
+        answerToCategory[String(item.id)] ?? answerToCategory[item.id];
       if (!catId) return;
       if (!categoryToItems[catId]) categoryToItems[catId] = [];
       categoryToItems[catId].push(item);

@@ -64,6 +64,7 @@ const CreateQuestionModal = dynamic(
 );
 import { QuestionBankDialog } from "@/components/QuestionBankDialog";
 import { CreateQuestionDialog } from "@/components/ui/dialog";
+import { CLONE_QUESTION_EDIT_ENABLED } from "@/config/hiddenModules";
 
 interface ExamFormProps {
   // Form data
@@ -1141,7 +1142,9 @@ export function ExamForm({
                                             href={`/manage/question-bank/edit/${
                                               question.id
                                             }${
-                                              examId ? `?exam_id=${examId}` : ""
+                                              CLONE_QUESTION_EDIT_ENABLED && examId
+                                                ? `?exam_id=${examId}`
+                                                : ""
                                             }`}
                                             target="_blank"
                                           >

@@ -66,6 +66,7 @@ import { QuestionBankDialog } from "@/components/QuestionBankDialog";
 import { LatexText } from "@/components/latex-text";
 import { CreateQuestionDialog } from "@/components/ui/dialog";
 import { useCurrentLocale, useTypedTranslations } from "@/lib/i18n/client";
+import { CLONE_QUESTION_EDIT_ENABLED } from "@/config/hiddenModules";
 
 interface ExamFormProps {
   // Form data
@@ -1218,7 +1219,9 @@ export function ExamForm({
                                             href={`/${currentLocale}/manage/question-bank/edit/${
                                               question.id
                                             }${
-                                              examId ? `?exam_id=${examId}` : ""
+                                              CLONE_QUESTION_EDIT_ENABLED && examId
+                                                ? `?exam_id=${examId}`
+                                                : ""
                                             }`}
                                             target="_blank"
                                           >

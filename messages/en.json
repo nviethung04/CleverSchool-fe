@@ -2827,6 +2827,7 @@
         "sources": "Sources:",
         "targets": "Targets:",
         "moreItems": "more items",
+        "position": "Position",
         "ordering": "Correct order:",
         "dragDrop": "Drag & drop:",
         "labels": "Labels:",
