@@ -13,6 +13,7 @@ import { debounce } from "lodash";
 import { UserForm } from "../../components/user-form";
 import { FormData, Province, Ward, Subject } from "../../types";
 import { useQueryString } from "@/hooks/use-query-string";
+import { HIDDEN_USER_LIST_TABS } from "@/config/hiddenModules";
 
 export default function CreateUserPage() {
   const router = useRouter();
@@ -94,6 +95,12 @@ export default function CreateUserPage() {
     fetchCourses();
     fetchSubjects();
   }, []);
+
+  useEffect(() => {
+    if (!HIDDEN_USER_LIST_TABS.includes("schools") || roleParam !== "4") return;
+    const tab = returnTab && !HIDDEN_USER_LIST_TABS.includes(returnTab) ? returnTab : "students";
+    router.replace(`/admin/users/list?tab=${tab}`);
+  }, [roleParam, returnTab, router]);
 
   const handleRoleChange = (role: string) => {
     setQueryParams({ role });

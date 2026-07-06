@@ -17,6 +17,8 @@ import { GetClassList } from "@/lib/api/classes";
 import { debounce } from "lodash";
 import { UserForm } from "../../../components/user-form";
 import { FormData, Province, Ward, Subject } from "../../../types";
+import { HIDDEN_USER_LIST_TABS } from "@/config/hiddenModules";
+
 export default function EditUserPage() {
   const router = useRouter();
   const t = useTranslations("users");
@@ -145,6 +147,16 @@ export default function EditUserPage() {
 
       setOriginalUsername(user.username);
       const roleId = Number.parseInt(user.role_id);
+
+      if (HIDDEN_USER_LIST_TABS.includes("schools") && roleId === 4) {
+        const tab =
+          returnTab && !HIDDEN_USER_LIST_TABS.includes(returnTab)
+            ? returnTab
+            : "students";
+        router.replace(`/admin/users/list?tab=${tab}`);
+        return;
+      }
+
       const isTeacher = roleId === 2;
 
       // Teacher: map user_info.schools (unique) và user_info.classes theo trường

@@ -33,8 +33,11 @@ export const HIDDEN_MODULES: string[] = [
   // Teacher — secondary (admin feedback vẫn ẩn qua admin/feedback)
 ];
 
-/** Tabs on /admin/users/list — empty = show all role tabs including school managers */
-export const HIDDEN_USER_LIST_TABS: string[] = [];
+/**
+ * Tabs on /admin/users/list — slug: students | teachers | admins | schools
+ * Role School (4) chưa có lọc dữ liệu theo trường — ẩn tab Quản lý trường.
+ */
+export const HIDDEN_USER_LIST_TABS: string[] = ["schools"];
 
 /**
  * Tab / nút "Thảo luận" trên trang khóa học (HS + GV).
