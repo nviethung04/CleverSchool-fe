@@ -302,13 +302,13 @@ export default function ProgramsManagementPage() {
     fetchSubjects();
   }, []);
 
-  useEffect(() => {
-    async function fetchPrograms(
+  const fetchPrograms = useCallback(
+    async (
       keyword?: string,
       subjectId?: string,
       page?: number,
       size?: number
-    ) {
+    ) => {
       setLoading(true);
       const startTime = Date.now();
       try {
@@ -319,8 +319,7 @@ export default function ProgramsManagementPage() {
         if (keyword) params.keyword = keyword;
         if (subjectId && subjectId !== "all") params.subject_id = subjectId;
         const res = await GetProgramList(params);
-        console.log("res: ",res);
-        
+
         setAllPrograms(res.data?.programs || []);
         setTotalCount(res.data?.total_count || 0);
       } catch (err) {
@@ -334,9 +333,13 @@ export default function ProgramsManagementPage() {
           setLoading(false);
         }, remainingTime);
       }
-    }
+    },
+    [currentPage, pageSize]
+  );
+
+  useEffect(() => {
     fetchPrograms(searchKeyword, selectedSubjectId, currentPage, pageSize);
-  }, [searchKeyword, selectedSubjectId, currentPage, pageSize]);
+  }, [searchKeyword, selectedSubjectId, currentPage, pageSize, fetchPrograms]);
 
   const handleSearch = useCallback((keyword: string) => {
     setSearchKeyword(keyword);
@@ -356,10 +359,14 @@ export default function ProgramsManagementPage() {
     }
   }
 
-  function handleProgramDeleted(id: string) {
-    setAllPrograms((prev) => prev.filter((p) => String(p.id) !== String(id)));
-    setTotalCount((prev) => Math.max(0, prev - 1));
-  }
+  const handleProgramDeleted = useCallback(
+    (id: string) => {
+      setAllPrograms((prev) => prev.filter((p) => String(p.id) !== String(id)));
+      setTotalCount((prev) => Math.max(0, prev - 1));
+      fetchPrograms(searchKeyword, selectedSubjectId, currentPage, pageSize);
+    },
+    [fetchPrograms, searchKeyword, selectedSubjectId, currentPage, pageSize]
+  );
 
   const handlePageChange = useCallback(
     (page: number) => {
@@ -428,7 +435,7 @@ function ProgramCard({
     setLoading(true);
     try {
       const res = await DeleteProgram(program.id);
-      if (res && res.status === 200) {
+      if (res?.code === 200) {
         toast({ title: "Xóa thành công" });
         onDeleted?.(program.id);
       } else {
