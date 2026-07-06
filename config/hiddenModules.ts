@@ -15,6 +15,8 @@ export const HIDDEN_MODULES: string[] = [
 
   // Admin — reporting & configuration extras
   "users/permissions",
+  // Subject management is hidden (default only 1 subject: Tiếng Anh)
+  "admin/subjects",
   "admin/export",
   "admin/settings",
   "admin/notices",
@@ -22,10 +24,11 @@ export const HIDDEN_MODULES: string[] = [
   "criteria-assessment",
   "criteria-report",
 
-  // Learning extensions (SCORM, lecture bank, contest)
+  // Learning extensions (SCORM, lecture bank, contest, H5P)
   "lecture-bank",
   "contest",
   "scorm",
+  "admin/h5p",
 
   // Teacher — secondary (admin feedback vẫn ẩn qua admin/feedback)
 ];
