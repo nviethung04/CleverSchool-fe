@@ -35,6 +35,8 @@ import { getListCourse } from "@/lib/api/dashboard";
 import { getWeeks } from "@/lib/api/students";
 import { GetScheduleByWeek } from "@/lib/api/courses";
 import { sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
+import { SEMESTER_SCHEDULE_UI_ENABLED } from "@/config/hiddenModules";
+import Link from "next/link";
 
 // Helper function to group lessons by course and fetch lesson details
 async function groupLessonsByCourse(schedules: any[], weekData?: any) {
@@ -324,9 +326,8 @@ export function LessonsTab() {
 
   // Fetch weeks when course changes
   useEffect(() => {
-    if (selectedCourseId) {
-      fetchWeeks(selectedCourseId);
-    }
+    if (!SEMESTER_SCHEDULE_UI_ENABLED || !selectedCourseId) return;
+    fetchWeeks(selectedCourseId);
   }, [selectedCourseId]);
 
   // Update courseId vào URL khi course thay đổi (tách riêng để tránh loop)
@@ -341,11 +342,16 @@ export function LessonsTab() {
   }, [selectedCourseId, courses.length]);
 
   // Fetch schedule when both course and week are selected
-  // Lưu ý: Không update URL ở đây vì onChange handlers đã handle rồi
   useEffect(() => {
-    if (selectedCourseId && selectedWeekId && weeks.length > 0) {
-      fetchSchedule(selectedCourseId, selectedWeekId);
+    if (
+      !SEMESTER_SCHEDULE_UI_ENABLED ||
+      !selectedCourseId ||
+      !selectedWeekId ||
+      weeks.length === 0
+    ) {
+      return;
     }
+    fetchSchedule(selectedCourseId, selectedWeekId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCourseId, selectedWeekId]);
 
@@ -429,6 +435,7 @@ export function LessonsTab() {
           </div>
 
           {/* Week Controls */}
+          {SEMESTER_SCHEDULE_UI_ENABLED && (
           <div className="flex flex-col gap-2">
             {/* Back to Current Week Button */}
             {(() => {
@@ -537,11 +544,30 @@ export function LessonsTab() {
               </div>
             </div>
           </div>
+          )}
         </div>
       </div>
 
       <div className="">
-        {loading ? (
+        {!SEMESTER_SCHEDULE_UI_ENABLED ? (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Calendar className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Lịch theo tuần / học kỳ đã tắt
+            </h3>
+            <p className="text-gray-500 max-w-md mx-auto mb-6">
+              Mở khóa học để xem bài học và giao bài tập.
+            </p>
+            <Link
+              href={`/${currentLocale}/teacher/courses`}
+              className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700"
+            >
+              Đi tới Khóa học
+            </Link>
+          </div>
+        ) : loading ? (
           <div className="text-center py-12 text-gray-500">
             <div className="animate-pulse">{t("loading")}</div>
           </div>

@@ -18,6 +18,7 @@ import { GetProgramList } from "@/lib/api/programs";
 import { ArrowLeft, CalendarClock } from "lucide-react";
 import { GetSchoolList } from "@/lib/api/schools";
 import { GetSemestersList, Semester } from "@/lib/api/semesters";
+import { SEMESTER_SCHEDULE_UI_ENABLED } from "@/config/hiddenModules";
 import { Checkbox } from "@/components/ui/checkbox";
 import { sortAlphabetGeneric, sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
 
@@ -528,6 +529,7 @@ function CreateCourseForm({
                 </div>{" "}
               </div>
 
+              {SEMESTER_SCHEDULE_UI_ENABLED && (
               <div>
                 <label className="block font-semibold text-gray-700 mb-2 mt-4">
                   Kỳ học
@@ -712,6 +714,7 @@ function CreateCourseForm({
                   </div>
                 )}
               </div>
+              )}
 
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
@@ -941,6 +944,7 @@ export default function CreateCoursePage() {
   }, []);
 
   useEffect(() => {
+    if (!SEMESTER_SCHEDULE_UI_ENABLED) return;
     (async () => {
       try {
         const res = await GetSemestersList();
@@ -1103,7 +1107,7 @@ export default function CreateCoursePage() {
         school: selectedSchoolId
           ? { id: Number(selectedSchoolId), name: selectedSchoolName }
           : { id: 0, name: "" },
-        semesters: form.semesters || [],
+        semesters: SEMESTER_SCHEDULE_UI_ENABLED ? form.semesters || [] : [],
         created_at: now,
         updated_at: now,
       };

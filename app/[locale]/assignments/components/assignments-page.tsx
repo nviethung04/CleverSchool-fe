@@ -50,6 +50,7 @@ import {
 } from "@/lib/utils/route-utils";
 import { useAuth } from "@/lib/context/auth-context";
 import { ASSESSMENTS_ENABLED } from "@/config/featureFlags";
+import { SEMESTER_SCHEDULE_UI_ENABLED } from "@/config/hiddenModules";
 
 interface AssignmentsPageProps {
   weeks: Week[];
@@ -766,7 +767,8 @@ export default function AssignmentsPageSimplified({
                 </SelectContent>
               </Select>
 
-              {currentWeek &&
+              {SEMESTER_SCHEDULE_UI_ENABLED &&
+                currentWeek &&
                 selectedWeek &&
                 selectedWeek.id !== currentWeek.id && (
                   <Button
@@ -781,6 +783,7 @@ export default function AssignmentsPageSimplified({
             </div>
 
             {/* Week selector + prev/next */}
+            {SEMESTER_SCHEDULE_UI_ENABLED && (
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
@@ -832,6 +835,7 @@ export default function AssignmentsPageSimplified({
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
+            )}
           </div>
         </div>
 

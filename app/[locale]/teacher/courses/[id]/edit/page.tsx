@@ -43,6 +43,7 @@ import { GetProgramList } from "@/lib/api/programs";
 import { GetSemestersList, Semester } from "@/lib/api/semesters";
 import { Checkbox } from "@/components/ui/checkbox";
 import { sortAlphabetGeneric, sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
+import { SEMESTER_SCHEDULE_UI_ENABLED } from "@/config/hiddenModules";
 
 function EditCourseContent({
   chapterLessonSelect,
@@ -213,6 +214,7 @@ function EditCourseContent({
   }, []);
 
   useEffect(() => {
+    if (!SEMESTER_SCHEDULE_UI_ENABLED) return;
     (async () => {
       try {
         const res = await GetSemestersList();
@@ -802,8 +804,10 @@ function EditCourseContent({
         updatedCourse.program_id = Number(selectedProgramId);
         delete updatedCourse.program;
       }
-      // Cập nhật semesters
-      updatedCourse.semesters = form.semesters || [];
+      // Cập nhật semesters (chỉ khi bật UI học kỳ)
+      if (SEMESTER_SCHEDULE_UI_ENABLED) {
+        updatedCourse.semesters = form.semesters || [];
+      }
 
       await UpdateCourse(courseId, updatedCourse);
       setSelectedImageFile(null);
@@ -984,6 +988,7 @@ function EditCourseContent({
                     </select>
                   </div>
 
+                  {SEMESTER_SCHEDULE_UI_ENABLED && (
                   <div>
                     <label className="block font-semibold text-gray-700 mb-2 mt-4">
                       Kỳ học
@@ -1165,6 +1170,7 @@ function EditCourseContent({
                       </div>
                     )}
                   </div>
+                  )}
 
                   <div className="gap-4">
                     <div>
@@ -1360,7 +1366,14 @@ function EditCourseContent({
                       <div className="space-y-2">
                         <p>
                           Chương và bài học thuộc <strong>chương trình</strong> gắn với khóa học này.
-                          Màn sửa khóa học chỉ <strong>xem</strong> nội dung và cài <strong>Schedule</strong> (lịch tuần).
+                          Màn sửa khóa học chỉ <strong>xem</strong> nội dung
+                          {SEMESTER_SCHEDULE_UI_ENABLED && (
+                            <>
+                              {" "}
+                              và cài <strong>Schedule</strong> (lịch tuần).
+                            </>
+                          )}
+                          {!SEMESTER_SCHEDULE_UI_ENABLED && "."}
                         </p>
                         {(selectedProgramId || courseData?.program_id) && (
                           <Link
@@ -1374,6 +1387,7 @@ function EditCourseContent({
                       </div>
                     </div>
                     <div className="flex items-center gap-3 mb-6 flex-wrap">
+                      {SEMESTER_SCHEDULE_UI_ENABLED && (
                       <Button
                         variant="outline"
                         onClick={() => setShowScheduleModal(true)}
@@ -1381,6 +1395,8 @@ function EditCourseContent({
                       >
                         <Target className="h-4 w-4 mr-2" /> Schedule
                       </Button>
+                      )}
+                      {SEMESTER_SCHEDULE_UI_ENABLED && (
                       <div>
                         <Button
                           type="button"
@@ -1411,6 +1427,7 @@ function EditCourseContent({
                           Đồng bộ lịch học cho các khóa học cùng chương trình
                         </Button>
                       </div>
+                      )}
                     </div>
 
                     <div className="space-y-4">
@@ -1641,6 +1658,7 @@ function EditCourseContent({
               onClose={() => setShowTeacherModal(false)}
               courseId={courseId}
             />
+            {SEMESTER_SCHEDULE_UI_ENABLED && (
             <ScheduleModal
               open={showScheduleModal}
               chapters={form.chapters}
@@ -1650,8 +1668,10 @@ function EditCourseContent({
               courseId={courseId}
               onClose={() => setShowScheduleModal(false)}
             />
+            )}
 
             {/* Dialog đồng bộ khóa học cùng chương trình */}
+            {SEMESTER_SCHEDULE_UI_ENABLED && (
             <Dialog
               open={showSyncFamilyDialog}
               onOpenChange={(open) => {
@@ -1880,6 +1900,7 @@ function EditCourseContent({
                 )}
               </DialogContent>
             </Dialog>
+            )}
           </>
         )}
       </div>

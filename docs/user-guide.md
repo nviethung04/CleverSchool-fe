@@ -69,7 +69,7 @@ Lần đầu trên môi trường mới: xem [be/docs/getting-started.md](../../
 
 | Bước | Đường dẫn | Việc cần làm |
 |------|-----------|--------------|
-| Học kỳ | `/admin/semesters` | Tạo học kỳ: tên, mô tả, **ngày bắt đầu / kết thúc**, tuần đầu / tuần cuối |
+| Học kỳ | `/admin/semesters` | **Ẩn menu** — `SEMESTER_SCHEDULE_UI_ENABLED = false` trong `hiddenModules.ts` |
 
 Học kỳ dùng khi tạo khóa học và xếp **lịch bài học theo tuần**.
 
@@ -116,7 +116,7 @@ Học kỳ dùng khi tạo khóa học và xếp **lịch bài học theo tuần
 
 - Tên, mô tả, ảnh cover
 - **Chương trình** (kéo theo chương + bài học)
-- **Trường**, **học kỳ** (có thể chọn nhiều học kỳ)
+- **Trường** (học kỳ ẩn trên MVP — xem `hiddenModules.ts`)
 - **Ngày bắt đầu / kết thúc** khóa
 - Gắn **học sinh**, **giáo viên** (hoặc gắn sau ở màn sửa)
 
@@ -182,25 +182,19 @@ Tạo/sửa: admin + GV question-bank; làm bài: `/manage/assignments/do-homewo
 
 ## 3. Cài lịch & thời gian
 
-### 3.1 Học kỳ (Admin)
+> **MVP:** Module học kỳ / lịch tuần **ẩn** (`SEMESTER_SCHEDULE_UI_ENABLED = false`). Giao và làm bài theo **khóa học**, không cần xếp tuần.
 
-1. `/admin/semesters` → tạo học kỳ, khoảng ngày, tuần bắt đầu / kết thúc.
-2. Tuần học (`weeks`) là đơn vị xếp lịch trên khóa.
+### 3.1 Học kỳ (Admin) — đã ẩn
 
-### 3.2 Lịch khóa — gán bài học theo tuần (GV / Admin)
+Menu `/admin/semesters` ẩn. Bật lại: xóa `admin/semesters` khỏi `HIDDEN_MODULES` và đặt `SEMESTER_SCHEDULE_UI_ENABLED = true`.
 
-1. Mở **Sửa khóa học:** `/teacher/courses/[id]/edit`
-2. Chọn **Lịch học** (ScheduleModal):
-   - Chọn tuần trong học kỳ
-   - Gán từng **bài học** vào tuần
-   - **Lưu** khi đã gán hết (hệ thống cảnh báo nếu còn bài chưa gán)
+### 3.2 Lịch khóa — gán bài theo tuần — đã ẩn
 
-**Đồng bộ lịch khóa clone (nâng cao):** nút đồng bộ lịch cùng nhóm chương trình — chỉ copy **lịch học**, không copy học sinh/tên khóa. Xem [be/docs/features.md](../../be/docs/features.md) §3.1.
+Nút Schedule trên sửa khóa, đồng bộ lịch clone, và chọn tuần trên `/assignments` (HS) đã ẩn khi flag tắt.
 
 ### 3.3 Thời gian khóa học
 
-- **Ngày bắt đầu / kết thúc** khi tạo hoặc sửa khóa
-- **Học kỳ** đã chọn trên khóa
+- **Ngày bắt đầu / kết thúc** khi tạo hoặc sửa khóa (metadata; không bắt buộc cho giao bài MVP)
 - Học sinh học theo bài đã giao trong khóa đang hoạt động
 
 ---
@@ -337,7 +331,7 @@ Menu học sinh → **Báo cáo tiến độ**.
 - [ ] Học kỳ + tuần
 - [ ] Môn học, chương trình, bài học mẫu
 - [ ] Tài khoản GV, HS + gắn trường / lớp
-- [ ] Khóa học + chương trình + học kỳ + HS / GV
+- [ ] Khóa học + chương trình + HS / GV (học kỳ/lịch tuần ngoài MVP)
 - [ ] Câu hỏi + bài (homework / exercise / exam)
 - [ ] Gắn bài vào bài học
 - [ ] GV: xếp lịch tuần + **giao bài**

@@ -11,6 +11,7 @@ import {
 import { getListCourse } from "@/lib/api/dashboard";
 import { useRouter, useSearchParams } from "next/navigation";
 import { sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
+import { SEMESTER_SCHEDULE_UI_ENABLED } from "@/config/hiddenModules";
 
 export default function AssignmentsPageContainer() {
   const [weeks, setWeeks] = useState<Week[]>([]);
@@ -45,20 +46,26 @@ export default function AssignmentsPageContainer() {
 
   // Bỏ đồng bộ theo weeks để tránh set state trùng dẫn tới gọi API lặp
 
-  // Load exams when selected week or course changes (week_id=0 khi chưa có lịch tuần)
+  // Load exams when selected week or course changes (week_id=0 khi chưa có lịch tuần / UI tắt)
   useEffect(() => {
     if (!selectedCourseId) return;
-    const weekId = selectedWeek?.id ?? "0";
+    const weekId = SEMESTER_SCHEDULE_UI_ENABLED
+      ? (selectedWeek?.id ?? "0")
+      : "0";
     loadExamsByWeek(weekId, selectedCourseId);
   }, [selectedWeek, selectedCourseId]);
 
   // Load weeks when course changes (chỉ reset về tuần hiện tại nếu do user đổi khóa)
   useEffect(() => {
-    if (selectedCourseId) {
-      const shouldReset = courseChangeByUserRef.current === true;
-      courseChangeByUserRef.current = false;
-      loadWeeks(selectedCourseId, shouldReset);
+    if (!selectedCourseId) return;
+    if (!SEMESTER_SCHEDULE_UI_ENABLED) {
+      setWeeks([]);
+      setSelectedWeek(null);
+      return;
     }
+    const shouldReset = courseChangeByUserRef.current === true;
+    courseChangeByUserRef.current = false;
+    loadWeeks(selectedCourseId, shouldReset);
   }, [selectedCourseId]);
 
   const loadCourses = async () => {

@@ -31,9 +31,17 @@ export const HIDDEN_MODULES: string[] = [
   "admin/h5p",
   // Thư viện tập tin tập trung — upload inline trong form vẫn hoạt động qua /api/upload-file
   "admin/images",
+  // Học kỳ + lịch tuần (semesters, weeks, lesson_schedules) — ngoài MVP
+  "admin/semesters",
 
   // Teacher — secondary (admin feedback vẫn ẩn qua admin/feedback)
 ];
+
+/**
+ * Học kỳ, lịch tuần (Schedule), chọn tuần trên BTVN HS / Bài học tuần GV.
+ * Khi `false`: giao/làm bài theo khóa vẫn chạy (`week_id=0`); BE semesters/weeks không đổi.
+ */
+export const SEMESTER_SCHEDULE_UI_ENABLED = false;
 
 /**
  * Tabs on /admin/users/list — slug: students | teachers | admins | schools
