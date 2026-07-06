@@ -81,7 +81,7 @@ const LessonModal = ({
   useEffect(() => {
     if (open) {
       setLoading(true);
-      GetLessons({ page: 1, limit: 1000, chapter_id: 0 })
+      GetLessons({ page: 1, limit: 1000 })
         .then((res) => {
           setLessons(res?.data?.lessons || []);
         })
