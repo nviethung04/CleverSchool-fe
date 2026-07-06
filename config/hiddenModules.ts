@@ -65,3 +65,9 @@ export const CLONE_QUESTION_EDIT_ENABLED = false;
  * Đặt `true` khi bật lại trên production.
  */
 export const EXPORT_IMPORT_DATA_UI_ENABLED = false;
+
+/**
+ * Tab URL và Thư viện trong dialog thêm media (ảnh/audio/video) khi tạo/sửa câu hỏi.
+ * Khi `false`: chỉ hiện tab Tải lên file.
+ */
+export const QUESTION_MEDIA_URL_LIBRARY_UI_ENABLED = false;

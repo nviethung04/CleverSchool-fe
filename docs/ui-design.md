@@ -201,4 +201,6 @@ API client: `fe/lib/api/lessons.ts`. Backend: `be/docs/features.md` §3.4.
 
 Hằng số dùng chung: `fe/lib/constants/questionTypes.ts`. Màn làm bài HS/GV preview: `do-homework`, `do-exercise`, `do/[examId]` — cùng bộ component `fe/app/[locale]/manage/assignments/components/questions/*`.
 
+**Media (ảnh/audio/video):** Dialog `fe/components/question-editor/media-upload-dialog.tsx`. Mặc định chỉ tab **Tải lên** — tab URL và Thư viện ẩn qua `QUESTION_MEDIA_URL_LIBRARY_UI_ENABLED = false` trong `fe/config/hiddenModules.ts`.
+
 **Category:** Nếu câu hỏi chưa có nhóm/mục trong DB, `CategoryQuestion` hiển thị cảnh báo vàng (không render vùng kéo thả trống). Sau khi sửa & lưu trong ngân hàng câu hỏi, làm bài homework tự nạp lại `options` từ DB (`GetCloned` + `refreshQuestionOptionsFromDB`).

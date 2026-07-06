@@ -27,6 +27,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { postMultipartUpload } from "@/lib/api/axios";
 import { useTranslations } from "next-intl";
 import { useAppSelector } from "@/lib/redux/hooks";
+import { QUESTION_MEDIA_URL_LIBRARY_UI_ENABLED } from "@/config/hiddenModules";
 
 type MediaType = "image" | "audio" | "video";
 
@@ -189,6 +190,87 @@ export function MediaUploadDialog({
     }
   };
 
+  const uploadPanel = (
+    <div className="space-y-4">
+      <div className="grid gap-4">
+        <div className="border-2 border-dashed rounded-lg p-4 text-center">
+          {previewUrl ? (
+            <div className="relative">
+              <div className="absolute top-2 right-2">
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="h-6 w-6 rounded-full"
+                  onClick={clearSelection}
+                >
+                  <LucideX className="h-3 w-3" />
+                </Button>
+              </div>
+              {type === "image" && (
+                <img
+                  src={previewUrl || "/placeholder.svg"}
+                  alt="Preview"
+                  className="max-h-[200px] mx-auto object-contain rounded-md"
+                />
+              )}
+              {type === "audio" && (
+                <audio controls className="w-full mt-2">
+                  <source src={previewUrl} />
+                  Your browser does not support the audio element.
+                </audio>
+              )}
+              {type === "video" && (
+                <video controls className="max-h-[200px] mx-auto rounded-md">
+                  <source src={previewUrl} />
+                  Your browser does not support the video element.
+                </video>
+              )}
+              <p className="mt-2 text-sm text-gray-500">{uploadedFile?.name}</p>
+            </div>
+          ) : (
+            <>
+              <LucideUpload className="mx-auto h-12 w-12 text-gray-400" />
+              <div className="mt-4">
+                <div className="text-center">
+                  <Label
+                    htmlFor="file-upload"
+                    className="relative cursor-pointer rounded-md bg-white font-semibold text-purple-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-purple-600 focus-within:ring-offset-2 hover:text-purple-500"
+                  >
+                    <span>{t("uploadFile")}</span>
+                    <Input
+                      id="file-upload"
+                      ref={fileInputRef}
+                      type="file"
+                      accept={getAcceptTypes()}
+                      className="sr-only"
+                      onChange={handleFileChange}
+                    />
+                  </Label>
+                  <span className="text-sm text-gray-600"> {t("orDragDrop")}</span>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                {type === "image" && t("hints.image")}
+                {type === "audio" && t("hints.audio")}
+                {type === "video" && t("hints.video")}
+              </p>
+            </>
+          )}
+        </div>
+        <Button onClick={handleUpload} disabled={!uploadedFile || isUploading}>
+          {isUploading ? (
+            <>
+              <LucideLoader2 className="mr-2 h-4 w-4 animate-spin" />
+              {t("uploading")}
+            </>
+          ) : (
+            t("upload")
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -203,6 +285,9 @@ export function MediaUploadDialog({
           <DialogTitle>{getTypeTitle()}</DialogTitle>
         </DialogHeader>
 
+        {!QUESTION_MEDIA_URL_LIBRARY_UI_ENABLED ? (
+          uploadPanel
+        ) : (
         <Tabs
           defaultValue="upload"
           value={activeTab}
@@ -215,93 +300,7 @@ export function MediaUploadDialog({
           </TabsList>
 
           <TabsContent value="upload" className="space-y-4">
-            <div className="grid gap-4">
-              <div className="border-2 border-dashed rounded-lg p-4 text-center">
-                {previewUrl ? (
-                  <div className="relative">
-                    <div className="absolute top-2 right-2">
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        className="h-6 w-6 rounded-full"
-                        onClick={clearSelection}
-                      >
-                        <LucideX className="h-3 w-3" />
-                      </Button>
-                    </div>
-                    {type === "image" && (
-                      <img
-                        src={previewUrl || "/placeholder.svg"}
-                        alt="Preview"
-                        className="max-h-[200px] mx-auto object-contain rounded-md"
-                      />
-                    )}
-                    {type === "audio" && (
-                      <audio controls className="w-full mt-2">
-                        <source src={previewUrl} />
-                        Your browser does not support the audio element.
-                      </audio>
-                    )}
-                    {type === "video" && (
-                      <video
-                        controls
-                        className="max-h-[200px] mx-auto rounded-md"
-                      >
-                        <source src={previewUrl} />
-                        Your browser does not support the video element.
-                      </video>
-                    )}
-                    <p className="mt-2 text-sm text-gray-500">
-                      {uploadedFile?.name}
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <LucideUpload className="mx-auto h-12 w-12 text-gray-400" />
-                    <div className="mt-4">
-                      <div className="text-center">
-                        <Label
-                          htmlFor="file-upload"
-                          className="relative cursor-pointer rounded-md bg-white font-semibold text-purple-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-purple-600 focus-within:ring-offset-2 hover:text-purple-500"
-                        >
-                          <span>{t("uploadFile")}</span>
-                          <Input
-                            id="file-upload"
-                            ref={fileInputRef}
-                            type="file"
-                            accept={getAcceptTypes()}
-                            className="sr-only"
-                            onChange={handleFileChange}
-                          />
-                        </Label>
-                        <span className="text-sm text-gray-600">
-                          {" "}
-                          {t("orDragDrop")}
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-2">
-                      {type === "image" && t("hints.image")}
-                      {type === "audio" && t("hints.audio")}
-                      {type === "video" && t("hints.video")}
-                    </p>
-                  </>
-                )}
-              </div>
-              <Button
-                onClick={handleUpload}
-                disabled={!uploadedFile || isUploading}
-              >
-                {isUploading ? (
-                  <>
-                    <LucideLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t("uploading")}
-                  </>
-                ) : (
-                  t("upload")
-                )}
-              </Button>
-            </div>
+            {uploadPanel}
           </TabsContent>
 
           <TabsContent value="url" className="space-y-4">
@@ -371,6 +370,7 @@ export function MediaUploadDialog({
             </div>
           </TabsContent>
         </Tabs>
+        )}
       </DialogContent>
     </Dialog>
   );
