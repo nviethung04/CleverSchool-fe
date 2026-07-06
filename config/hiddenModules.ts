@@ -29,6 +29,8 @@ export const HIDDEN_MODULES: string[] = [
   "contest",
   "scorm",
   "admin/h5p",
+  // Thư viện tập tin tập trung — upload inline trong form vẫn hoạt động qua /api/upload-file
+  "admin/images",
 
   // Teacher — secondary (admin feedback vẫn ẩn qua admin/feedback)
 ];
