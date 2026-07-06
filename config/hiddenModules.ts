@@ -56,3 +56,9 @@ export const TEACHER_REPORTS_EXPORT_TAB_ENABLED = false;
  * Khi `false`: link sửa từ form bài tập luôn mở ngân hàng câu hỏi gốc, không gửi homework_id/exam_id/exercise_id.
  */
 export const CLONE_QUESTION_EDIT_ENABLED = false;
+
+/**
+ * Nút Xuất dữ liệu / Nhập dữ liệu (Excel bulk) trên admin + ngân hàng câu hỏi GV.
+ * Đặt `true` khi bật lại trên production.
+ */
+export const EXPORT_IMPORT_DATA_UI_ENABLED = false;

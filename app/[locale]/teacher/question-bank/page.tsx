@@ -91,6 +91,7 @@ import {
 import ExportData from "@/components/ui/export-data";
 import ImportData from "@/components/ui/import-data";
 import { exportQuestion, importQuestion } from "@/lib/api/export-import";
+import { EXPORT_IMPORT_DATA_UI_ENABLED } from "@/config/hiddenModules";
 import { useCurrentLocale, useTypedTranslations } from "@/lib/i18n/client";
 import { useQueryString } from "@/hooks/use-query-string";
 import {
@@ -789,6 +790,7 @@ export default function QuestionBankPage() {
                 </div>
 
                 {/* Export and Import Buttons */}
+                {EXPORT_IMPORT_DATA_UI_ENABLED && (
                 <div className="flex gap-2 justify-center sm:justify-end">
                   <ExportData
                     onExport={async () => {
@@ -845,6 +847,7 @@ export default function QuestionBankPage() {
                     label={t("importLabel")}
                   />
                 </div>
+                )}
               </div>
 
               {/* Search and Action Section */}

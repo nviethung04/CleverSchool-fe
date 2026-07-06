@@ -14,6 +14,7 @@ import { LucidePlus, Edit, Trash2, Search, Info, ChevronLeft, ChevronRight } fro
 import ExportData from "@/components/ui/export-data"
 import ImportData from "@/components/ui/import-data"
 import { exportSchool, importSchool } from "@/lib/api/export-import"
+import { EXPORT_IMPORT_DATA_UI_ENABLED } from "@/config/hiddenModules"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useEffect, useState, useMemo, memo, useCallback } from "react"
 import { useParams } from "next/navigation"
@@ -580,6 +581,8 @@ export default function SchoolPage() {
                         <p className="text-gray-600">{t("description")}</p>
                     </div>
                     <div className="mt-4 md:mt-0 flex gap-3 flex-wrap">
+                        {EXPORT_IMPORT_DATA_UI_ENABLED && (
+                        <>
                         <ExportData
                             onExport={async () => {
                                 try {
@@ -635,6 +638,8 @@ export default function SchoolPage() {
                             accept={".csv,.xlsx"}
                             label="Nhập dữ liệu"
                         />
+                        </>
+                        )}
                         <Button className={`rounded-full ${adminPrimaryButtonClass}`} onClick={openCreateSchool}>
                             <LucidePlus className="mr-2 h-4 w-4" />
                             {t("createNew")}

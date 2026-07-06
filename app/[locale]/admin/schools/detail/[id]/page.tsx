@@ -30,6 +30,7 @@ import { GetProvinceList } from "@/lib/api/provinces";
 import ExportData from "@/components/ui/export-data";
 import ImportData from "@/components/ui/import-data";
 import { exportClass, importClass, exportUser } from "@/lib/api/export-import";
+import { EXPORT_IMPORT_DATA_UI_ENABLED } from "@/config/hiddenModules";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -1746,6 +1747,8 @@ export default function SchoolDetailPage() {
                   <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                     <h3 className="text-lg font-semibold">{t("classList")}</h3>
                     <div className="flex gap-2 flex-wrap">
+                      {EXPORT_IMPORT_DATA_UI_ENABLED && (
+                      <>
                       <ExportData
                         onExport={async () => {
                           try {
@@ -1795,6 +1798,8 @@ export default function SchoolDetailPage() {
                         accept={".csv,.xlsx"}
                         label="Nhập dữ liệu"
                       />
+                      </>
+                      )}
                       <Button onClick={handleAddClass}>
                         <Plus className="h-4 w-4 mr-2" />
                         {t("addClass")}
@@ -1879,6 +1884,7 @@ export default function SchoolDetailPage() {
                           <SelectItem value="false">Chưa đăng nhập</SelectItem>
                         </SelectContent>
                       </Select>
+                      {EXPORT_IMPORT_DATA_UI_ENABLED && (
                       <ExportData
                         onExport={async () => {
                           try {
@@ -1929,6 +1935,7 @@ export default function SchoolDetailPage() {
                         }}
                         label="Xuất dữ liệu"
                       />
+                      )}
                       <Button onClick={() => handleAddStudent()}>
                         <Plus className="h-4 w-4 mr-2" />
                         {t("addStudent")}

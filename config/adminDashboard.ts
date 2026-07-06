@@ -25,7 +25,7 @@ export const DASHBOARD_FILTERS = {
   year: true,
   month: true,
   role: false,
-  export: true,
+  export: false,
 } as const;
 
 /** Thẻ số tab Tổng quan */

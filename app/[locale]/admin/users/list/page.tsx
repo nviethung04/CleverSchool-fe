@@ -52,7 +52,7 @@ import { exportUser, importUser } from "@/lib/api/export-import";
 import { useQueryString } from "@/hooks/use-query-string";
 import { sortAlphabetGeneric, sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
 import { useAuth } from "@/lib/context/auth-context";
-import { HIDDEN_USER_LIST_TABS } from "@/config/hiddenModules";
+import { HIDDEN_USER_LIST_TABS, EXPORT_IMPORT_DATA_UI_ENABLED } from "@/config/hiddenModules";
 
 const USER_LIST_TABS = ["students", "teachers", "admins", "schools"] as const;
 const VISIBLE_USER_LIST_TABS = USER_LIST_TABS.filter(
@@ -474,6 +474,8 @@ export default function UserListPage() {
               </Button>
             </div>
           )}
+          {EXPORT_IMPORT_DATA_UI_ENABLED && (
+          <>
           <ExportData
             onExport={async () => {
               try {
@@ -531,6 +533,8 @@ export default function UserListPage() {
             accept={".csv,.xlsx"}
             label="Nhập dữ liệu"
           />
+          </>
+          )}
           <Button
             className="bg-blue-500 hover:bg-blue-600 w-full sm:w-auto flex-shrink-0"
             onClick={() => {
