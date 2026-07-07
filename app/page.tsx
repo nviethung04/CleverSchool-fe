@@ -97,7 +97,7 @@ export default function HomePage() {
       if (user.type === "student") {
         router.replace(`/${locale}/assignments`);
       } else if (user.type === "teacher") {
-        router.replace(`/${locale}/teacher/weekly-lessons`);
+        router.replace(`/${locale}/teacher/reports`);
       } else if (user.type === "admin") {
         router.replace(`/${locale}/admin/dashboard`);
       }

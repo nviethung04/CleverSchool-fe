@@ -83,7 +83,7 @@ export function LoginForm() {
       if (user.type === "student") {
         router.push(`/${locale}/assignments`);
       } else if (user.type === "teacher") {
-        router.push(`/${locale}/teacher/weekly-lessons`);
+        router.push(`/${locale}/teacher/reports`);
       } else if (user.type === "admin") {
         router.push(`/${locale}/admin/dashboard`);
       }

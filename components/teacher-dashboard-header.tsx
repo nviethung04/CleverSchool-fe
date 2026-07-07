@@ -146,11 +146,6 @@ export function TeacherDashboardHeader() {
 
   const navItems = filterNavByHref([
     {
-      href: `/${locale}/teacher/weekly-lessons`,
-      label: t("nav.home"),
-      icon: LucideGraduationCap,
-    },
-    {
       href: `/${locale}/teacher/reports`,
       label: t("nav.reports"),
       icon: ChartBar,

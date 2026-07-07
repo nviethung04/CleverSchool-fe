@@ -49,7 +49,7 @@ export const getDefaultRoute = (user: User | null): string => {
     case "admin":
       return `/${locale}/admin/dashboard`;
     case "teacher":
-      return `/${locale}/teacher/weekly-lessons`;
+      return `/${locale}/teacher/reports`;
     case "student":
       return `/${locale}/assignments`;
     default:
