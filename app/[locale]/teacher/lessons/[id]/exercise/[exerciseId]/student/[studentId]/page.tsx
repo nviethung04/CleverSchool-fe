@@ -802,8 +802,8 @@ export default function GradeExercisePage() {
           // Handle different question types based on new API structure
           switch (question.type) {
             case "multiple_choice":
-              if (question.answer_multiple_choice) {
-                const mc = question.answer_multiple_choice;
+              if (question.answer_multiple_choice_exercise) {
+                const mc = question.answer_multiple_choice_exercise;
                 return {
                   ...baseAnswer,
                   answer: {
@@ -824,8 +824,8 @@ export default function GradeExercisePage() {
               break;
 
             case "fill_in_blanks":
-              if (question.answer_fill_in_blank) {
-                const fib = question.answer_fill_in_blank;
+              if (question.answer_fill_in_blank_exercise) {
+                const fib = question.answer_fill_in_blank_exercise;
                 return {
                   ...baseAnswer,
                   answer: {
@@ -842,8 +842,8 @@ export default function GradeExercisePage() {
               break;
 
             case "drag_drop":
-              if (question.answer_position) {
-                const dd = question.answer_position;
+              if (question.answer_position_exercise) {
+                const dd = question.answer_position_exercise;
                 const correctCount =
                   dd.answers?.filter((a: any) => a.is_correct).length || 0;
                 const totalCount = dd.answers?.length || 0;
@@ -868,8 +868,8 @@ export default function GradeExercisePage() {
               break;
 
             case "ordering":
-              if (question.answer_position) {
-                const ord = question.answer_position;
+              if (question.answer_position_exercise) {
+                const ord = question.answer_position_exercise;
                 const correctCount =
                   ord.answers?.filter((a: any) => a.is_correct).length || 0;
                 const totalCount = ord.answers?.length || 0;
@@ -892,8 +892,8 @@ export default function GradeExercisePage() {
               break;
 
             case "category":
-              if (question.answer_group) {
-                const cat = question.answer_group;
+              if (question.answer_group_exercise) {
+                const cat = question.answer_group_exercise;
                 const groups: any = {};
                 let correctCount = 0;
                 let totalCount = 0;
@@ -923,8 +923,8 @@ export default function GradeExercisePage() {
               break;
 
             case "labeling":
-              if (question.answer_labeling) {
-                const lab = question.answer_labeling;
+              if (question.answer_labeling_exercise) {
+                const lab = question.answer_labeling_exercise;
                 const correctCount =
                   lab.answers?.filter((a: any) => a.is_correct).length || 0;
                 const totalCount = lab.answers?.length || 0;
@@ -942,8 +942,8 @@ export default function GradeExercisePage() {
               break;
 
             case "matching":
-              if (question.answer_matching) {
-                const mat = question.answer_matching;
+              if (question.answer_matching_exercise) {
+                const mat = question.answer_matching_exercise;
                 const correctCount =
                   mat.matches?.filter((m: any) => m.is_correct).length || 0;
                 const totalCount = mat.matches?.length || 0;
@@ -974,8 +974,8 @@ export default function GradeExercisePage() {
               break;
 
             case "writing":
-              if (question.answer_manual) {
-                const manual = question.answer_manual;
+              if (question.answer_manual_exercise) {
+                const manual = question.answer_manual_exercise;
                 return {
                   ...baseAnswer,
                   questionPoints: 10, // Default for subjective questions
@@ -991,8 +991,8 @@ export default function GradeExercisePage() {
               break;
 
             case "speaking":
-              if (question.answer_manual) {
-                const manual = question.answer_manual;
+              if (question.answer_manual_exercise) {
+                const manual = question.answer_manual_exercise;
                 return {
                   ...baseAnswer,
                   questionPoints: 10, // Default for subjective questions
