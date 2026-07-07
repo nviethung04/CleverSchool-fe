@@ -125,7 +125,6 @@ export function DashboardHeader() {
       label: t("nav.reports"),
       icon: BarChart3,
     },
-    { href: `/${locale}/ranking`, label: t("nav.ranking"), icon: Trophy },
     {
       href: `/${locale}/feedback`,
       label: t("nav.feedback"),
