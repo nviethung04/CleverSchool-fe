@@ -224,20 +224,6 @@ export function DashboardHeader() {
             </div>
             {/* Action Buttons - Minimalist */}
             <div className="flex items-center gap-3">
-              {/* Holiday Icon */}
-              <button
-                onClick={() => setHolidayPopupOpen(true)}
-                className="relative h-[55px] w-[55px] flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
-                aria-label="Holiday"
-              >
-                <Image
-                  src="/holiday/icon_2026.png"
-                  alt="Holiday"
-                  width={55}
-                  height={55}
-                  className="object-contain"
-                />
-              </button>
               {/* Total Star and Exp Display */}
               {user && (
                 <div className="hidden sm:flex items-center gap-3">
