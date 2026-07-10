@@ -858,6 +858,8 @@ export default function ExercisePage() {
     };
   }, []);
 
+  const pathname = usePathname();
+
   useEffect(() => {
     const handlePopState = (e: PopStateEvent) => {
       const confirmLeave = window.confirm(
