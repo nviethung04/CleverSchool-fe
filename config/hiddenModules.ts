@@ -45,9 +45,9 @@ export const SEMESTER_SCHEDULE_UI_ENABLED = false;
 
 /**
  * Tabs on /admin/users/list — slug: students | teachers | admins | schools
- * Role School (4) chưa có lọc dữ liệu theo trường — ẩn tab Quản lý trường.
+ * Role School (4): BE lọc users/schools/classes/courses theo school_id JWT.
  */
-export const HIDDEN_USER_LIST_TABS: string[] = ["schools"];
+export const HIDDEN_USER_LIST_TABS: string[] = [];
 
 /**
  * Tab / nút "Thảo luận" trên trang khóa học (HS + GV).

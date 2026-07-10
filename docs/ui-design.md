@@ -83,7 +83,7 @@ Component dùng chung: `fe/components/admin/admin-list-header.tsx`
 
 ## 6. Menu admin & module ẩn
 
-Menu sidebar: `fe/components/admin/admin-sidebar.tsx`, lọc bởi `filterSidebarItems` + `fe/config/hiddenModules.ts`.
+Menu sidebar: `fe/components/admin/admin-sidebar.tsx`, lọc bởi `filterSidebarItems` + `fe/config/hiddenModules.ts`. User **quản lý trường** (`role_id=4`, `isSchoolManager`) chỉ thấy Tổng quan, Người dùng, Trường, Khóa học — không có Chương trình / Học liệu / Cài đặt.
 
 Các module **ẩn khỏi menu** (vẫn vào được bằng URL): departments, contest, scorm, criteria-report, …
 

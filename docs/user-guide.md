@@ -90,9 +90,10 @@ Học kỳ dùng khi tạo khóa học và xếp **lịch bài học theo tuần
 
 | Bước | Đường dẫn |
 |------|-----------|
-| Danh sách | `/admin/users/list` — tab HS, GV, Admin (tab Quản lý trường ẩn — `hiddenModules.ts`) |
+| Danh sách | `/admin/users/list` — tab HS, GV, Admin, **Quản lý trường** (role School) |
 | Tạo GV | `/admin/users/list/create?role=2` |
 | Tạo HS | `/admin/users/list/create?role=3` |
+| Tạo QL trường | `/admin/users/list/create?role=4` — bắt buộc chọn **trường**; user đăng nhập chỉ thấy dữ liệu trường đó |
 
 **Cách 2 — Từ trang trường**
 

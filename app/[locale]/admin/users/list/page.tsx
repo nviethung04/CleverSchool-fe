@@ -52,6 +52,7 @@ import { exportUser, importUser } from "@/lib/api/export-import";
 import { useQueryString } from "@/hooks/use-query-string";
 import { sortAlphabetGeneric, sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
 import { useAuth } from "@/lib/context/auth-context";
+import { isSchoolManager } from "@/lib/auth/roles";
 import { HIDDEN_USER_LIST_TABS, EXPORT_IMPORT_DATA_UI_ENABLED } from "@/config/hiddenModules";
 
 const USER_LIST_TABS = ["students", "teachers", "admins", "schools"] as const;
@@ -425,7 +426,7 @@ export default function UserListPage() {
   useEffect(() => {
     if (
       schoolAutoSelectedRef.current ||
-      user?.sub_type !== "school" ||
+      !isSchoolManager(user) ||
       selectedTypeSchool !== "all" ||
       filterSchoolList.length === 0
     ) return;
@@ -435,7 +436,7 @@ export default function UserListPage() {
       schoolAutoSelectedRef.current = true;
       handleSelectTypeSchool(first.id.toString());
     }
-  }, [filterSchoolList, user?.sub_type, selectedTypeSchool]);
+  }, [filterSchoolList, user, selectedTypeSchool]);
 
   return (
     <div className="space-y-6 p-4 md:p-6">

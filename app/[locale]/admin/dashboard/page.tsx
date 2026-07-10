@@ -53,6 +53,7 @@ import {
 import { cn, sortAlphabetGeneric, sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/context/auth-context";
+import { isSchoolManager } from "@/lib/auth/roles";
 import {
   DASHBOARD_FILTERS,
   DASHBOARD_OVERVIEW_CARDS,
@@ -358,7 +359,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (
       schoolAutoSelectedRef.current ||
-      user?.sub_type !== "school" ||
+      !isSchoolManager(user) ||
       filters.school_id !== "all-school" ||
       schools.length <= 1
     ) return;
@@ -368,7 +369,7 @@ export default function AdminDashboard() {
       schoolAutoSelectedRef.current = true;
       handleFilterChange("school_id", first.value);
     }
-  }, [schools, user?.sub_type, filters.school_id]);
+  }, [schools, user, filters.school_id]);
 
   // Component SearchableCombobox
   const SearchableCombobox = ({

@@ -27,6 +27,7 @@ import {
 } from "@/lib/api/assessment";
 import { sortAlphabetGeneric } from "@/lib/utils";
 import { useAuth } from "@/lib/context/auth-context";
+import { isSchoolManager } from "@/lib/auth/roles";
 
 interface School {
   id: string;
@@ -583,7 +584,7 @@ export default function AssessmentSchoolReportTab() {
   useEffect(() => {
     if (
       schoolAutoSelectedRef.current ||
-      user?.sub_type !== "school" ||
+      !isSchoolManager(user) ||
       schools.length === 0
     ) return;
 
@@ -593,7 +594,7 @@ export default function AssessmentSchoolReportTab() {
       schoolAutoSelectedRef.current = true;
       setSelectedSchoolIds([first.id]);
     }
-  }, [schools, user?.sub_type]);
+  }, [schools, user]);
 
   // Initial load
   useEffect(() => {

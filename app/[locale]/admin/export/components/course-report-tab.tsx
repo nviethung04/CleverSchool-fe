@@ -51,6 +51,7 @@ import {
 import { useTranslations } from "next-intl";
 import { sortAlphabetGeneric, sortByNumberAndAlphabetFromSecondGeneric } from "@/lib/utils";
 import { useAuth } from "@/lib/context/auth-context";
+import { isSchoolManager } from "@/lib/auth/roles";
 
 interface Week {
   label: string;
@@ -350,7 +351,7 @@ export default function CourseReportTab({
   useEffect(() => {
     if (
       schoolAutoSelectedRef.current ||
-      user?.sub_type !== "school" ||
+      !isSchoolManager(user) ||
       selectedSchoolId !== "all" ||
       schools.length === 0
     ) return;
@@ -361,7 +362,7 @@ export default function CourseReportTab({
       schoolAutoSelectedRef.current = true;
       handleSchoolChange(first.id);
     }
-  }, [schools, user?.sub_type, selectedSchoolId]);
+  }, [schools, user, selectedSchoolId]);
 
   return (
     <>

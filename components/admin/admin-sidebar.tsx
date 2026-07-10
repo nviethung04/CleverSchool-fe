@@ -63,6 +63,7 @@ import { useTranslations } from "next-intl";
 import { filterSidebarItems } from "@/lib/nav/filter-nav";
 import NotificationPermissionButton from "../notification-permission-button";
 import { useMounted } from "@/hooks/use-mounted";
+import { isSchoolManager } from "@/lib/auth/roles";
 
 type SidebarItem = {
   icon: React.ReactNode;
@@ -82,6 +83,7 @@ export function AdminSidebar() {
   const params = useParams();
   const locale = params?.locale || "vi"; // Default to 'vi' if no locale
   const t = useTranslations("sidebar");
+  const schoolManager = isSchoolManager(authUser);
 
   const sidebarItems: SidebarItem[] = [
     {
@@ -104,65 +106,74 @@ export function AdminSidebar() {
       label: t("schoolManagement"),
       href: `/${locale}/admin/schools`,
     },
-    {
-      icon: <Clipboard className="h-5 w-5" />,
-      label: t("subjectManagement"),
-      href: `/${locale}/admin/subjects`,
-    },
-    {
-      icon: <FileStack className="h-5 w-5" />,
-      label: t("programManagement"),
-      href: `/${locale}/manage/programs`,
-    },
+    ...(schoolManager
+      ? []
+      : [
+        {
+          icon: <Clipboard className="h-5 w-5" />,
+          label: t("subjectManagement"),
+          href: `/${locale}/admin/subjects`,
+        },
+        {
+          icon: <FileStack className="h-5 w-5" />,
+          label: t("programManagement"),
+          href: `/${locale}/manage/programs`,
+        },
+      ]),
     {
       icon: <BookOpen className="h-5 w-5" />,
       label: t("courseManagement"),
       href: `/${locale}/manage/courses`,
     },
-    {
-      icon: <FileText className="h-5 w-5" />,
-      label: t("learningMaterials"),
-      href: `/${locale}/manage/lessons`,
-      submenu: [
+    ...(schoolManager
+      ? []
+      : [
         {
           icon: <FileText className="h-5 w-5" />,
-          label: t("lessonManagement"),
+          label: t("learningMaterials"),
           href: `/${locale}/manage/lessons`,
+          submenu: [
+            {
+              icon: <FileText className="h-5 w-5" />,
+              label: t("lessonManagement"),
+              href: `/${locale}/manage/lessons`,
+            },
+            {
+              icon: <BookOpenCheck className="h-5 w-5" />,
+              label: t("assignmentManagement"),
+              href: `/${locale}/admin/assignments`,
+            },
+            {
+              icon: <FileStack className="h-5 w-5" />,
+              label: t("questionBank"),
+              href: `/${locale}/manage/question-bank`,
+            },
+            {
+              icon: <Presentation className="h-5 w-5" />,
+              label: t("lectureManagement"),
+              href: `/${locale}/admin/lecture-bank`,
+            },
+            {
+              icon: <BookMarked className="h-5 w-5" />,
+              label: t("flashcardManagement"),
+              href: `/${locale}/admin/flashcard`,
+            },
+            {
+              icon: <FileText className="h-5 w-5" />,
+              label: t("h5p"),
+              href: `/${locale}/admin/h5p`,
+            },
+            {
+              icon: <HelpCircle className="h-5 w-5" />,
+              label: t("mediaManagement"),
+              href: `/${locale}/admin/images`,
+            },
+          ],
         },
-        {
-          icon: <BookOpenCheck className="h-5 w-5" />,
-          label: t("assignmentManagement"),
-          href: `/${locale}/admin/assignments`,
-        },
-        {
-          icon: <FileStack className="h-5 w-5" />,
-          label: t("questionBank"),
-          href: `/${locale}/manage/question-bank`,
-        },
-        {
-          icon: <Presentation className="h-5 w-5" />,
-          label: t("lectureManagement"),
-          href: `/${locale}/admin/lecture-bank`,
-        },
-        {
-          icon: <BookMarked className="h-5 w-5" />,
-          label: t("flashcardManagement"),
-          href: `/${locale}/admin/flashcard`,
-        },
-        {
-          icon: <FileText className="h-5 w-5" />,
-          label: t("h5p"),
-          href: `/${locale}/admin/h5p`,
-        },
-        {
-          icon: <HelpCircle className="h-5 w-5" />,
-          label: t("mediaManagement"),
-          href: `/${locale}/admin/images`,
-        },
-      ],
-    },
-    ...(authUser?.sub_type !== "school"
-      ? [
+      ]),
+    ...(schoolManager
+      ? []
+      : [
         {
           icon: <Star className="h-5 w-5" />,
           label: t("criteriaValuate"),
@@ -190,17 +201,16 @@ export function AdminSidebar() {
           label: t("settings"),
           href: `/${locale}/admin/settings`,
         },
-      ]
-      : []),
-    ...(authUser?.sub_type !== "school"
-      ? [
+      ]),
+    ...(schoolManager
+      ? []
+      : [
         {
           icon: <MessageSquare className="h-5 w-5" />,
           label: t("feedback"),
           href: `/${locale}/admin/feedback`,
         },
-      ]
-      : []),
+      ]),
     {
       icon: <Bell className="h-5 w-5" />,
       label: t("notices"),
