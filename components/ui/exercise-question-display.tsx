@@ -3,7 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Mic, PenTool } from "lucide-react";
 import { TiptapMathViewer } from "@/components/question-editor/tiptap-math-viewer";
-import MediaContent, { MediaType } from "@/components/ui/media-content";
+import MediaContent, {
+  RenderAnswerOptionContent,
+  isMcOptionCorrect,
+  isMcOptionSelected,
+} from "@/components/ui/media-content";
 
 export interface ExerciseQuestionDisplayProps {
   question: any;
@@ -25,14 +29,19 @@ const  ExerciseQuestionDisplay: React.FC<ExerciseQuestionDisplayProps> = ({
               <p className="text-sm font-medium text-gray-600">Các lựa chọn:</p>
               <div className="grid grid-cols-2 gap-3">
                 {question.options?.map((option: any, idx: number) => {
-                  const isSelected =
-                    question.studentAnswer.selectedAnswers?.includes(
-                      option.content
-                    );
-                  const isCorrect =
-                    question.studentAnswer.correctAnswers?.includes(
-                      option.content
-                    );
+                  const isSelected = isMcOptionSelected(
+                    question.studentAnswer,
+                    option
+                  );
+                  const isCorrect = isMcOptionCorrect(
+                    {
+                      correctAnswerIds:
+                        question.studentAnswer.correctAnswerIds,
+                      correctAnswers: question.studentAnswer.correctAnswers,
+                      correctFileUrls: question.studentAnswer.correctFileUrls,
+                    },
+                    option
+                  );
                   let bgColor = "bg-white border-gray-300";
                   if (isSelected && isCorrect) {
                     bgColor = "bg-green-200 border-green-400 font-medium";
@@ -49,16 +58,7 @@ const  ExerciseQuestionDisplay: React.FC<ExerciseQuestionDisplayProps> = ({
                       <span className="font-medium">
                         {String.fromCharCode(65 + idx)}.
                       </span>
-                      <div className="flex items-center space-x-2 flex-1">
-                        {option.content && <span>{option.content}</span>}
-                        {option.file_url && (
-                          <img
-                            src={option.file_url || "/placeholder.svg"}
-                            alt="Answer option"
-                            className="max-h-8 max-w-16 object-contain"
-                          />
-                        )}
-                      </div>
+                      <RenderAnswerOptionContent option={option} />
                       {isSelected && (
                         <Badge variant="outline" className="ml-auto">
                           {isCorrect === true ? "✓" : "✗"}
@@ -381,31 +381,9 @@ const  ExerciseQuestionDisplay: React.FC<ExerciseQuestionDisplayProps> = ({
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="flex items-center space-x-2">
-                        {match.firstItem.file_url ? (
-                          <img
-                            src={match.firstItem.file_url || "/placeholder.svg"}
-                            alt="First item"
-                            className="max-h-12 max-w-20 object-contain"
-                          />
-                        ) : (
-                          <span>{match.firstItem.content}</span>
-                        )}
-                      </div>
+                      <RenderAnswerOptionContent option={match.firstItem} />
                       <span className="text-gray-400">↔</span>
-                      <div className="flex items-center space-x-2">
-                        {match.secondItem.file_url ? (
-                          <img
-                            src={
-                              match.secondItem.file_url || "/placeholder.svg"
-                            }
-                            alt="Second item"
-                            className="max-h-12 max-w-20 object-contain"
-                          />
-                        ) : (
-                          <span>{match.secondItem.content}</span>
-                        )}
-                      </div>
+                      <RenderAnswerOptionContent option={match.secondItem} />
                     </div>
                     <Badge
                       variant={

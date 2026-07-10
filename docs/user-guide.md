@@ -237,6 +237,7 @@ Body: `{ lesson_id, is_assigned, course_id? }`
 | Chấm / xem bài kiểm tra từng HS | `/teacher/lessons/[id]/exam/[examId]/student/[studentId]?course_id=...` |
 | Danh sách HS — luyện tập | `/teacher/lessons/[id]/exercise/[exerciseId]?course_id=...` — cột **Reset lượt làm** (HS đã nộp) |
 | Chấm bài tập HS (tự luận / upload) | `/teacher/lessons/[id]/homework/[homeworkId]/student/[studentId]` |
+| Chấm / xem luyện tập từng HS | `/teacher/lessons/[id]/exercise/[exerciseId]/student/[studentId]?course_id=...` — trắc nghiệm (kể cả đáp án **audio** / nghe) hiển thị qua `convertApiDataToDisplay` |
 | Báo cáo / theo dõi | `/teacher/reports` — tab **Bài tập về nhà** (BTVN), **Bài luyện tập** (exercise), **Bài kiểm tra** (exam). Tab *Kiểm tra và đánh giá* / *Xuất mẫu* ẩn — `fe/config/hiddenModules.ts` |
 
 Trắc nghiệm: hệ thống **chấm tự động** sau khi HS nộp. GV mở trang chấm để **xem từng câu** (`data.questions`) và chấm tay câu Writing/Speaking (`data.manual_answers`, nếu có).

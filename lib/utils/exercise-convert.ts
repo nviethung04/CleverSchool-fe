@@ -1,5 +1,52 @@
 import { ExerciseQuestion, ExerciseOverview } from "@/lib/api/exercises";
 
+function normalizeMcExerciseFields(mc: Record<string, any> | undefined) {
+  if (!mc) return mc;
+  return {
+    ...mc,
+    answer_ids: mc.answer_ids ?? mc.answerIds ?? [],
+    answers: mc.answers ?? [],
+    answer_file_urls: mc.answer_file_urls ?? mc.answerFileUrls ?? [],
+    answer_kinds: mc.answer_kinds ?? mc.answerKinds ?? [],
+    true_answer_ids: mc.true_answer_ids ?? mc.trueAnswerIds ?? [],
+    true_answers: mc.true_answers ?? mc.trueAnswers ?? [],
+    true_answer_file_urls:
+      mc.true_answer_file_urls ?? mc.trueAnswerFileUrls ?? [],
+    true_answer_kinds: mc.true_answer_kinds ?? mc.trueAnswerKinds ?? [],
+    all_answer_ids: mc.all_answer_ids ?? mc.allAnswerIds ?? [],
+    all_answer_contents: mc.all_answer_contents ?? mc.allAnswerContents ?? [],
+    all_answer_file_urls:
+      mc.all_answer_file_urls ?? mc.allAnswerFileUrls ?? [],
+    all_answer_kinds: mc.all_answer_kinds ?? mc.allAnswerKinds ?? [],
+    is_all_correct: mc.is_all_correct ?? mc.isAllCorrect,
+    score: mc.score,
+  };
+}
+
+/** Chuẩn hóa field proto JSON (snake_case hoặc camelCase oneof). */
+export function normalizeExerciseQuestion(raw: Record<string, unknown>): ExerciseQuestion {
+  const q = raw as Record<string, any>;
+  const mc =
+    q.answer_multiple_choice_exercise ?? q.answerMultipleChoiceExercise;
+  return {
+    ...q,
+    content: q.content ?? "",
+    file_url: q.file_url ?? q.fileUrl ?? "",
+    question_kind: q.question_kind ?? q.questionKind ?? "",
+    answer_multiple_choice_exercise: normalizeMcExerciseFields(mc),
+    answer_fill_in_blank_exercise:
+      q.answer_fill_in_blank_exercise ?? q.answerFillInBlankExercise,
+    answer_position_exercise:
+      q.answer_position_exercise ?? q.answerPositionExercise,
+    answer_matching_exercise:
+      q.answer_matching_exercise ?? q.answerMatchingExercise,
+    answer_labeling_exercise:
+      q.answer_labeling_exercise ?? q.answerLabelingExercise,
+    answer_group_exercise: q.answer_group_exercise ?? q.answerGroupExercise,
+    answer_manual_exercise: q.answer_manual_exercise ?? q.answerManualExercise,
+  } as ExerciseQuestion;
+}
+
 export interface DisplayQuestion {
   questionId: string;
   questionType: string;
@@ -38,7 +85,10 @@ export function convertApiDataToDisplay(
   exerciseId: string,
   options?: { includeFeedback?: boolean; includePercentage?: boolean }
 ): DisplayExerciseResult {
-  const answers: DisplayQuestion[] = apiData.map((question) => {
+  const answers: DisplayQuestion[] = apiData.map((raw) => {
+    const question = normalizeExerciseQuestion(
+      raw as unknown as Record<string, unknown>
+    );
     let studentAnswer: any = {};
     let options: any[] = [];
     let isCorrect = false;
@@ -50,12 +100,17 @@ export function convertApiDataToDisplay(
         if (question.answer_multiple_choice_exercise) {
           const mc = question.answer_multiple_choice_exercise;
           studentAnswer = {
+            selectedAnswerIds: mc.answer_ids || [],
             selectedAnswers: mc.answers || [],
+            selectedFileUrls: mc.answer_file_urls || [],
+            correctAnswerIds: mc.true_answer_ids || [],
             correctAnswers: mc.true_answers || [],
+            correctFileUrls: mc.true_answer_file_urls || [],
             is_all_correct: mc.is_all_correct,
           };
           options =
             mc.all_answer_contents?.map((content: string, idx: number) => ({
+              id: mc.all_answer_ids?.[idx],
               content,
               file_url: mc.all_answer_file_urls?.[idx] || "",
               kind: mc.all_answer_kinds?.[idx] || "text",

@@ -29,6 +29,15 @@ import {
   type ExerciseOverview,
   postExerciseComment,
 } from "@/lib/api/exercises";
+import {
+  convertApiDataToDisplay,
+  normalizeExerciseQuestion,
+} from "@/lib/utils/exercise-convert";
+import {
+  RenderAnswerOptionContent,
+  isMcOptionCorrect,
+  isMcOptionSelected,
+} from "@/components/ui/media-content";
 import { toast } from "sonner";
 import { useTypedTranslations } from "@/lib/i18n/client";
 import {
@@ -139,12 +148,8 @@ const QuestionAnswerDisplay = ({
               <p className="text-sm font-medium text-gray-600">Các lựa chọn:</p>
               <div className="grid grid-cols-2 gap-3">
                 {answer.options?.map((option: any, idx: number) => {
-                  const isSelected = answer.answer.selectedAnswers?.includes(
-                    option.content
-                  );
-                  const isCorrect = answer.answer.correctAnswers?.includes(
-                    option.content
-                  );
+                  const isSelected = isMcOptionSelected(answer.answer, option);
+                  const isCorrect = isMcOptionCorrect(answer.answer, option);
 
                   let bgColor = "bg-white border-gray-300";
                   if (isSelected && isCorrect) {
@@ -163,17 +168,7 @@ const QuestionAnswerDisplay = ({
                       <span className="font-medium">
                         {String.fromCharCode(65 + idx)}.
                       </span>
-                      <div className="flex items-center space-x-2 flex-1">
-                        {/* Show both content and image if available */}
-                        {option.content && <span>{option.content}</span>}
-                        {option.file_url && (
-                          <img
-                            src={option.file_url || "/placeholder.svg"}
-                            alt={t("answerOption")}
-                            className="max-h-8 max-w-16 object-contain"
-                          />
-                        )}
-                      </div>
+                      <RenderAnswerOptionContent option={option} />
                       {isSelected && (
                         <Badge variant="outline" className="ml-auto">
                           {isCorrect ? "✓" : "✗"}
@@ -484,31 +479,9 @@ const QuestionAnswerDisplay = ({
                   }`}
                 >
                   <div className="flex items-center space-x-3">
-                    {/* First Item */}
-                    <div className="flex items-center space-x-2">
-                      {match.firstItem.file_url ? (
-                        <img
-                          src={match.firstItem.file_url || "/placeholder.svg"}
-                          alt="First item"
-                          className="max-h-12 max-w-20 object-contain"
-                        />
-                      ) : (
-                        <span>{match.firstItem.content}</span>
-                      )}
-                    </div>
+                    <RenderAnswerOptionContent option={match.firstItem} />
                     <span className="text-gray-400">↔</span>
-                    {/* Second Item */}
-                    <div className="flex items-center space-x-2">
-                      {match.secondItem.file_url ? (
-                        <img
-                          src={match.secondItem.file_url || "/placeholder.svg"}
-                          alt="Second item"
-                          className="max-h-12 max-w-20 object-contain"
-                        />
-                      ) : (
-                        <span>{match.secondItem.content}</span>
-                      )}
-                    </div>
+                    <RenderAnswerOptionContent option={match.secondItem} />
                   </div>
                   <Badge
                     variant={match.isCorrect ? "default" : "destructive"}
@@ -775,245 +748,29 @@ export default function GradeExercisePage() {
         response.data.questions &&
         response.data.questions.length > 0
       ) {
-        const questions = response.data.questions;
         const overview = response.data.overview;
-        setQuestions(questions);
+        const normalizedQuestions = response.data.questions.map((q: any) =>
+          normalizeExerciseQuestion(q as Record<string, unknown>)
+        );
+        setQuestions(normalizedQuestions);
 
-        // Convert API data to UI format
-        const convertedAnswers = questions.map((question: any) => {
-          const baseAnswer = {
-            questionId: question.id,
-            questionType: question.type,
-            questionText: question.content,
-            questionMedia:
-              question.file_url && question.question_kind
-                ? {
-                    type: question.question_kind as "image" | "video" | "audio",
-                    url: question.file_url,
-                  }
-                : undefined,
-            questionPoints: 10, // Default points, will be updated based on question type
-            answer: {},
-            score: undefined,
-            isCorrect: undefined,
-            is_all_correct: undefined, // Thêm trường này vào StudentAnswer
-          };
+        const display = convertApiDataToDisplay(
+          normalizedQuestions,
+          overview,
+          exerciseId
+        );
 
-          // Handle different question types based on new API structure
-          switch (question.type) {
-            case "multiple_choice":
-              if (question.answer_multiple_choice_exercise) {
-                const mc = question.answer_multiple_choice_exercise;
-                return {
-                  ...baseAnswer,
-                  answer: {
-                    selectedAnswers: mc.answers || [],
-                    correctAnswers: mc.true_answers || [],
-                  },
-                  options:
-                    mc.all_answer_contents?.map(
-                      (content: string, idx: number) => ({
-                        content,
-                        file_url: mc.all_answer_file_urls?.[idx] || "",
-                        kind: mc.all_answer_kinds?.[idx] || "text",
-                      })
-                    ) || [],
-                  is_all_correct: mc.is_all_correct, // Sử dụng is_correct cho is_all_correct
-                };
-              }
-              break;
-
-            case "fill_in_blanks":
-              if (question.answer_fill_in_blank_exercise) {
-                const fib = question.answer_fill_in_blank_exercise;
-                return {
-                  ...baseAnswer,
-                  answer: {
-                    blanks:
-                      fib.answers?.map((a: any) => ({
-                        answer: a.answer,
-                        correctAnswer: a.true_answer,
-                        isCorrect: a.is_correct,
-                      })) || [],
-                  },
-                  is_all_correct: fib.is_all_correct,
-                };
-              }
-              break;
-
-            case "drag_drop":
-              if (question.answer_position_exercise) {
-                const dd = question.answer_position_exercise;
-                const correctCount =
-                  dd.answers?.filter((a: any) => a.is_correct).length || 0;
-                const totalCount = dd.answers?.length || 0;
-
-                return {
-                  ...baseAnswer,
-                  answer: {
-                    positions:
-                      dd.answers?.map((a: any) => ({
-                        position: a.sort_position,
-                        content: a.answer_content,
-                        file_url: a.answer_file_url,
-                        correctAnswer: a.true_answer_content,
-                        isCorrect: a.is_correct,
-                      })) || [],
-                    correctCount,
-                    totalCount,
-                  },
-                  is_all_correct: dd.is_all_correct,
-                };
-              }
-              break;
-
-            case "ordering":
-              if (question.answer_position_exercise) {
-                const ord = question.answer_position_exercise;
-                const correctCount =
-                  ord.answers?.filter((a: any) => a.is_correct).length || 0;
-                const totalCount = ord.answers?.length || 0;
-
-                return {
-                  ...baseAnswer,
-                  answer: {
-                    positions:
-                      ord.answers?.map((a: any) => ({
-                        position: a.sort_position,
-                        content: a.answer_content,
-                        isCorrect: a.is_correct,
-                      })) || [],
-                    correctCount,
-                    totalCount,
-                  },
-                  is_all_correct: ord.is_all_correct,
-                };
-              }
-              break;
-
-            case "category":
-              if (question.answer_group_exercise) {
-                const cat = question.answer_group_exercise;
-                const groups: any = {};
-                let correctCount = 0;
-                let totalCount = 0;
-
-                cat.groups?.forEach((g: any) => {
-                  if (!groups[g.group_content]) {
-                    groups[g.group_content] = [];
-                  }
-                  groups[g.group_content].push({
-                    content: g.answer_content,
-                    isCorrect: g.is_correct,
-                  });
-                  totalCount++;
-                  if (g.is_correct) correctCount++;
-                });
-
-                return {
-                  ...baseAnswer,
-                  answer: {
-                    groups,
-                    correctCount,
-                    totalCount,
-                  },
-                  is_all_correct: cat.is_all_correct,
-                };
-              }
-              break;
-
-            case "labeling":
-              if (question.answer_labeling_exercise) {
-                const lab = question.answer_labeling_exercise;
-                const correctCount =
-                  lab.answers?.filter((a: any) => a.is_correct).length || 0;
-                const totalCount = lab.answers?.length || 0;
-
-                return {
-                  ...baseAnswer,
-                  answer: {
-                    labels: lab.answers || [],
-                    correctCount,
-                    totalCount,
-                  },
-                  is_all_correct: lab.is_all_correct,
-                };
-              }
-              break;
-
-            case "matching":
-              if (question.answer_matching_exercise) {
-                const mat = question.answer_matching_exercise;
-                const correctCount =
-                  mat.matches?.filter((m: any) => m.is_correct).length || 0;
-                const totalCount = mat.matches?.length || 0;
-
-                return {
-                  ...baseAnswer,
-                  answer: {
-                    matches:
-                      mat.matches?.map((m: any) => ({
-                        firstItem: {
-                          content: m.first_item_content,
-                          file_url: m.first_item_file_url,
-                          kind: m.first_item_kind,
-                        },
-                        secondItem: {
-                          content: m.second_item_content,
-                          file_url: m.second_item_file_url,
-                          kind: m.second_item_kind,
-                        },
-                        isCorrect: m.is_correct,
-                      })) || [],
-                    correctCount,
-                    totalCount,
-                  },
-                  is_all_correct: mat.is_all_correct,
-                };
-              }
-              break;
-
-            case "writing":
-              if (question.answer_manual_exercise) {
-                const manual = question.answer_manual_exercise;
-                return {
-                  ...baseAnswer,
-                  questionPoints: 10, // Default for subjective questions
-                  answer: {
-                    text: manual.answer || manual.answer_text || "",
-                    fileUrl: manual.answer_file_url || "",
-                    score: manual.score || 0,
-                    isScored: manual.is_scored || false,
-                  },
-                  score: manual.is_scored ? manual.score : undefined,
-                };
-              }
-              break;
-
-            case "speaking":
-              if (question.answer_manual_exercise) {
-                const manual = question.answer_manual_exercise;
-                return {
-                  ...baseAnswer,
-                  questionPoints: 10, // Default for subjective questions
-                  answer: {
-                    text: manual.answer || manual.answer_text || "",
-                    fileUrl: manual.answer_file_url || "",
-                    duration: 120, // Default duration
-                    score: manual.score || 0,
-                    isScored: manual.is_scored || false,
-                  },
-                  score: manual.is_scored ? manual.score : undefined,
-                };
-              }
-              break;
-
-            default:
-              return baseAnswer;
-          }
-
-          return baseAnswer;
-        });
+        const convertedAnswers: StudentAnswer[] = display.answers.map((a) => ({
+          questionId: a.questionId,
+          questionType: a.questionType,
+          questionText: a.questionText,
+          questionMedia: a.questionMedia,
+          questionPoints: a.questionPoints,
+          answer: a.studentAnswer,
+          options: a.options,
+          score: a.score,
+          is_all_correct: a.is_all_correct,
+        }));
 
         console.log("Converted answers:", convertedAnswers);
 
@@ -1029,7 +786,7 @@ export default function GradeExercisePage() {
             ? formatSubmittedAt(overview.submitted_at)
             : new Date().toISOString(),
           status: "submitted" as const,
-          totalQuestions: overview?.total_questions || questions.length,
+          totalQuestions: overview?.total_questions || normalizedQuestions.length,
           maxScore: 100, // Will be calculated properly later
           timeSpent: overview?.duration
             ? Number.parseInt(overview.duration)
