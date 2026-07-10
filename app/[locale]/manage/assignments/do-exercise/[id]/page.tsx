@@ -31,7 +31,7 @@ import { MultipleChoiceQuestion } from "../../components/questions/multiple-choi
 import { SpeakingQuestion } from "../../components/questions/speaking-question";
 import { WritingQuestion } from "../../components/questions/writing-question";
 import { OrderingQuestion } from "../../components/questions/ordering-question";
-import { toast } from "sonner";
+import { useToast } from "@/components/ui/use-toast";
 
 function isStudentDoExerciseRoute(pathname: string): boolean {
   return (
@@ -44,6 +44,7 @@ function isStudentDoExerciseRoute(pathname: string): boolean {
 
 export default function ExercisePage() {
   const { user, isLoading: authLoading } = useAuth();
+  const { toast } = useToast();
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -110,6 +111,7 @@ export default function ExercisePage() {
 
   // State để kiểm soát popup xác nhận nộp bài
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Prevent scrolling on body
   useEffect(() => {
@@ -129,12 +131,14 @@ export default function ExercisePage() {
 
     const forStudent =
       isStudentDoExerciseRoute(pathname) || user?.type === "student";
+    const courseIdFromUrl = searchParams.get("courseId");
 
     const loadExerciseAndQuestions = async () => {
       try {
         setIsLoading(true);
         const exerciseData = await getExerciseDetail(exerciseId, {
           forStudent,
+          courseId: courseIdFromUrl ?? undefined,
         });
         setExerciseDetail(exerciseData);
         setExerciseName(exerciseData?.name || searchParams.get("name") || "");
@@ -177,6 +181,11 @@ export default function ExercisePage() {
 
   // Submit exercise logic (bulk)
   const handleSubmitExercise = useCallback(async () => {
+    if (isSubmitting) return;
+
+    const isStudentSession =
+      isStudentDoExerciseRoute(pathname) || user?.type === "student";
+
     // Calculate elapsed time in seconds
     const elapsedTimeInSeconds =
       originalTimeLimit && timeLeft !== null ? originalTimeLimit - timeLeft : 0;
@@ -390,14 +399,27 @@ export default function ExercisePage() {
     const resolvedLessonId =
       lessonId ||
       searchParams.get("lessonId") ||
-      (exerciseDetail?.lesson_id != null
+      (exerciseDetail?.lesson_id != null &&
+      String(exerciseDetail.lesson_id) !== "0"
         ? String(exerciseDetail.lesson_id)
         : null);
 
-    if (user?.type === "student" && !resolvedLessonId) {
-      toast.error(
-        "Không thể nộp bài: thiếu mã bài học. Vui lòng quay lại tab Bài tập và bấm Làm bài lại."
-      );
+    if (isStudentSession && !resolvedLessonId) {
+      toast({
+        variant: "destructive",
+        title: "Không thể nộp bài",
+        description:
+          "Thiếu mã bài học. Vui lòng quay lại tab Bài tập và bấm Làm bài lại.",
+      });
+      return;
+    }
+
+    if (list_answers.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Không thể nộp bài",
+        description: "Chưa tải được câu hỏi hoặc bài tập không có câu hỏi.",
+      });
       return;
     }
 
@@ -413,6 +435,7 @@ export default function ExercisePage() {
     console.log("Elapsed time (seconds):", elapsedTimeInSeconds);
 
     try {
+      setIsSubmitting(true);
       const response = await saveScoreExerciseBulk(requestData);
 
       // Store the exercise result data in localStorage for the result page
@@ -431,7 +454,13 @@ export default function ExercisePage() {
       }, 200);
     } catch (error) {
       console.error("Error saving exercise (bulk):", error);
-      toast.error("Nộp bài thất bại. Vui lòng thử lại.");
+      toast({
+        variant: "destructive",
+        title: "Nộp bài thất bại",
+        description: "Vui lòng thử lại.",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   }, [
     questions,
@@ -452,6 +481,9 @@ export default function ExercisePage() {
     searchParams,
     lessonId,
     exerciseDetail,
+    pathname,
+    isSubmitting,
+    toast,
   ]);
 
   // Function để hiển thị popup xác nhận
@@ -462,7 +494,7 @@ export default function ExercisePage() {
   // Function để xử lý khi user xác nhận nộp bài
   const handleConfirmSubmit = useCallback(() => {
     setShowConfirmDialog(false);
-    handleSubmitExercise();
+    void handleSubmitExercise();
   }, [handleSubmitExercise]);
 
   // Function để xử lý khi user hủy nộp bài
@@ -926,10 +958,12 @@ export default function ExercisePage() {
                   No
                 </button>
                 <button
+                  type="button"
                   onClick={handleConfirmSubmit}
-                  className="flex-1 bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-all hover:bg-green-700"
+                  disabled={isSubmitting}
+                  className="flex-1 bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-all hover:bg-green-700 disabled:opacity-60"
                 >
-                  Yes
+                  {isSubmitting ? "Submitting..." : "Yes"}
                 </button>
               </div>
             </div>

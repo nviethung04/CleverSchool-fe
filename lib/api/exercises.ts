@@ -493,7 +493,7 @@ export async function getExercisesList(params?: {
 
 export async function getExerciseDetail(
   id: string | number,
-  options?: { forStudent?: boolean }
+  options?: { forStudent?: boolean; courseId?: string | number }
 ): Promise<Exercise> {
   try {
     console.log("Fetching exercise detail for ID:", id);
@@ -506,6 +506,10 @@ export async function getExerciseDetail(
       headers: {
         "ngrok-skip-browser-warning": "true",
       },
+      params:
+        options?.forStudent && options.courseId != null
+          ? { course_id: options.courseId }
+          : undefined,
     });
     const data = response.data as SingleExerciseResponse;
 
