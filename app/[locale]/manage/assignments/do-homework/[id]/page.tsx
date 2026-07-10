@@ -737,9 +737,11 @@ export default function HomeworkPage() {
 
   const handleAnswerUpdate = useCallback(
     (answer: any) => {
+      const key = answer?.questionId ?? currentQuestion?.id;
+      if (!key) return;
       setAnswers((prev) => ({
         ...prev,
-        [currentQuestion?.id || ""]: answer,
+        [key]: answer,
       }));
     },
     [currentQuestion?.id]

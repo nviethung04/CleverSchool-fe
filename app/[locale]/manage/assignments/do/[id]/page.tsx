@@ -7,7 +7,7 @@ import {
   usePathname,
   useSearchParams,
 } from "next/navigation";
-import { getQuestions, uploadFile } from "@/lib/api/questions";
+import { getQuestions, uploadFile, extractUploadFileUrl } from "@/lib/api/questions";
 import {
   GetExamDetail,
   saveScoreExamBulk,
@@ -320,17 +320,31 @@ export default function ExamPage() {
           },
         });
       } else if (q.type === "speaking") {
-        const answer = speakingAnswers[q.id];
+        let answer = speakingAnswers[q.id];
+        if (answer?.mediaBlob && !answer?.fileUrl) {
+          try {
+            const file = new File([answer.mediaBlob], "recording.wav", {
+              type: "audio/wav",
+            });
+            const uploadRes = await uploadFile(file, "speaking");
+            const uploadedUrl = extractUploadFileUrl(uploadRes);
+            if (uploadedUrl) {
+              answer = { ...answer, fileUrl: uploadedUrl };
+            }
+          } catch (uploadErr) {
+            console.error("Failed to upload speaking recording on submit:", uploadErr);
+          }
+        }
+
         const data: any = {};
 
-        // Nếu có text answer thì thêm vào
         if (answer?.text && answer.text.trim()) {
           data.answer = answer.text.trim();
         }
 
-        // Nếu có file URL thì thêm vào
-        if (answer?.fileUrl) {
-          data.file_url = answer.fileUrl;
+        const fileUrl = answer?.fileUrl?.trim();
+        if (fileUrl) {
+          data.file_url = fileUrl;
         }
 
         list_answers.push({
@@ -557,22 +571,20 @@ export default function ExamPage() {
   );
 
   // Xử lý khi user cập nhật đáp án speaking
-  const handleSpeakingUpdate = useCallback(
-    (answer: any) => {
-      if (currentQuestion) {
-        setSpeakingAnswers((prev) => ({
-          ...prev,
-          [currentQuestion.id]: {
-            mediaBlob: answer.audioBlob || answer.videoBlob,
-            text: answer.text || "",
-            fileUrl: answer.fileUrl, // fileUrl đã được upload ở component con
-            isAnswered: answer.isAnswered,
-          },
-        }));
-      }
-    },
-    [currentQuestion]
-  );
+  const handleSpeakingUpdate = useCallback((answer: any) => {
+    const questionId = answer?.questionId;
+    if (!questionId) return;
+
+    setSpeakingAnswers((prev) => ({
+      ...prev,
+      [questionId]: {
+        mediaBlob: answer.audioBlob || answer.videoBlob,
+        text: answer.text || "",
+        fileUrl: answer.fileUrl,
+        isAnswered: answer.isAnswered,
+      },
+    }));
+  }, []);
 
   // Xử lý khi user cập nhật đáp án writing
   const handleWritingUpdate = useCallback(

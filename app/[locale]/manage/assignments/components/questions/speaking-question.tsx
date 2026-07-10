@@ -242,25 +242,18 @@ export function SpeakingQuestion({
     };
   }, [question.id]);
 
-  // --- propagate answer data (unchanged) ---
   useEffect(() => {
-    const answerData: any = {
+    onAnswerUpdate({
+      questionId: question.id,
       duration: recordingDuration,
       mediaType,
       isAnswered: !!mediaBlob && recordingDuration > 0,
       fileUrl,
-    };
-    answerData.audioBlob = mediaBlob;
-    answerData.audioUrl = mediaUrl;
-    onAnswerUpdate(answerData);
-  }, [
-    mediaBlob,
-    mediaUrl,
-    mediaType,
-    recordingDuration,
-    fileUrl,
-    onAnswerUpdate,
-  ]);
+      audioBlob: mediaBlob,
+      audioUrl: mediaUrl,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- propagate recording state; questionId pins target row
+  }, [mediaBlob, mediaUrl, mediaType, recordingDuration, fileUrl, question.id]);
 
   // --- recording logic (unchanged) ---
   const startRecording = async () => {
@@ -354,7 +347,17 @@ export function SpeakingQuestion({
         setLoadingUpload(true)
         const file = new File([wavBlob], "recording.wav", { type: "audio/wav" });
         const res = await uploadFile(file);
-        setFileUrl(res.data.url);
+        const uploadedUrl = res.data?.url || "";
+        setFileUrl(uploadedUrl);
+        onAnswerUpdate({
+          questionId: question.id,
+          duration: recordingDuration,
+          mediaType,
+          isAnswered: true,
+          fileUrl: uploadedUrl,
+          audioBlob: wavBlob,
+          audioUrl: audioUrl,
+        });
       } catch (err) {
         console.error("Upload lỗi:", err);
         toast.error("Lỗi", {

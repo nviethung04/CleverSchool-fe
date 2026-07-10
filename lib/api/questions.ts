@@ -358,6 +358,19 @@ export async function createQuestion(data: any) {
   }
 }
 
+/** Lấy URL public từ response POST /upload-file (proto File trong data). */
+export function extractUploadFileUrl(payload: unknown): string {
+  if (!payload || typeof payload !== "object") return "";
+  const body = payload as Record<string, any>;
+  const inner = body.data;
+  if (inner && typeof inner === "object") {
+    if (typeof inner.url === "string" && inner.url.trim()) return inner.url.trim();
+    if (typeof inner.path === "string" && inner.path.trim()) return inner.path.trim();
+  }
+  if (typeof body.url === "string" && body.url.trim()) return body.url.trim();
+  return "";
+}
+
 // Hàm upload file
 export async function uploadFile(file: File, path?: string) {
   try {
@@ -368,8 +381,16 @@ export async function uploadFile(file: File, path?: string) {
     formData.append("file", file);
 
     const response = await postMultipartUpload(formData, "/upload-file");
+    const body = response.data as Record<string, any>;
+    const url = extractUploadFileUrl(body);
 
-    return response.data;
+    return {
+      ...body,
+      data: {
+        ...(body?.data && typeof body.data === "object" ? body.data : {}),
+        url,
+      },
+    };
   } catch (error) {
     console.error("Error uploading file:", error);
     throw error;
