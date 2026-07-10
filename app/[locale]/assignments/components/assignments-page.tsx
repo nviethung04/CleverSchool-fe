@@ -1522,22 +1522,37 @@ export default function AssignmentsPageSimplified({
                                                   size="sm"
                                                   className="bg-green-600 text-white hover:bg-green-700 text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow"
                                                   onClick={() => {
-                                                    let exerciseUrl =
+                                                    const baseUrl =
                                                       doExerciseFromAssignmentsRoute(
                                                         user,
                                                         exercise.id
                                                       );
+                                                    let exerciseUrl = baseUrl;
+
+                                                    if (lesson.id) {
+                                                      exerciseUrl += `${
+                                                        exerciseUrl.includes("?")
+                                                          ? "&"
+                                                          : "?"
+                                                      }lessonId=${lesson.id}`;
+                                                    }
 
                                                     const weekParam =
                                                       searchParams.get("week");
                                                     if (weekParam) {
                                                       exerciseUrl += `${
-                                                        exerciseUrl.includes(
-                                                          "?"
-                                                        )
+                                                        exerciseUrl.includes("?")
                                                           ? "&"
                                                           : "?"
                                                       }week=${weekParam}`;
+                                                    }
+
+                                                    if (course.id) {
+                                                      exerciseUrl += `${
+                                                        exerciseUrl.includes("?")
+                                                          ? "&"
+                                                          : "?"
+                                                      }courseId=${course.id}`;
                                                     }
 
                                                     router.push(exerciseUrl);

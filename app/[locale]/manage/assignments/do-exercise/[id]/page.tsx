@@ -31,6 +31,7 @@ import { MultipleChoiceQuestion } from "../../components/questions/multiple-choi
 import { SpeakingQuestion } from "../../components/questions/speaking-question";
 import { WritingQuestion } from "../../components/questions/writing-question";
 import { OrderingQuestion } from "../../components/questions/ordering-question";
+import { toast } from "sonner";
 
 function isStudentDoExerciseRoute(pathname: string): boolean {
   return (
@@ -137,6 +138,16 @@ export default function ExercisePage() {
         });
         setExerciseDetail(exerciseData);
         setExerciseName(exerciseData?.name || searchParams.get("name") || "");
+
+        const lessonIdFromUrl = searchParams.get("lessonId");
+        if (lessonIdFromUrl) {
+          setLessonId(lessonIdFromUrl);
+        } else if (
+          exerciseData?.lesson_id != null &&
+          String(exerciseData.lesson_id) !== "0"
+        ) {
+          setLessonId(String(exerciseData.lesson_id));
+        }
 
         const timeLimitInMinutes =
           typeof exerciseData.time_limit === "string"
@@ -384,7 +395,9 @@ export default function ExercisePage() {
         : null);
 
     if (user?.type === "student" && !resolvedLessonId) {
-      console.error("Lesson ID is required for submitting exercise");
+      toast.error(
+        "Không thể nộp bài: thiếu mã bài học. Vui lòng quay lại tab Bài tập và bấm Làm bài lại."
+      );
       return;
     }
 
@@ -418,6 +431,7 @@ export default function ExercisePage() {
       }, 200);
     } catch (error) {
       console.error("Error saving exercise (bulk):", error);
+      toast.error("Nộp bài thất bại. Vui lòng thử lại.");
     }
   }, [
     questions,

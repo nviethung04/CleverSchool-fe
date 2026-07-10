@@ -286,7 +286,7 @@ URL thường có thêm `lesson_id`, `course_id` (query) — không xóa khi chi
 | Không nộp được kiểm tra | Quá deadline / hết time_limit | Kiểm tra cấu hình exam |
 | 401 / không vào được | Sai token / hết phiên | Đăng nhập lại |
 | Báo cáo tiến độ — tab Bài luyện tập trống | API cũ (homework) hoặc BE chưa có route mới | Cập nhật BE+FE 2026-06-21; **restart backend**; chọn đúng khóa học |
-| Luyện tập nộp xong vẫn **Làm bài** / không lưu kết quả | Thiếu `lesson_id` khi gọi `save-score/bulk` | Cập nhật BE+FE 2026-06-21; vào bài từ tab Luyện tập bài học (URL có `lessonId`); restart BE |
+| Luyện tập nộp xong vẫn **Làm bài** / không lưu kết quả; bấm Nộp không phản hồi | Thiếu `lessonId` trong URL (`?from=assigments` không đủ) — BE `save-score/bulk` bắt buộc `lesson_id` | Vào từ tab **Bài tập** (URL có `lessonId` + `courseId`); nếu đang mở link cũ — quay lại tab Bài tập và bấm **Làm bài** lại |
 | Báo cáo tiến độ — 404 `exercise-list` | Server Go chạy bản cũ | Dừng process port 8080 → `go run .` trong `be/` |
 | Tab **Điểm** trên `/courses/[id]` trống dù đã làm bài KT | FE đọc sai field API (`exam_ressults`) | Cập nhật FE 2026-06-22; reload trang; cần bài kiểm tra đã **giao** trong khóa |
 | Tab **Đánh giá** báo cáo tiến độ — dropdown trống / 403 | HS gọi `/manage/assessments` | Cập nhật BE+FE 2026-06-22: `GET /dashboard/student/assessment-list`; restart BE |
