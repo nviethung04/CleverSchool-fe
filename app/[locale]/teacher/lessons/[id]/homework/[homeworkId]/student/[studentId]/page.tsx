@@ -35,12 +35,14 @@ import { TiptapMathViewer } from "@/components/question-editor/tiptap-math-viewe
 import {
   getHomeworkAnswersByTeacher,
   HomeworkOverview,
+  HomeworkQuestion,
   ManualAnswer,
   HomeworkFile,
   saveManualScoring,
   postHomeworkComment,
   postEvaluateScore,
 } from "@/lib/api/exam-answers";
+import { HomeworkQuestionReviewCard } from "@/components/homework/homework-question-review-card";
 import { gradeWritingByAI, gradeSpeakingByAI, gradeImageByAI } from "@/lib/api/ai-grading";
 import { useTypedTranslations } from "@/lib/i18n/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -468,6 +470,7 @@ export default function GradeHomeworkPage() {
   const t = useTypedTranslations("gradeHomework");
   const { toast } = useToast();
   const [overview, setOverview] = useState<HomeworkOverview | null>(null);
+  const [questions, setQuestions] = useState<HomeworkQuestion[]>([]);
   const [manualAnswers, setManualAnswers] = useState<ManualAnswer[]>([]);
   const [submitFiles, setSubmitFiles] = useState<HomeworkFile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -516,6 +519,7 @@ export default function GradeHomeworkPage() {
       });
       if (response && response.data) {
         setOverview(response.data.overview);
+        setQuestions(response.data.questions || []);
         setManualAnswers(response.data.manual_answers || []);
         setSubmitFiles(response.data.submit_files || []);
         setIsAllScored(response.data.is_all_scored || false);
@@ -555,12 +559,14 @@ export default function GradeHomeworkPage() {
         setScores(initial);
       } else {
         setOverview(null);
+        setQuestions([]);
         setManualAnswers([]);
         setSubmitFiles([]);
       }
     } catch (error) {
       console.error("Error fetching submission:", error);
       setOverview(null);
+      setQuestions([]);
       setManualAnswers([]);
       setSubmitFiles([]);
     } finally {
@@ -1056,6 +1062,177 @@ export default function GradeHomeworkPage() {
   const questionsCompleted = Number(overview.questions_completed || 0);
   const otherCount = Math.max(questionsCompleted - writingSpeakingCount, 0);
 
+  const manualAnswersMap = new Map(manualAnswers.map((ma) => [ma.id, ma]));
+  const sortedQuestions = [...questions].sort((a, b) => {
+    const aManual = a.type === "writing" || a.type === "speaking";
+    const bManual = b.type === "writing" || b.type === "speaking";
+    if (aManual && !bManual) return -1;
+    if (!aManual && bManual) return 1;
+    return 0;
+  });
+
+  const renderManualGradingCard = (answer: ManualAnswer, index: number) => {
+    const isUnmarked = !scores[answer.id] && scores[answer.id] !== 0;
+    return (
+      <Card
+        key={answer.id}
+        className={`overflow-hidden rounded-2xl shadow-lg border-0 bg-white ${
+          isUnmarked ? "ring-2 ring-red-300 bg-red-50" : ""
+        }`}
+        id={`question-${index}`}
+      >
+        <CardHeader className="bg-gray-50 py-4 rounded-t-2xl">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center text-xl">
+              {getQuestionIcon(answer.type)}
+              <span className="ml-2">
+                {t("question")} {index + 1}
+              </span>
+              <Badge variant="outline" className="ml-2 capitalize">
+                {answer.type.replace("_", " ")}
+              </Badge>
+            </CardTitle>
+            {getGradingStatusBadge(answer)}
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-8">
+          <div className="bg-blue-50 rounded-lg p-4 mb-4">
+            <h4 className="font-medium text-gray-900 mb-2">{t("question")}:</h4>
+            <div className="text-gray-700 space-y-2">
+              <TiptapMathViewer value={answer.content_struct?.text || ""} />
+              {answer.content_struct.medias &&
+              answer.content_struct.medias.length > 1
+                ? answer.content_struct.medias.map(
+                    (media: QuestionMedia, mediaIndex: number) => {
+                      if (media.type === "image") {
+                        return (
+                          <img
+                            key={media.type + mediaIndex}
+                            src={media.url}
+                            alt=""
+                            className="max-w-full h-auto rounded border max-h-32"
+                          />
+                        );
+                      }
+                      if (media.type === "audio") {
+                        return (
+                          <audio
+                            key={media.type + mediaIndex}
+                            controls
+                            src={media.url}
+                            className="flex-1 mt-2"
+                          />
+                        );
+                      }
+                      return null;
+                    }
+                  )
+                : answer.content_struct?.media?.type &&
+                  answer.content_struct?.media?.url && (
+                    <>
+                      {answer.content_struct.media.type === "image" && (
+                        <img
+                          src={answer.content_struct.media.url}
+                          alt=""
+                          className="max-w-full h-auto rounded border max-h-32"
+                        />
+                      )}
+                      {answer.content_struct.media.type === "audio" && (
+                        <audio
+                          controls
+                          src={answer.content_struct.media.url}
+                          className="flex-1 mt-2"
+                        />
+                      )}
+                    </>
+                  )}
+            </div>
+          </div>
+          <div className="bg-green-50 rounded-lg p-4">
+            <h4 className="font-medium text-gray-900 mb-2">
+              {t("studentAnswer")}:
+            </h4>
+            <div className="text-gray-700">
+              {answer.type === "speaking" ? (
+                answer.file_url ? (
+                  <div className="flex items-center space-x-3">
+                    <Mic className="h-5 w-5 text-blue-600" />
+                    <audio controls src={answer.file_url} className="flex-1" />
+                  </div>
+                ) : (
+                  <span className="italic text-gray-500">
+                    {t("studentNotRecorded")}
+                  </span>
+                )
+              ) : answer.type === "writing" ? (
+                answer.answer ? (
+                  <span>{answer.answer}</span>
+                ) : (
+                  <span className="italic text-gray-500">
+                    {t("studentNotWritten")}
+                  </span>
+                )
+              ) : null}
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("score")} (0-10)
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="number"
+                step="0.5"
+                min={0}
+                max={10}
+                value={scores[answer.id] ?? ""}
+                onChange={(e) => handleScoreChange(answer.id, e.target.value)}
+                className={`w-32 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-blue-400 transition ${
+                  answer.is_scored === true
+                    ? "border-green-300 bg-green-50 focus:ring-green-200"
+                    : "border-gray-200 focus:ring-blue-200"
+                }`}
+                placeholder={
+                  answer.is_scored === true
+                    ? `${answer.manual_score || ""}`
+                    : ""
+                }
+              />
+              {(answer.type === "speaking" || answer.type === "writing") && (
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleAIGrading(answer)}
+                    disabled={
+                      aiGradingLoading && currentGradingAnswerId === answer.id
+                    }
+                    className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 text-purple-700 hover:from-purple-100 hover:to-pink-100 hover:border-purple-300"
+                  >
+                    <Sparkles className="h-4 w-4 mr-1" />
+                    {aiGradingLoading && currentGradingAnswerId === answer.id
+                      ? "Đang chấm..."
+                      : "Chấm AI"}
+                  </Button>
+                  {aiGradingCache[answer.id] && (
+                    <Badge
+                      variant="outline"
+                      className="text-xs text-green-600 border-green-300 bg-green-50"
+                    >
+                      ✓ Đã chấm
+                    </Badge>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -1341,176 +1518,48 @@ export default function GradeHomeworkPage() {
                 </Card>
               </div>
             ) : (
-              // Question-based homework display (original logic)
+              // Question-based homework: auto-graded + manual (writing/speaking)
               <div className="space-y-8">
-                {manualAnswers.map((answer, index) => {
-                  const isUnmarked =
-                    !scores[answer.id] && scores[answer.id] !== 0;
-                  return (
-                    <Card
-                      key={answer.id}
-                      className={`overflow-hidden rounded-2xl shadow-lg border-0 bg-white ${isUnmarked ? "ring-2 ring-red-300 bg-red-50" : ""
-                        }`}
-                      id={`question-${index}`}
-                    >
-                      <CardHeader className="bg-gray-50 py-4 rounded-t-2xl">
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="flex items-center text-xl">
-                            {getQuestionIcon(answer.type)}
-                            <span className="ml-2">
-                              {t("question")} {index + 1}
-                            </span>
-                            <Badge
-                              variant="outline"
-                              className="ml-2 capitalize"
-                            >
-                              {answer.type.replace("_", " ")}
-                            </Badge>
-                          </CardTitle>
-                          {getGradingStatusBadge(answer)}
-                        </div>
-                      </CardHeader>
+                {sortedQuestions.length > 0 ? (
+                  sortedQuestions.map((question, index) => {
+                    const isManual =
+                      question.type === "writing" ||
+                      question.type === "speaking";
+                    const manualAnswer = manualAnswersMap.get(question.id);
 
-                      <CardContent className="p-8">
-                        {/* Question text */}
-                        <div className="bg-blue-50 rounded-lg p-4 mb-4">
-                          <h4 className="font-medium text-gray-900 mb-2">
-                            {t("question")}:
-                          </h4>
-                          <div className="text-gray-700 space-y-2">
-                            <TiptapMathViewer
-                              value={answer.content_struct?.text || ""}
-                            />
-                            {answer.content_struct.medias && answer.content_struct.medias.length > 1 ? 
-                              answer.content_struct.medias.map((media: QuestionMedia, index) => {
-                                if (media.type === 'image') {
-                                  return (
-                                    <img
-                                      key={media.type + index}
-                                      src={media.url}
-                                      alt=""
-                                      className="max-w-full h-auto rounded border max-h-32"
-                                    />
-                                  )
-                                }
-                                if (media.type === 'audio') {
-                                  return (
-                                    <audio
-                                      key={media.type + index}
-                                      controls
-                                      src={media.url}
-                                      className="flex-1 mt-2"
-                                    />
-                                  )
-                                }
-                              })
-                            : answer.content_struct?.media?.type &&
-                              answer.content_struct?.media?.url && (
-                                <>
-                                  {answer.content_struct.media.type ===
-                                    "image" && (
-                                      <img
-                                        src={answer.content_struct.media.url}
-                                        alt=""
-                                        className="max-w-full h-auto rounded border max-h-32"
-                                      />
-                                    )}
-                                  {answer.content_struct.media.type ===
-                                    "audio" && (
-                                      <audio
-                                        controls
-                                        src={answer.content_struct.media.url}
-                                        className="flex-1 mt-2"
-                                      />
-                                    )}
-                                </>
-                              )}
-                          </div>
-                        </div>
-                        {/* Student Answer */}
-                        <div className="bg-green-50 rounded-lg p-4">
-                          <h4 className="font-medium text-gray-900 mb-2">
-                            {t("studentAnswer")}:
-                          </h4>
-                          <div className="text-gray-700">
-                            {answer.type === "speaking" ? (
-                              answer.file_url ? (
-                                <div className="flex items-center space-x-3">
-                                  <Mic className="h-5 w-5 text-blue-600" />
-                                  <audio
-                                    controls
-                                    src={answer.file_url}
-                                    className="flex-1"
-                                  />
-                                </div>
-                              ) : (
-                                <span className="italic text-gray-500">
-                                  {t("studentNotRecorded")}
-                                </span>
-                              )
-                            ) : answer.type === "writing" ? (
-                              answer.answer ? (
-                                <span>{answer.answer}</span>
-                              ) : (
-                                <span className="italic text-gray-500">
-                                  {t("studentNotWritten")}
-                                </span>
-                              )
-                            ) : null}
-                          </div>
-                        </div>
+                    if (isManual && manualAnswer) {
+                      return renderManualGradingCard(manualAnswer, index);
+                    }
 
-                        {/* Score input with AI Grading Button */}
-                        <div className="mt-4">
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            {t("score")} (0-10)
-                          </label>
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="number"
-                              step="0.5"
-                              min={0}
-                              max={10}
-                              value={scores[answer.id] ?? ""}
-                              onChange={(e) =>
-                                handleScoreChange(answer.id, e.target.value)
-                              }
-                              className={`w-32 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-blue-400 transition ${answer.is_scored === true
-                                ? "border-green-300 bg-green-50 focus:ring-green-200"
-                                : "border-gray-200 focus:ring-blue-200"
-                                }`}
-                              placeholder={
-                                answer.is_scored === true
-                                  ? `${answer.manual_score || ""}`
-                                  : ""
-                              }
-                            />
-                            {/* AI Grading Button for Speaking and Writing */}
-                            {(answer.type === "speaking" || answer.type === "writing") && (
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleAIGrading(answer)}
-                                disabled={aiGradingLoading && currentGradingAnswerId === answer.id}
-                                className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 text-purple-700 hover:from-purple-100 hover:to-pink-100 hover:border-purple-300"
-                              >
-                                <Sparkles className="h-4 w-4 mr-1" />
-                                {(aiGradingLoading && currentGradingAnswerId === answer.id) ? "Đang chấm..." : "Chấm AI"}
-                              </Button>
-                              {aiGradingCache[answer.id] && (
-                                <Badge variant="outline" className="text-xs text-green-600 border-green-300 bg-green-50">
-                                  ✓ Đã chấm
-                                </Badge>
-                              )}
-                            </div>
-                          )}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                    return (
+                      <HomeworkQuestionReviewCard
+                        key={question.id}
+                        question={question}
+                        index={index}
+                        labels={{
+                          question: t("question"),
+                          correctAnswers: t("answer"),
+                          completed: t("graded"),
+                          pendingGrading: t("pendingGrading"),
+                          graded: t("graded"),
+                        }}
+                      />
+                    );
+                  })
+                ) : manualAnswers.length > 0 ? (
+                  manualAnswers.map((answer, index) =>
+                    renderManualGradingCard(answer, index)
+                  )
+                ) : (
+                  <Card className="rounded-2xl shadow-lg border-0 bg-white">
+                    <CardContent className="p-8 text-center">
+                      <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600">
+                        {t("submissionNotFound")}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             )}
           </div>

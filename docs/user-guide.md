@@ -239,7 +239,7 @@ Body: `{ lesson_id, is_assigned, course_id? }`
 | Chấm bài tập HS (tự luận / upload) | `/teacher/lessons/[id]/homework/[homeworkId]/student/[studentId]` |
 | Báo cáo / theo dõi | `/teacher/reports` — tab **Bài tập về nhà** (BTVN), **Bài luyện tập** (exercise), **Bài kiểm tra** (exam). Tab *Kiểm tra và đánh giá* / *Xuất mẫu* ẩn — `fe/config/hiddenModules.ts` |
 
-Trắc nghiệm: hệ thống **chấm tự động** sau khi HS nộp. GV vẫn mở trang chấm để **xem điểm** và chấm tay câu Writing/Speaking (nếu có).
+Trắc nghiệm: hệ thống **chấm tự động** sau khi HS nộp. GV mở trang chấm để **xem từng câu** (`data.questions`) và chấm tay câu Writing/Speaking (`data.manual_answers`, nếu có).
 
 ---
 
