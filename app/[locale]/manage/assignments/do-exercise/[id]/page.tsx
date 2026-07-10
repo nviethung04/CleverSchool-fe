@@ -32,10 +32,20 @@ import { SpeakingQuestion } from "../../components/questions/speaking-question";
 import { WritingQuestion } from "../../components/questions/writing-question";
 import { OrderingQuestion } from "../../components/questions/ordering-question";
 
+function isStudentDoExerciseRoute(pathname: string): boolean {
+  return (
+    /\/assignments\/do-exercise\//.test(pathname) &&
+    !/\/manage\//.test(pathname) &&
+    !/\/teacher\//.test(pathname) &&
+    !/\/admin\//.test(pathname)
+  );
+}
+
 export default function ExercisePage() {
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const exerciseId = params.id as string;
   const [lessonId, setLessonId] = useState<string | null>(
@@ -114,10 +124,17 @@ export default function ExercisePage() {
   }, []);
 
   useEffect(() => {
+    if (authLoading) return;
+
+    const forStudent =
+      isStudentDoExerciseRoute(pathname) || user?.type === "student";
+
     const loadExerciseAndQuestions = async () => {
       try {
         setIsLoading(true);
-        const exerciseData = await getExerciseDetail(exerciseId);
+        const exerciseData = await getExerciseDetail(exerciseId, {
+          forStudent,
+        });
         setExerciseDetail(exerciseData);
         setExerciseName(exerciseData?.name || searchParams.get("name") || "");
 
@@ -145,7 +162,7 @@ export default function ExercisePage() {
       }
     };
     loadExerciseAndQuestions();
-  }, [exerciseId]);
+  }, [exerciseId, authLoading, pathname, user?.type]);
 
   // Submit exercise logic (bulk)
   const handleSubmitExercise = useCallback(async () => {

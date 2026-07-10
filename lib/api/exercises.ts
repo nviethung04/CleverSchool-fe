@@ -492,12 +492,17 @@ export async function getExercisesList(params?: {
 }
 
 export async function getExerciseDetail(
-  id: string | number
+  id: string | number,
+  options?: { forStudent?: boolean }
 ): Promise<Exercise> {
   try {
     console.log("Fetching exercise detail for ID:", id);
 
-    const response = await axiosInstance.get(`/manage/exercises/${id}`, {
+    const path = options?.forStudent
+      ? `/study/student/exercises/${id}`
+      : `/manage/exercises/${id}`;
+
+    const response = await axiosInstance.get(path, {
       headers: {
         "ngrok-skip-browser-warning": "true",
       },
