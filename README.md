@@ -2,7 +2,7 @@
 
 Frontend của hệ thống **CleverSchool LMS** — nền tảng quản lý học tập cho Admin, Giáo viên và Học sinh.
 
-- **Demo:** https://clever-school-fe-wmft-nviethung04s-projects.vercel.app  
+- **Demo:** https://staging.viethung.uk/  
 - **Backend:** https://github.com/nviethung04/CleverSchool-be  
 - **Nhánh mặc định:** `develop`
 
